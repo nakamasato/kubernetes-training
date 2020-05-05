@@ -146,9 +146,6 @@ curl -XPOST "http://localhost/flights" -d '
   "FlightTo": "Tokyo"
 }
 '
-404 page not found
+{"id":"piyasara-api1588680669155","code":201,"message":"created"}
 ```
-
-Not working...
-
 
