@@ -108,3 +108,94 @@ my-topic                                                      1            1
 # Enable the Cluster Operator to watch multiple namespaces
 
 https://strimzi.io/docs/0.16.2/full.html#deploying-cluster-operator-to-watch-multiple-namespacesstr
+
+## Change STRIMZI_NAMESPACE
+
+TO update `STRIMZI_NAMESPACE`, add a patch yaml and include it in `kustomization.yaml` in `kafka-strimzi-18` (Reference: [Kustomize でマニフェストのフィールドを削除する](https://text.superbrothers.dev/200315-delete-field-with-kustomize/))
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strimzi-cluster-operator
+spec:
+  template:
+    spec:
+      serviceAccountName: strimzi-cluster-operator
+      containers:
+      - name: strimzi-cluster-operator
+        env:
+        - name: STRIMZI_NAMESPACE
+          value: kafka-strimzi-18,kafka-strimzi-18-staging
+          valueFrom: null
+```
+
+```
+kubectl diff -k overlays/kafka-strimzi-18
+-  generation: 1
++  generation: 2
+   labels:
+     app: strimzi
+   name: strimzi-cluster-operator
+@@ -36,10 +36,7 @@
+         - /opt/strimzi/bin/cluster_operator_run.sh
+         env:
+         - name: STRIMZI_NAMESPACE
+-          valueFrom:
+-            fieldRef:
+-              apiVersion: v1
+-              fieldPath: metadata.namespace
++          value: kafka-strimzi-18,kafka-strimzi-18-staging
+         - name: STRIMZI_FULL_RECONCILIATION_INTERVAL_MS
+```
+
+```
+kubectl apply -k overlays/kafka-strimzi-18
+customresourcedefinition.apiextensions.k8s.io/kafkabridges.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkaconnectors.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkaconnects.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkaconnects2is.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkamirrormaker2s.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkamirrormakers.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkarebalances.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkas.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkatopics.kafka.strimzi.io unchanged
+customresourcedefinition.apiextensions.k8s.io/kafkausers.kafka.strimzi.io unchanged
+serviceaccount/strimzi-cluster-operator unchanged
+clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-global unchanged
+clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-namespaced unchanged
+clusterrole.rbac.authorization.k8s.io/strimzi-entity-operator unchanged
+clusterrole.rbac.authorization.k8s.io/strimzi-kafka-broker unchanged
+clusterrole.rbac.authorization.k8s.io/strimzi-topic-operator unchanged
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation unchanged
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-topic-operator-delegation unchanged
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator unchanged
+clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-kafka-broker-delegation unchanged
+clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator unchanged
+deployment.apps/strimzi-cluster-operator configured
+kafka.kafka.strimzi.io/my-cluster unchanged
+```
+
+## RoleBinding & ClusterRoleBinding
+
+Copy `RoleBinding` from `kafka-strimzi-18`
+
+```
+mkdir -p overlays/kafka-strimzi-18-staging/strimzi-0.18.0/install/cluster-operator
+cp overlays/kafka-strimzi-18/strimzi-0.18.0/install/cluster-operator/*-RoleBinding*yaml overlays/kafka-strimzi-18-staging/strimzi-0.18.0/install/cluster-operator
+```
+
+
+
+```
+kubectl apply -k overlays/kafka-strimzi-18-staging
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation created
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-topic-operator-delegation created
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
+```
+
+## Kafka Cluster
+
+```
+cp overlays/kafka-strimzi-18/my-cluster.yaml overlays/kafka-strimzi-18-staging
+```
