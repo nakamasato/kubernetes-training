@@ -3,6 +3,8 @@ bases:
   - ../../base-0.18.0
 resources:
   - my-cluster.yaml
+  - topic/my-topic.yaml
+  - user/my-user.yaml
 patches: # to update namespace
   - strimzi-0.18.0/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
   - strimzi-0.18.0/install/cluster-operator/021-ClusterRoleBinding-strimzi-cluster-operator.yaml

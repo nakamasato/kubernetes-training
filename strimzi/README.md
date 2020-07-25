@@ -105,6 +105,33 @@ consumer-offsets---84e7a678d08f4bd226872e5cdd4eb527fadc1c6a   50           1
 my-topic                                                      1            1
 ```
 
+## KafkaTopic
+
+Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/topic/kafka-topic.yaml
+
+```
+kubectl get KafkaTopic -n $namespace
+NAME                                                          PARTITIONS   REPLICATION FACTOR
+consumer-offsets---84e7a678d08f4bd226872e5cdd4eb527fadc1c6a   50           1
+my-topic                                                      1            1
+```
+
+## KafkaUser
+
+Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/user/kafka-user.yaml
+
+```
+kubectl get KafkaUser -n $namespace
+NAME      AUTHENTICATION   AUTHORIZATION
+my-user   tls              simple
+```
+
+## KafkaConnect
+
+https://strimzi.io/docs/0.16.2/full.html#deploying-kafka-connect-str
+
+
+
 # Enable the Cluster Operator to watch multiple namespaces
 
 https://strimzi.io/docs/0.16.2/full.html#deploying-cluster-operator-to-watch-multiple-namespacesstr
