@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Strimzi Overview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment @import statement to use as custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite::before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+:not(pre)>code.nobreak{word-wrap:normal}
+:not(pre)>code.nowrap{white-space:nowrap}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details>summary:first-of-type{cursor:pointer;display:list-item;outline:none;margin-bottom:.75em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class="highlight"],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid currentColor;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid currentColor;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;text-align:left;margin-right:0}
+table.tableblock{max-width:100%;border-collapse:separate}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot,table.frame-ends{border-width:1px 0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.inline{display:-ms-flexbox;display:-webkit-box;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media print,amzn-kf8{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body id="overview-book_str" class="book toc2 toc-left">
+<div id="header">
+<h1>Strimzi Overview</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#key-features_str">1. Key features</a>
+<ul class="sectlevel2">
+<li><a href="#key-features-kafka_str">1.1. Kafka capabilities</a></li>
+<li><a href="#kafka_use_cases">1.2. Kafka use cases</a></li>
+<li><a href="#key-features-product_str">1.3. How Strimzi supports Kafka</a></li>
+</ul>
+</li>
+<li><a href="#kafka-concepts_str">2. About Kafka</a>
+<ul class="sectlevel2">
+<li><a href="#kafka-concepts-key_str">2.1. Kafka concepts</a></li>
+<li><a href="#kafka-concepts-producers-consumers_str">2.2. Producers and consumers</a></li>
+</ul>
+</li>
+<li><a href="#kafka-components_str">3. Strimzi deployment of Kafka</a>
+<ul class="sectlevel2">
+<li><a href="#kafka-concepts-components_str">3.1. Kafka component architecture</a></li>
+<li><a href="#overview-components-kafka-bridge_str">3.2. Kafka Bridge interface</a>
+<ul class="sectlevel3">
+<li><a href="#http_requests">3.2.1. HTTP requests</a></li>
+<li><a href="#con-overview-components-kafka-bridge-clients_str">3.2.2. Supported clients for the Kafka Bridge</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#overview-components_str">4. Strimzi Operators</a>
+<ul class="sectlevel2">
+<li><a href="#overview-components-cluster-operator-str">4.1. Cluster Operator</a></li>
+<li><a href="#overview-concepts-topic-operator-str">4.2. Topic Operator</a></li>
+<li><a href="#overview-concepts-user-operator-str">4.3. User Operator</a></li>
+</ul>
+</li>
+<li><a href="#configuration-points_str">5. Kafka configuration</a>
+<ul class="sectlevel2">
+<li><a href="#configuration-points-resources_str">5.1. Custom resources</a></li>
+<li><a href="#configuration-points-common_str">5.2. Common configuration</a></li>
+<li><a href="#configuration-points-broker_str">5.3. Kafka cluster configuration</a></li>
+<li><a href="#configuration-points-topic_str">5.4. Kafka MirrorMaker configuration</a></li>
+<li><a href="#configuration-points-connect_str">5.5. Kafka Connect configuration</a></li>
+<li><a href="#configuration-points-bridge_str">5.6. Kafka Bridge configuration</a></li>
+</ul>
+</li>
+<li><a href="#security-overview_str">6. Securing Kafka</a>
+<ul class="sectlevel2">
+<li><a href="#security-configuration-encryption_str">6.1. Encryption</a></li>
+<li><a href="#security-configuration-authentication_str">6.2. Authentication</a></li>
+<li><a href="#security-configuration-authorization_str">6.3. Authorization</a></li>
+</ul>
+</li>
+<li><a href="#metrics-overview_str">7. Monitoring</a>
+<ul class="sectlevel2">
+<li><a href="#metrics-overview-prometheus_str">7.1. Prometheus</a></li>
+<li><a href="#metrics-overview-grafana_str">7.2. Grafana</a></li>
+<li><a href="#metrics-overview-exporter_str">7.3. Kafka Exporter</a></li>
+<li><a href="#metrics-overview-tracing_str">7.4. Distributed tracing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="key-features_str"><a class="link" href="#key-features_str">1. Key features</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Strimzi simplifies the process of running Apache Kafka in a Kubernetes cluster.</p>
+</div>
+<div class="paragraph">
+<p>This guide is intended as a starting point for building an understanding of Strimzi.
+The guide introduces some of the key concepts behind Kafka, which is central to Strimzi, explaining briefly the purpose of Kafka components.
+Configuration points are outlined, including options to secure and monitor Kafka.
+A distribution of Strimzi provides the files to deploy and manage a Kafka cluster, as well as example files for configuration and monitoring of your deployment.</p>
+</div>
+<div class="paragraph">
+<p>A typical Kafka deployment is described, as well as the tools used to deploy and manage Kafka.</p>
+</div>
+<div class="sect2">
+<h3 id="key-features-kafka_str"><a class="link" href="#key-features-kafka_str">1.1. Kafka capabilities</a></h3>
+<div class="paragraph">
+<p>The underlying data stream-processing capabilities and component architecture of Kafka can deliver:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Microservices and other applications to share data with extremely high throughput and low latency</p>
+</li>
+<li>
+<p>Message ordering guarantees</p>
+</li>
+<li>
+<p>Message rewind/replay from data storage to reconstruct an application state</p>
+</li>
+<li>
+<p>Message compaction to remove old records when using a key-value log</p>
+</li>
+<li>
+<p>Horizontal scalability in a cluster configuration</p>
+</li>
+<li>
+<p>Replication of data to control fault tolerance</p>
+</li>
+<li>
+<p>Retention of high volumes of data for immediate access</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kafka_use_cases"><a class="link" href="#kafka_use_cases">1.2. Kafka use cases</a></h3>
+<div class="paragraph">
+<p>Kafka&#8217;s capabilities make it suitable for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Event-driven architectures</p>
+</li>
+<li>
+<p>Event sourcing to capture changes to the state of an application as a log of events</p>
+</li>
+<li>
+<p>Message brokering</p>
+</li>
+<li>
+<p>Website activity tracking</p>
+</li>
+<li>
+<p>Operational monitoring through metrics</p>
+</li>
+<li>
+<p>Log collection and aggregation</p>
+</li>
+<li>
+<p>Commit logs for distributed systems</p>
+</li>
+<li>
+<p>Stream processing so that applications can respond to data in real time</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="key-features-product_str"><a class="link" href="#key-features-product_str">1.3. How Strimzi supports Kafka</a></h3>
+<div class="paragraph">
+<p>Strimzi provides container images and Operators for running Kafka on Kubernetes.
+Strimzi Operators are fundamental to the running of Strimzi.
+The Operators provided with Strimzi are purpose-built with specialist operational knowledge to effectively manage Kafka.</p>
+</div>
+<div class="paragraph">
+<p>Operators simplify the process of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deploying and running Kafka clusters</p>
+</li>
+<li>
+<p>Deploying and running Kafka components</p>
+</li>
+<li>
+<p>Configuring access to Kafka</p>
+</li>
+<li>
+<p>Securing access to Kafka</p>
+</li>
+<li>
+<p>Upgrading Kafka</p>
+</li>
+<li>
+<p>Managing brokers</p>
+</li>
+<li>
+<p>Creating and managing topics</p>
+</li>
+<li>
+<p>Creating and managing users</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kafka-concepts_str"><a class="link" href="#kafka-concepts_str">2. About Kafka</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kafka is an open-source distributed publish-subscribe messaging system for fault-tolerant real-time data feeds.</p>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>For more information about Apache Kafka, see the <a href="http://kafka.apache.org" target="_blank" rel="noopener">Apache Kafka website</a>.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="kafka-concepts-key_str"><a class="link" href="#kafka-concepts-key_str">2.1. Kafka concepts</a></h3>
+<div class="paragraph">
+<p>Knowledge of the key concepts of Kafka is important in understanding how Strimzi works.</p>
+</div>
+<div class="paragraph">
+<p>A Kafka cluster comprises multiple brokers
+Topics are used to receive and store data in a Kafka cluster.
+Topics are split by partitions, where the data is written.
+Partitions are replicated across topics for fault tolerance.</p>
+</div>
+<div class="paragraph">
+<div class="title">Kafka brokers and topics</div>
+<p><span class="image"><img src="images/overview/kafka-concepts-key-concepts.png" alt="Kafka brokers and topics"></span></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Broker</dt>
+<dd>
+<p>A broker, sometimes referred to as a server or node, orchestrates the storage and passing of messages.</p>
+</dd>
+<dt class="hdlist1">Topic</dt>
+<dd>
+<p>A topic provides a destination for the storage of data.
+Each topic is split into one or more partitions.</p>
+</dd>
+<dt class="hdlist1">Cluster</dt>
+<dd>
+<p>A group of broker instances.</p>
+</dd>
+<dt class="hdlist1">Partition</dt>
+<dd>
+<p>The number of topic partitions is defined by a topic <em>partition count</em>.</p>
+</dd>
+<dt class="hdlist1">Partition leader</dt>
+<dd>
+<p>A partition leader handles all producer requests for a topic.</p>
+</dd>
+<dt class="hdlist1">Partition follower</dt>
+<dd>
+<p>A partition follower replicates the partition data of a partition leader, optionally handling consumer requests.</p>
+<div class="paragraph">
+<p>Topics use a <em>replication factor</em> to configure the number of replicas of each partition within the cluster.
+A topic comprises at least one partition.</p>
+</div>
+<div class="paragraph">
+<p>An <em>in-sync</em> replica has the same number of messages as the leader.
+Configuration defines how many replicas must be <em>in-sync</em> to be able to produce messages, ensuring that a message is committed only after it has been successfully copied to the replica partition.
+In this way, if the leader fails the message is not lost.</p>
+</div>
+<div class="paragraph">
+<p>In the <em>Kafka brokers and topics</em> diagram, we can see each numbered partition has a leader and two followers in replicated topics.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kafka-concepts-producers-consumers_str"><a class="link" href="#kafka-concepts-producers-consumers_str">2.2. Producers and consumers</a></h3>
+<div class="paragraph">
+<p>Producers and consumers send and receive messages (publish and subscribe) through brokers.
+Messages comprise an optional <em>key</em> and a <em>value</em> that contains the message data, plus headers and related metadata.
+The key is used to identify the subject of the message, or a property of the message.
+Messages are delivered in batches, and batches and records contain headers and metadata that provide details that are useful for filtering and routing by clients, such as the timestamp and offset position for the record.</p>
+</div>
+<div class="paragraph">
+<div class="title">Producers and consumers</div>
+<p><span class="image"><img src="images/overview/kafka-concepts-producer-consumer.png" alt="Producers and consumers"></span></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Producer</dt>
+<dd>
+<p>A producer sends messages to a broker topic to be written to the end offset of a partition.
+Messages are written to partitions by a producer on a round robin basis, or to a specific partition based on the message key.</p>
+</dd>
+<dt class="hdlist1">Consumer</dt>
+<dd>
+<p>A consumer subscribes to a topic and reads messages according to topic, partition and offset.</p>
+</dd>
+<dt class="hdlist1">Consumer group</dt>
+<dd>
+<p>Consumer groups are used to share a typically large data stream generated by multiple producers from a given topic.
+Consumers are grouped using a <code>group.id</code>, allowing messages to be spread across the members.
+Consumers within a group do not read data from the same partition, but can receive data from one or more partitions.</p>
+</dd>
+<dt class="hdlist1">Offsets</dt>
+<dd>
+<p>Offsets describe the position of messages within a partition.
+Each message in a given partition has a unique offset, which helps identify the position of a consumer within the partition to track the number of records that have been consumed.</p>
+<div class="paragraph">
+<p>Committed offsets are written to an offset commit log.
+A <code>__consumer_offsets</code> topic stores information on committed offsets, the position of last and next offset, according to consumer group.</p>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<div class="title">Producing and consuming data</div>
+<p><span class="image"><img src="images/overview/kafka-concepts-partitions.png" alt="Partitions"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kafka-components_str"><a class="link" href="#kafka-components_str">3. Strimzi deployment of Kafka</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kafka components are provided for deployment to Kubernetes with the Strimzi distribution.
+The Kafka components are generally run as clusters for availability.</p>
+</div>
+<div class="paragraph">
+<p>A typical deployment incorporating Kafka components might include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Kafka</strong> cluster of broker nodes</p>
+</li>
+<li>
+<p><strong>ZooKeeper</strong> cluster of replicated ZooKeeper instances</p>
+</li>
+<li>
+<p><strong>Kafka Connect</strong> cluster for external data connections</p>
+</li>
+<li>
+<p><strong>Kafka MirrorMaker</strong> cluster to mirror the Kafka cluster in a secondary cluster</p>
+</li>
+<li>
+<p><strong>Kafka Exporter</strong> to extract additional Kafka metrics data for monitoring</p>
+</li>
+<li>
+<p><strong>Kafka Bridge</strong> to make HTTP-based requests to the Kafka cluster</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Not all of these components are mandatory, though you need Kafka and ZooKeeper as a minimum.
+Some components can be deployed without Kafka, such as MirrorMaker or Kafka Connect.</p>
+</div>
+<div class="sect2">
+<h3 id="kafka-concepts-components_str"><a class="link" href="#kafka-concepts-components_str">3.1. Kafka component architecture</a></h3>
+<div class="paragraph">
+<p>A cluster of Kafka brokers is main part of the Apache Kafka project responsible for delivering messages.</p>
+</div>
+<div class="paragraph">
+<p>A broker uses Apache ZooKeeper for storing configuration data and for cluster coordination.
+Before running Apache Kafka, an Apache ZooKeeper cluster has to be ready.</p>
+</div>
+<div class="paragraph">
+<p>Each of the other Kafka components interact with the Kafka cluster to perform specific roles.</p>
+</div>
+<div class="paragraph">
+<div class="title">Kafka component interaction</div>
+<p><span class="image"><img src="images/overview/kafka-concepts-supporting-components.png" alt="Kafka components"></span></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Apache ZooKeeper</dt>
+<dd>
+<p>Apache ZooKeeper is a core dependency for Kafka as it provides a cluster coordination service, storing and tracking the status of brokers and consumers. ZooKeeper is also used for leader election of partitions.</p>
+</dd>
+<dt class="hdlist1">Kafka Connect</dt>
+<dd>
+<p>Kafka Connect is an integration toolkit for streaming data between Kafka brokers and other systems using <em>Connector</em> plugins.
+Kafka Connect provides a framework for integrating Kafka with an external data source or target, such as a database, for import or export of data using connectors.
+Connectors are plugins that provide the connection configuration needed.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A <em>source</em> connector pushes external data into Kafka.</p>
+</li>
+<li>
+<p>A <em>sink</em> connector extracts data  out of Kafka</p>
+<div class="paragraph">
+<p>External data is translated and transformed into the appropriate format.</p>
+</div>
+<div class="paragraph">
+<p>You can deploy Kafka Connect with Source2Image support, which provides a convenient way to include connectors.</p>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Kafka MirrorMaker</dt>
+<dd>
+<p>Kafka MirrorMaker replicates data between two Kafka clusters, within or across data centers.</p>
+<div class="paragraph">
+<p>MirrorMaker takes messages from a source Kafka cluster and writes them to a target Kafka cluster.</p>
+</div>
+</dd>
+<dt class="hdlist1">Kafka Bridge</dt>
+<dd>
+<p>Kafka Bridge provides an API for integrating HTTP-based clients with a Kafka cluster.</p>
+</dd>
+<dt class="hdlist1">Kafka Exporter</dt>
+<dd>
+<p>Kafka Exporter extracts data for analysis as Prometheus metrics, primarily data relating to offsets, consumer groups, consumer lag and topics. Consumer lag is the delay between the last message written to a partition and the message currently being picked up from that partition by a consumer</p>
+</dd>
+<dt class="hdlist1">Cruise Control</dt>
+<dd>
+<p>Cruise Control monitors and balances data across a Kafka cluster.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="overview-components-kafka-bridge_str"><a class="link" href="#overview-components-kafka-bridge_str">3.2. Kafka Bridge interface</a></h3>
+<div class="paragraph">
+<p>Strimzi Kafka Bridge provides a RESTful interface that allows HTTP-based clients to interact with a Kafka cluster. 
+Kafka Bridge offers the advantages of a web API connection to Strimzi, without the need for client applications to interpret the Kafka protocol.</p>
+</div>
+<div class="paragraph">
+<p>The API has two main resources — <code>consumers</code> and <code>topics</code> — that are exposed and made accessible through endpoints to interact with consumers and producers in your Kafka cluster. The resources relate only to the Kafka Bridge, not the consumers and producers connected directly to Kafka.</p>
+</div>
+<div class="sect3">
+<h4 id="http_requests"><a class="link" href="#http_requests">3.2.1. HTTP requests</a></h4>
+<div class="paragraph">
+<p>The Kafka Bridge supports HTTP requests to a Kafka cluster, with methods to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Send messages to a topic.</p>
+</li>
+<li>
+<p>Retrieve messages from topics.</p>
+</li>
+<li>
+<p>Create and delete consumers.</p>
+</li>
+<li>
+<p>Subscribe consumers to topics, so that they start receiving messages from those topics.</p>
+</li>
+<li>
+<p>Retrieve a list of topics that a consumer is subscribed to.</p>
+</li>
+<li>
+<p>Unsubscribe consumers from topics.</p>
+</li>
+<li>
+<p>Assign partitions to consumers.</p>
+</li>
+<li>
+<p>Commit a list of consumer offsets.</p>
+</li>
+<li>
+<p>Seek on a partition, so that a consumer starts receiving messages from the first or last offset position, or a given offset position.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The methods provide JSON responses and HTTP response code error handling.
+Messages can be sent in JSON or binary formats.</p>
+</div>
+<div class="paragraph">
+<p>Clients can produce and consume messages without the requirement to use the native Kafka protocol.</p>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>To view the API documentation, including example requests and responses, see the <a href="https://strimzi.io/docs/bridge/latest/" target="_blank" rel="noopener">Kafka Bridge API reference</a> on the Strimzi website.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="con-overview-components-kafka-bridge-clients_str"><a class="link" href="#con-overview-components-kafka-bridge-clients_str">3.2.2. Supported clients for the Kafka Bridge</a></h4>
+<div class="paragraph">
+<p>You can use the Kafka Bridge to integrate both <em>internal</em> and <em>external</em> HTTP client applications with your Kafka cluster.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Internal clients</dt>
+<dd>
+<p>Internal clients are container-based HTTP clients running in <em>the same</em> Kubernetes cluster as the Kafka Bridge itself.
+Internal clients can access the Kafka Bridge on the host and port defined in the <code>KafkaBridge</code> custom resource.</p>
+</dd>
+<dt class="hdlist1">External clients</dt>
+<dd>
+<p>External clients are HTTP clients running <em>outside</em> the Kubernetes cluster in which the Kafka Bridge is deployed and running.
+External clients can access the Kafka Bridge through an OpenShift Route, a loadbalancer service, or using an Ingress.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<div class="title">HTTP internal and external client integration</div>
+<p><span class="image"><img src="images/kafka-bridge.png" alt="Kafka Bridge"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overview-components_str"><a class="link" href="#overview-components_str">4. Strimzi Operators</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Strimzi supports Kafka using <em>Operators</em> to deploy and manage the components and dependencies of Kafka to Kubernetes.</p>
+</div>
+<div class="paragraph">
+<p>Operators are a method of packaging, deploying, and managing a Kubernetes application.
+Strimzi Operators extend Kubernetes functionality, automating common and complex tasks related to a Kafka deployment.
+By implementing knowledge of Kafka operations in code, Kafka administration tasks are simplified and require less manual intervention.</p>
+</div>
+<h3 id="key-features-operators_str" class="discrete">Operators</h3>
+<div class="paragraph">
+<p>Strimzi provides Operators for managing a Kafka cluster running within a Kubernetes cluster.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Cluster Operator</dt>
+<dd>
+<p>Deploys and manages Apache Kafka clusters, Kafka Connect, Kafka MirrorMaker, Kafka Bridge, Kafka Exporter, and the Entity Operator</p>
+</dd>
+<dt class="hdlist1">Entity Operator</dt>
+<dd>
+<p>Comprises the Topic Operator and User Operator</p>
+</dd>
+<dt class="hdlist1">Topic Operator</dt>
+<dd>
+<p>Manages Kafka topics</p>
+</dd>
+<dt class="hdlist1">User Operator</dt>
+<dd>
+<p>Manages Kafka users</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The Cluster Operator can deploy the Topic Operator and User Operator as part of an <strong>Entity Operator</strong> configuration at the same time as a Kafka cluster.</p>
+</div>
+<div class="paragraph">
+<div class="title">Operators within the Strimzi architecture</div>
+<p><span class="image"><img src="images/operators.png" alt="Operators"></span></p>
+</div>
+<div class="sect2">
+<h3 id="overview-components-cluster-operator-str"><a class="link" href="#overview-components-cluster-operator-str">4.1. Cluster Operator</a></h3>
+<div class="paragraph">
+<p>Strimzi uses the Cluster Operator to deploy and manage clusters for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Kafka (including ZooKeeper, Entity Operator, Kafka Exporter, and Cruise Control)</p>
+</li>
+<li>
+<p>Kafka Connect</p>
+</li>
+<li>
+<p>Kafka MirrorMaker</p>
+</li>
+<li>
+<p>Kafka Bridge</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Custom resources are used to deploy the clusters.</p>
+</div>
+<div class="paragraph">
+<p>For example, to deploy a Kafka cluster:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A <code>Kafka</code> resource with the cluster configuration is created within the Kubernetes cluster.</p>
+</li>
+<li>
+<p>The Cluster Operator deploys a corresponding Kafka cluster, based on what is declared in the <code>Kafka</code> resource.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The Cluster Operator can also deploy (through configuration of the <code>Kafka</code> resource):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A Topic Operator to provide operator-style topic management through <code>KafkaTopic</code> custom resources</p>
+</li>
+<li>
+<p>A User Operator to provide operator-style user management through <code>KafkaUser</code> custom resources</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The Topic Operator and User Operator function within the Entity Operator on deployment.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example architecture for the Cluster Operator</div>
+<p><span class="image"><img src="images/cluster-operator.png" alt="Cluster Operator"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="overview-concepts-topic-operator-str"><a class="link" href="#overview-concepts-topic-operator-str">4.2. Topic Operator</a></h3>
+<div class="paragraph">
+<p>The Topic Operator provides a way of managing topics in a Kafka cluster through Kubernetes resources.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example architecture for the Topic Operator</div>
+<p><span class="image"><img src="images/topic-operator.png" alt="Topic Operator"></span></p>
+</div>
+<div class="paragraph">
+<p>The role of the Topic Operator is to keep a set of <code>KafkaTopic</code> Kubernetes resources describing Kafka topics in-sync with corresponding Kafka topics.</p>
+</div>
+<div class="paragraph">
+<p>Specifically, if a <code>KafkaTopic</code> is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Created, the Topic Operator creates the topic</p>
+</li>
+<li>
+<p>Deleted, the Topic Operator deletes the topic</p>
+</li>
+<li>
+<p>Changed, the Topic Operator updates the topic</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Working in the other direction, if a topic is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Created within the Kafka cluster, the Operator creates a <code>KafkaTopic</code></p>
+</li>
+<li>
+<p>Deleted from the Kafka cluster, the Operator deletes the <code>KafkaTopic</code></p>
+</li>
+<li>
+<p>Changed in the Kafka cluster, the Operator updates the <code>KafkaTopic</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This allows you to declare a <code>KafkaTopic</code> as part of your application&#8217;s deployment and the Topic Operator will take care of creating the topic for you.
+Your application just needs to deal with producing or consuming from the necessary topics.</p>
+</div>
+<div class="paragraph">
+<p>If the topic is reconfigured or reassigned to different Kafka nodes, the <code>KafkaTopic</code> will always be up to date.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="overview-concepts-user-operator-str"><a class="link" href="#overview-concepts-user-operator-str">4.3. User Operator</a></h3>
+<div class="paragraph">
+<p>The User Operator manages Kafka users for a Kafka cluster by watching for <code>KafkaUser</code> resources that describe Kafka users,
+and ensuring that they are configured properly in the Kafka cluster.</p>
+</div>
+<div class="paragraph">
+<p>For example, if a <code>KafkaUser</code> is:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Created, the User Operator creates the user it describes</p>
+</li>
+<li>
+<p>Deleted, the User Operator deletes the user it describes</p>
+</li>
+<li>
+<p>Changed, the User Operator updates the user it describes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unlike the Topic Operator, the User Operator does not sync any changes from the Kafka cluster with the Kubernetes resources.
+Kafka topics can be created by applications directly in Kafka, but it is not expected that the users will be managed directly in the Kafka cluster in parallel with the User Operator.</p>
+</div>
+<div class="paragraph">
+<p>The User Operator allows you to declare a <code>KafkaUser</code> resource as part of your application&#8217;s deployment.
+You can specify the authentication and authorization mechanism for the user.
+You can also configure <em>user quotas</em> that control usage of Kafka resources to ensure, for example, that a user does not monopolize access to a broker.</p>
+</div>
+<div class="paragraph">
+<p>When the user is created, the user credentials are created in a <code>Secret</code>.
+Your application needs to use the user and its credentials for authentication and to produce or consume messages.</p>
+</div>
+<div class="paragraph">
+<p>In addition to managing credentials for authentication, the User Operator also manages authorization rules by including a description of the user&#8217;s access rights in the <code>KafkaUser</code> declaration.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration-points_str"><a class="link" href="#configuration-points_str">5. Kafka configuration</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A deployment of Kafka components to a Kubernetes cluster using Strimzi is highly configurable through the application of custom resources.
+Custom resources are created as instances of APIs added by Custom resource definitions (CRDs) to extend Kubernetes resources.</p>
+</div>
+<div class="paragraph">
+<p>CRDs act as configuration instructions to describe the custom resources in a Kubernetes cluster,
+and are provided with Strimzi for each Kafka component used in a deployment, as well as users and topics.
+CRDs and custom resources are defined as YAML files.
+Example YAML files are provided with the Strimzi distribution.</p>
+</div>
+<div class="paragraph">
+<p>CRDs also allow Strimzi resources to benefit from native Kubernetes features like CLI accessibility and configuration validation.</p>
+</div>
+<div class="paragraph">
+<p>In this chapter we look at how Kafka components are configured through custom resources, starting with common configuration points and then important configuration considerations specific to components.</p>
+</div>
+<div class="sect2">
+<h3 id="configuration-points-resources_str"><a class="link" href="#configuration-points-resources_str">5.1. Custom resources</a></h3>
+<div class="paragraph">
+<p>After a new custom resource type is added to your cluster by installing a CRD, you can create instances of the resource based on its specification.</p>
+</div>
+<div class="paragraph">
+<p>The custom resources for Strimzi components have common configuration properties, which are defined under <code>spec</code>.</p>
+</div>
+<div class="paragraph">
+<p>In this fragment from a Kafka topic custom resource, the <code>apiVersion</code> and <code>kind</code> properties identify the associated CRD.
+The <code>spec</code> property shows configuration that defines the number of partitions and replicas for the topic.</p>
+</div>
+<h4 id="kafka_topic_custom_resource" class="discrete">Kafka topic custom resource</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: my-topic
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 1
+  replicas: 1
+  # ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are many additional configuration options that can be incorporated into a YAML definition, some common and some specific to a particular component.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration-points-common_str"><a class="link" href="#configuration-points-common_str">5.2. Common configuration</a></h3>
+<div class="paragraph">
+<p>Some of the configuration options common to resources are described here.
+<a href="#security-overview_str">Security</a> and <a href="#metrics-overview_str">metrics collection</a> might also be adopted where applicable.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Bootstrap servers</dt>
+<dd>
+<p>Bootstrap servers are used for host/port connection to a Kafka cluster for:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Kafka Connect</p>
+</li>
+<li>
+<p>Kafka Bridge</p>
+</li>
+<li>
+<p>Kafka MirrorMaker producers and consumers</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">CPU and memory resources</dt>
+<dd>
+<p>You request CPU and memory resources for components. Limits specify the maximum resources that can be consumed by a given container.</p>
+<div class="paragraph">
+<p>Resource requests and limits for the Topic Operator and User Operator are set in the <code>Kafka</code> resource.</p>
+</div>
+</dd>
+<dt class="hdlist1">Logging</dt>
+<dd>
+<p>You define the logging level for the component. Logging can be defined directly (inline) or externally using a config map.</p>
+</dd>
+<dt class="hdlist1">Healthchecks</dt>
+<dd>
+<p>Healthcheck configuration introduces <em>liveness</em> and <em>readiness</em> probes to know when to restart a container (liveness) and when a container can accept traffic (readiness).</p>
+</dd>
+<dt class="hdlist1">JVM options</dt>
+<dd>
+<p>JVM options provide maximum and minimum memory allocation to optimize the performance of the component according to the platform it is running on.</p>
+</dd>
+<dt class="hdlist1">Pod scheduling</dt>
+<dd>
+<p>Pod schedules use <em>affinity/anti-affinity</em> rules to determine under what circumstances a pod is scheduled onto a node.</p>
+</dd>
+</dl>
+</div>
+<h4 id="example_yaml_showing_common_configuration" class="discrete">Example YAML showing common configuration</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaConnect
+metadata:
+  name: my-cluster
+spec:
+  # ...
+  bootstrapServers: my-cluster-kafka-bootstrap:9092
+  resources:
+    requests:
+      cpu: 12
+      memory: 64Gi
+    limits:
+      cpu: 12
+      memory: 64Gi
+  logging:
+    type: inline
+    loggers:
+      connect.root.logger.level: "INFO"
+  readinessProbe:
+    initialDelaySeconds: 15
+    timeoutSeconds: 5
+  livenessProbe:
+    initialDelaySeconds: 15
+    timeoutSeconds: 5
+  jvmOptions:
+    "-Xmx": "2g"
+    "-Xms": "2g"
+  template:
+    pod:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-type
+                    operator: In
+                    values:
+                      - fast-network
+  # ...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration-points-broker_str"><a class="link" href="#configuration-points-broker_str">5.3. Kafka cluster configuration</a></h3>
+<div class="paragraph">
+<p>A kafka cluster comprises one or more brokers.
+For producers and consumers to be able to access topics within the brokers, Kafka configuration must define how data is stored in the cluster, and how the data is accessed.
+You can configure a Kafka cluster to run with multiple broker nodes across <em>racks</em>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Storage</dt>
+<dd>
+<p>Kafka and ZooKeeper store data on disks.</p>
+<div class="paragraph">
+<p>Strimzi requires block storage provisioned through <code>StorageClass</code>.
+The file system format for storage must be <em>XFS</em> or <em>EXT4</em>.
+Three types of data storage are supported:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Ephemeral (Recommended for development only)</dt>
+<dd>
+<p>Ephemeral storage stores data for the lifetime of an instance. Data is lost when the instance is restarted.</p>
+</dd>
+<dt class="hdlist1">Persistent</dt>
+<dd>
+<p>Persistent storage relates to long-term data storage independent of the lifecycle of the instance.</p>
+</dd>
+<dt class="hdlist1">JBOD (Just a Bunch of Disks, suitable for Kafka only)</dt>
+<dd>
+<p>JBOD allows you to use multiple disks to store commit logs in each broker.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The disk capacity used by an existing Kafka cluster can be increased if supported by the infrastructure.</p>
+</div>
+</dd>
+<dt class="hdlist1">Listeners</dt>
+<dd>
+<p>Listeners configure how clients connect to a Kafka cluster.</p>
+<div class="paragraph">
+<p>The following types of listener are supported:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Plain listener</strong> that does not use encryption</p>
+</li>
+<li>
+<p><strong>TLS listener</strong> that uses encryption</p>
+</li>
+<li>
+<p><strong>External listener</strong> for access outside of Kubernetes</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>External listeners expose Kafka by specifying a <code>type</code>:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>route</code> to use OpenShift Routes and HAProxy router</p>
+</li>
+<li>
+<p><code>loadbalancer</code> to use loadbalancer services</p>
+</li>
+<li>
+<p><code>nodeport</code> to use ports on the Kubernetes nodes</p>
+</li>
+<li>
+<p><code>ingress</code> to use Kubernetes <em>Ingress</em> and the <a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">NGINX Ingress Controller for Kubernetes</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>If you are using <a href="#security-configuration-authentication_str">OAuth 2.0 for token-based authentication</a>, you can configure listeners to use the authorization server.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Rack awareness</dt>
+<dd>
+<p>Rack awareness is a configuration feature that distributes Kafka broker pods and topic replicas across <em>racks</em>, which represent data centers or racks in data centers, or availability zones.</p>
+</dd>
+</dl>
+</div>
+<h4 id="example_yaml_showing_kafka_configuration" class="discrete">Example YAML showing Kafka configuration</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="shell" class="language-shell hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: Kafka
+metadata:
+  name: my-cluster
+spec:
+  kafka:
+    # ...
+    listeners:
+      tls:
+        authentication:
+          type: tls
+      external:
+        type: route
+        authentication:
+          type: tls
+    # ...
+    storage:
+      type: persistent-claim
+      size: 10000Gi
+    # ...
+    rack:
+      topologyKey: failure-domain.beta.kubernetes.io/zone
+    # ...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration-points-topic_str"><a class="link" href="#configuration-points-topic_str">5.4. Kafka MirrorMaker configuration</a></h3>
+<div class="paragraph">
+<p>To set up MirrorMaker, a source and target (destination) Kafka cluster must be running.</p>
+</div>
+<div class="paragraph">
+<p>You can use Strimzi with MirrorMaker 2.0, although the earlier version of MirrorMaker continues to be supported.</p>
+</div>
+<h4 id="mirrormaker_2_0" class="discrete">MirrorMaker 2.0</h4>
+<div class="paragraph">
+<p>MirrorMaker 2.0 is based on the Kafka Connect framework, <em>connectors</em> managing the transfer of data between clusters.</p>
+</div>
+<div class="paragraph">
+<p>MirrorMaker 2.0 uses:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Source cluster configuration to consume data from the source cluster</p>
+</li>
+<li>
+<p>Target cluster configuration to output data to the target cluster</p>
+</li>
+</ul>
+</div>
+<h5 id="cluster_configuration" class="discrete">Cluster configuration</h5>
+<div class="paragraph">
+<p>You configure a <code>KafkaMirrorMaker2</code> custom resource to define the Kafka Connect deployment, including the connection details of the source and target clusters,
+and then run a set of MirrorMaker 2.0 connectors to make the connection.</p>
+</div>
+<div class="paragraph">
+<p>Topic configuration is automatically synchronized between the source and target clusters according to the topics defined in the <code>KafkaMirrorMaker2</code> custom resource.
+Configuration changes are propagated to remote topics so that new topics and partitions are detected and created.
+Topic replication is defined using regular expression patterns to <em>whitelist</em> or <em>blacklist</em> topics.</p>
+</div>
+<div class="paragraph">
+<p>The following MirrorMaker 2.0 connectors and related internal topics help manage the transfer and synchronization of data between the clusters.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">MirrorSourceConnector</dt>
+<dd>
+<p>A <em>MirrorSourceConnector</em> creates remote topics from the source cluster.</p>
+</dd>
+<dt class="hdlist1">MirrorCheckpointConnector</dt>
+<dd>
+<p>A <em>MirrorCheckpointConnector</em> tracks and maps offsets for specified consumer groups using an <em>offset sync</em> topic and <em>checkpoint</em> topic.
+The offset sync topic maps the source and target offsets for replicated topic partitions from record metadata.
+A checkpoint is emitted from each source cluster and replicated in the target cluster through the checkpoint topic.
+The checkpoint topic maps the last committed offset in the source and target cluster for replicated topic partitions in each consumer group.</p>
+</dd>
+<dt class="hdlist1">MirrorHeartbeatConnector</dt>
+<dd>
+<p>A <em>MirrorHeartbeatConnector</em> periodically checks connectivity between clusters.
+A heartbeat is produced every second by the MirrorHeartbeatConnector into a <em>heartbeat</em> topic that is created on the local cluster.
+If you have MirrorMaker 2.0 at both the remote and local locations, the heartbeat emitted at the remote location by the MirrorHeartbeatConnector is treated like any remote topic and mirrored by the MirrorSourceConnector at the local cluster.
+The heartbeat topic makes it easy to check that the remote cluster is available and the clusters are connected.
+If things go wrong, the heartbeat topic offset positions and time stamps can help with recovery and diagnosis.</p>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/mirrormaker.png" alt="MirrorMaker 2.0 replication">
+</div>
+<div class="title">Figure 1. Replication across two clusters</div>
+</div>
+<h5 id="bidirectional_replication_across_two_clusters" class="discrete">Bidirectional replication across two clusters</h5>
+<div class="paragraph">
+<p>The MirrorMaker 2.0 architecture supports bidirectional replication in an <em>active/active</em> cluster configuration,
+so both clusters are active and provide the same data simultaneously.
+A MirrorMaker 2.0 cluster is required at each target destination.
+Remote topics are distinguished by automatic renaming that prepends the name of cluster to the name of the topic.
+This is useful if you want to make the same data available locally in different geographical locations.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/mirrormaker-renaming.png" alt="MirrorMaker 2.0 bidirectional architecture">
+</div>
+<div class="title">Figure 2. Bidirectional replication</div>
+</div>
+<h5 id="example_yaml_showing_mirrormaker_2_0_configuration" class="discrete">Example YAML showing MirrorMaker 2.0 configuration</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">  apiVersion: kafka.strimzi.io/v1alpha1
+  kind: KafkaMirrorMaker2
+  metadata:
+    name: my-mirror-maker2
+    spec:
+      version: 2.5.0
+      connectCluster: "my-cluster-target"
+      clusters:
+      - alias: "my-cluster-source"
+        bootstrapServers: my-cluster-source-kafka-bootstrap:9092
+      - alias: "my-cluster-target"
+        bootstrapServers: my-cluster-target-kafka-bootstrap:9092
+      mirrors:
+      - sourceCluster: "my-cluster-source"
+        targetCluster: "my-cluster-target"
+        sourceConnector: {}
+      topicsPattern: ".*"
+      groupsPattern: "group1|group2|group3"</code></pre>
+</div>
+</div>
+<h4 id="mirrormaker" class="discrete">MirrorMaker</h4>
+<div class="paragraph">
+<p>The earlier version of MirrorMaker uses producers and consumers to replicate data across clusters.</p>
+</div>
+<div class="paragraph">
+<p>MirrorMaker uses:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Consumer configuration to consume data from the source cluster</p>
+</li>
+<li>
+<p>Producer configuration to output data to the target cluster</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Consumer and producer configuration includes any authentication and encryption settings.</p>
+</div>
+<div class="paragraph">
+<p>A <em>whitelist</em> defines the topics to mirror from a source to a target cluster.</p>
+</div>
+<h5 id="key_consumer_configuration" class="discrete">Key Consumer configuration</h5>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Consumer group identifier</dt>
+<dd>
+<p>The consumer group ID for a MirrorMaker consumer so that messages consumed are assigned to a consumer group.</p>
+</dd>
+<dt class="hdlist1">Number of consumer streams</dt>
+<dd>
+<p>A value to determine the number of consumers in a consumer group that consume a message in parallel.</p>
+</dd>
+<dt class="hdlist1">Offset commit interval</dt>
+<dd>
+<p>An offset commit interval to set the time between consuming and committing a message.</p>
+</dd>
+</dl>
+</div>
+<h5 id="key_producer_configuration" class="discrete">Key Producer configuration</h5>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Cancel option for send failure</dt>
+<dd>
+<p>You can define whether a message send failure is ignored or MirrorMaker is terminated and recreated.</p>
+</dd>
+</dl>
+</div>
+<h5 id="example_yaml_showing_mirrormaker_configuration" class="discrete">Example YAML showing MirrorMaker configuration</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaMirrorMaker
+metadata:
+  name: my-mirror-maker
+spec:
+  # ...
+  consumer:
+    bootstrapServers: my-source-cluster-kafka-bootstrap:9092
+    groupId: "my-group"
+    numStreams: 2
+    offsetCommitInterval: 120000
+    # ...
+  producer:
+    # ...
+    abortOnSendFailure: false
+    # ...
+  whitelist: "my-topic|other-topic"
+  # ...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration-points-connect_str"><a class="link" href="#configuration-points-connect_str">5.5. Kafka Connect configuration</a></h3>
+<div class="paragraph">
+<p>A basic Kafka Connect configuration requires a bootstrap address to connect to a Kafka cluster, and encryption and authentication details.</p>
+</div>
+<div class="paragraph">
+<p>Kafka Connect instances are configured by default with the same:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Group ID for the Kafka Connect cluster</p>
+</li>
+<li>
+<p>Kafka topic to store the connector offsets</p>
+</li>
+<li>
+<p>Kafka topic to store connector and task status configurations</p>
+</li>
+<li>
+<p>Kafka topic to store connector and task status updates</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If multiple different Kafka Connect instances are used, these settings must reflect each instance.</p>
+</div>
+<h4 id="example_yaml_showing_kafka_connect_configuration" class="discrete">Example YAML showing Kafka Connect configuration</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaConnect
+metadata:
+  name: my-connect
+spec:
+  # ...
+  config:
+    group.id: my-connect-cluster
+    offset.storage.topic: my-connect-cluster-offsets
+    config.storage.topic: my-connect-cluster-configs
+    status.storage.topic: my-connect-cluster-status
+  # ...</code></pre>
+</div>
+</div>
+<h4 id="connectors" class="discrete">Connectors</h4>
+<div class="paragraph">
+<p>Connectors are configured separately from Kafka Connect.
+The configuration describes the source input data and target output data to feed into and out of Kafka Connect.
+The external source data must reference specific topics that will store the messages.</p>
+</div>
+<div class="paragraph">
+<p>Kafka provides two built-in connectors:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>FileStreamSourceConnector</code> streams data from an external system to Kafka, reading lines from an input source and sending each line to a Kafka topic.</p>
+</li>
+<li>
+<p><code>FileStreamSinkConnector</code> streams data from Kafka to an external system, reading messages from a Kafka topic and creating a line for each in an output file.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can add other connectors using connector plugins, which are a set of JAR files that define the implementation required to connect to certain types of external system.</p>
+</div>
+<div class="paragraph">
+<p>You create a custom Kafka Connect image that uses new Kafka Connect plugins.</p>
+</div>
+<div class="paragraph">
+<p>To create the image, you can use:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A Kafka container image on <a href="https://hub.docker.com/u/strimzi" target="_blank" rel="noopener">Docker Hub</a> as a base image</p>
+</li>
+<li>
+<p>OpenShift <a href="https://docs.okd.io/3.9/dev_guide/builds/index.html" target="_blank" rel="noopener">builds</a> and the <a href="https://docs.okd.io/3.9/creating_images/s2i.html" target="_blank" rel="noopener">Source-to-Image (S2I)</a> framework to create new container images</p>
+</li>
+</ul>
+</div>
+<h4 id="managing_connectors" class="discrete">Managing connectors</h4>
+<div class="paragraph">
+<p>You can use the <code>KafkaConnector</code> resource or the <a href="https://kafka.apache.org/documentation/#connect_rest">Kafka Connect REST API</a> to create and manage connector instances in a Kafka Connect cluster.
+The <code>KafkaConnector</code> resource offers a Kubernetes-native approach, and is managed by the Cluster Operator.</p>
+</div>
+<div class="paragraph">
+<p>The <code>spec</code> for the <code>KafkaConnector</code> resource specifies the connector class and configuration settings, as well as the maximum number of connector <em>tasks</em> to handle the data.</p>
+</div>
+<h4 id="example_yaml_showing_kafkaconnector_configuration" class="discrete">Example YAML showing KafkaConnector configuration</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaConnector
+metadata:
+  name: my-source-connector
+  labels:
+    strimzi.io/cluster: my-connect-cluster
+spec:
+  class: org.apache.kafka.connect.file.FileStreamSourceConnector
+  tasksMax: 2
+  config:
+    file: "/opt/kafka/LICENSE"
+    topic: my-topic
+    # ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You enable <code>KafkaConnectors</code> by adding an annotation to the <code>KafkaConnect</code> resource.</p>
+</div>
+<h4 id="example_yaml_showing_annotation_to_enable_kafkaconnector" class="discrete">Example YAML showing annotation to enable KafkaConnector</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaConnect
+metadata:
+  name: my-connect
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+  # ...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration-points-bridge_str"><a class="link" href="#configuration-points-bridge_str">5.6. Kafka Bridge configuration</a></h3>
+<div class="paragraph">
+<p>A Kafka Bridge configuration requires a bootstrap server specification for the Kafka cluster it connects to, as well as any encryption and authentication options required.</p>
+</div>
+<div class="paragraph">
+<p>Kafka Bridge consumer and producer configuration is standard, as described in the <a href="http://kafka.apache.org/20/documentation.html#newconsumerconfigs" target="_blank" rel="noopener">Apache Kafka configuration documentation for consumers</a> and <a href="http://kafka.apache.org/20/documentation.html#producerconfigs" target="_blank" rel="noopener">Apache Kafka configuration documentation for producers</a>.</p>
+</div>
+<div class="paragraph">
+<p>HTTP-related configuration options set the port connection which the server listens on.</p>
+</div>
+<h4 id="example_yaml_showing_kafka_bridge_configuration" class="discrete">Example YAML showing Kafka Bridge configuration</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="yaml" class="language-yaml hljs">apiVersion: kafka.strimzi.io/v1alpha1
+kind: KafkaBridge
+metadata:
+  name: my-bridge
+spec:
+  # ...
+  bootstrapServers: my-cluster-kafka:9092
+  http:
+    port: 8080
+  consumer:
+    config:
+      auto.offset.reset: earliest
+  producer:
+    config:
+      delivery.timeout.ms: 300000
+  # ...</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="security-overview_str"><a class="link" href="#security-overview_str">6. Securing Kafka</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A secure deployment of Strimzi can encompass:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Encryption for data exchange</p>
+</li>
+<li>
+<p>Authentication to prove identity</p>
+</li>
+<li>
+<p>Authorization to allow or decline actions executed by users</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="security-configuration-encryption_str"><a class="link" href="#security-configuration-encryption_str">6.1. Encryption</a></h3>
+<div class="paragraph">
+<p>Strimzi supports Transport Layer Security (TLS), a protocol for encrypted communication.</p>
+</div>
+<div class="paragraph">
+<p>Communication is always encrypted for communication between:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Kafka brokers</p>
+</li>
+<li>
+<p>ZooKeeper nodes</p>
+</li>
+<li>
+<p>Operators and Kafka brokers</p>
+</li>
+<li>
+<p>Operators and ZooKeeper nodes</p>
+</li>
+<li>
+<p>Kafka Exporter</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also configure TLS between Kafka brokers and clients by applying TLS encryption to the listeners of the Kafka broker.
+TLS is specified for external clients when configuring an external listener.</p>
+</div>
+<div class="paragraph">
+<p>Strimzi components and Kafka clients use digital certificates for encryption.
+The Cluster Operator sets up certificates to enable encryption within the Kafka cluster.
+You can provide your own server certificates, referred to as <em>Kafka listener certificates</em>,
+for communication between Kafka clients and Kafka brokers, and inter-cluster communication.</p>
+</div>
+<div class="paragraph">
+<p>Strimzi uses <em>Secrets</em> to store the certificates and private keys required for TLS in PEM and PKCS #12 format.</p>
+</div>
+<div class="paragraph">
+<p>A TLS Certificate Authority (CA) issues certificates to authenticate the identity of a component.
+Strimzi verifies the certificates for the components against the CA certificate.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Strimzi components are verified against the <em>cluster CA</em> Certificate Authority (CA)</p>
+</li>
+<li>
+<p>Kafka clients are verified against the <em>clients CA</em> Certificate Authority (CA)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As ZooKeeper does not have native support for TLS, a <em>TLS sidecar</em> deployment with ZooKeeper allows the Cluster Operator to provide data encryption and authentication between ZooKeeper nodes in a cluster.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="security-configuration-authentication_str"><a class="link" href="#security-configuration-authentication_str">6.2. Authentication</a></h3>
+<div class="paragraph">
+<p>Kafka listeners use authentication to ensure a secure client connection to the Kafka cluster.</p>
+</div>
+<div class="paragraph">
+<p>Supported authentication mechanisms:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>TLS client authentication</p>
+</li>
+<li>
+<p>SASL SCRAM-SHA-512</p>
+</li>
+<li>
+<p>OAuth 2.0 token based authentication</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The User Operator manages user credentials for TLS and SCRAM authentication, but not OAuth 2.0.
+For example, through the User Operator you can create a user representing a client that requires access to the Kafka cluster, and specify TLS as the authentication type.</p>
+</div>
+<div class="paragraph">
+<p>Using OAuth 2.0 token based authentication, application clients can access Kafka brokers without exposing account credentials.
+An authorization server handles the granting of access and inquiries about access.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="security-configuration-authorization_str"><a class="link" href="#security-configuration-authorization_str">6.3. Authorization</a></h3>
+<div class="paragraph">
+<p>You can apply authorization to a Kafka cluster using <code>SimpleACLAuthorizer</code>.
+If applied to a Kafka cluster, authorization is enabled for all listeners used for client connection.</p>
+</div>
+<div class="paragraph">
+<p><code>SimpleACLAuthorizer</code> uses Access Control Lists (ACLs) to define which users have access to which resources.</p>
+</div>
+<div class="paragraph">
+<p><em>Super users</em> provide user access to all resources in a Kafka cluster or to a specific broker.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="metrics-overview_str"><a class="link" href="#metrics-overview_str">7. Monitoring</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Monitoring data allows you to monitor the performance and health of Strimzi.
+You can configure your deployment to capture metrics data for analysis and notifications.</p>
+</div>
+<div class="paragraph">
+<p>Metrics data is useful when investigating issues with connectivity and data delivery.
+For example, metrics data can identify under-replicated partitions or the rate at which messages are consumed.
+Alerting rules can provide time-critical notifications on such metrics through a specified communications channel.
+Monitoring visualizations present real-time metrics data to help determine when and how to update the configuration of your deployment.
+Example metrics configuration files are provided with Strimzi.</p>
+</div>
+<div class="paragraph">
+<p>Distributed tracing complements the gathering of metrics data by providing a facility for end-to-end tracking of messages through Strimzi.</p>
+</div>
+<div class="paragraph">
+<div class="title">Metrics and monitoring tools</div>
+<p>Strimzi can employ the following tools for metrics and monitoring:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Prometheus</strong> pulls metrics from Kafka, ZooKeeper and Kafka Connect clusters. The Prometheus <strong>Alertmanager</strong> plugin handles alerts and routes them to a notification service.</p>
+</li>
+<li>
+<p><strong>Kafka Exporter</strong> adds additional Prometheus metrics</p>
+</li>
+<li>
+<p><strong>Grafana</strong> provides dashboard visualizations of Prometheus metrics</p>
+</li>
+<li>
+<p><strong>Jaeger</strong> provides distributed tracing support to track transactions between applications</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="https://github.com/prometheus" target="_blank" rel="noopener">Prometheus</a></p>
+</li>
+<li>
+<p><a href="https://github.com/danielqsj/kafka_exporter" target="_blank" rel="noopener">Kafka Exporter</a></p>
+</li>
+<li>
+<p><a href="https://grafana.com/" target="_blank" rel="noopener">Grafana Labs</a></p>
+</li>
+<li>
+<p><a href="https://www.jaegertracing.io/" target="_blank" rel="noopener">Jaeger</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="metrics-overview-prometheus_str"><a class="link" href="#metrics-overview-prometheus_str">7.1. Prometheus</a></h3>
+<div class="paragraph">
+<p>Prometheus can extract metrics data from Kafka, Kafka Connect and ZooKeeper.</p>
+</div>
+<div class="paragraph">
+<p>In order to use Prometheus to obtain metrics data and provide notifications, Prometheus and the Prometheus Alertmanager plugin must be deployed.
+Kafka resources must also be deployed or redeployed with Prometheus configuration to expose the metrics data.</p>
+</div>
+<div class="paragraph">
+<p>Prometheus scrapes the exposed metrics data for monitoring.
+Alertmanager issues notifications on conditions that indicate potential issues based on pre-defined alerting rules.</p>
+</div>
+<div class="paragraph">
+<p>Sample metrics and alerting rules configuration files are provided with Strimzi.
+The sample alerting mechanism provided with Strimzi is configured to send notifications to a Slack channel.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="metrics-overview-grafana_str"><a class="link" href="#metrics-overview-grafana_str">7.2. Grafana</a></h3>
+<div class="paragraph">
+<p>Grafana uses the metrics data exposed by Prometheus to present dashboard visualizations for monitoring.</p>
+</div>
+<div class="paragraph">
+<p>A deployment of Grafana is required, with Prometheus added as a data source.
+Example dashboards, supplied with Strimzi as JSON files, are imported through the Grafana interface to present monitoring data.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="metrics-overview-exporter_str"><a class="link" href="#metrics-overview-exporter_str">7.3. Kafka Exporter</a></h3>
+<div class="paragraph">
+<p>Kafka Exporter is an open source project to enhance monitoring of Apache Kafka brokers and clients.
+Kafka Exporter is deployed with a Kafka cluster to extract additional Prometheus metrics data from Kafka brokers related to offsets, consumer groups, consumer lag, and topics.
+You can use the Grafana dashboard provided to visualize the data collected by Prometheus from Kafka Exporter.</p>
+</div>
+<div class="paragraph">
+<p>A sample configuration file, alerting rules and Grafana dashboard for Kafka Exporter are provided with Strimzi.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="metrics-overview-tracing_str"><a class="link" href="#metrics-overview-tracing_str">7.4. Distributed tracing</a></h3>
+<div class="paragraph">
+<p>Within a Kafka deployment, distributed tracing using Jaeger is supported for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MirrorMaker to trace messages from a source cluster to a target cluster</p>
+</li>
+<li>
+<p>Kafka Connect to trace messages consumed and produced by Kafka Connect</p>
+</li>
+<li>
+<p>Kafka Bridge to trace messages consumed and produced by Kafka Bridge, and HTTP requests from client applications</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Template configuration properties are set for the Kafka resources, which describe tracing environment variables.</p>
+</div>
+<h4 id="tracing_for_kafka_clients" class="discrete">Tracing for Kafka clients</h4>
+<div class="paragraph">
+<p>Client applications, such as Kafka producers and consumers, can also be set up so that transactions are monitored.
+Clients are configured with a tracing profile, and a tracer is initialized for the client application to use.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2020-05-04 00:22:19 +0200
+</div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

@@ -2,6 +2,19 @@
 
 https://strimzi.io/quickstarts/
 
+
+## Download Strimzi (0.18)
+
+Download `strimzi-0.18.0.zip`
+
+https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.18.0
+
+1. Put it under `base` and unzip
+2. Create `kustomization.yaml`
+3. Create `overlays/<younamespace>`
+4. Add `rolebinding` + `clusterrolebinding` to overwrite `namespace`
+
+
 ## Strimzi Operator
 
 prepare namespace
@@ -14,45 +27,23 @@ namespace/kafka-strimzi-18 created
 
 prepare strimzi operator
 
-```
-curl https://strimzi.io/install/latest\?namespace\=kafka-strimzi-18 > 0.18/strimzi-operator.yaml
-```
 
 ```
 [20-07-25 13:36:02] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
 ± namespace=kafka-strimzi-18
 
 [20-07-25 13:36:19] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
-± kubectl apply -f "https://strimzi.io/install/latest?namespace=$namespace" -n $namespace
-customresourcedefinition.apiextensions.k8s.io/kafkas.kafka.strimzi.io created
-rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation created
-clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
-rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-topic-operator-delegation created
-customresourcedefinition.apiextensions.k8s.io/kafkausers.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkarebalances.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkamirrormaker2s.kafka.strimzi.io created
-clusterrole.rbac.authorization.k8s.io/strimzi-entity-operator created
-clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-global created
-clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-kafka-broker-delegation created
-rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
-clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-namespaced created
-clusterrole.rbac.authorization.k8s.io/strimzi-topic-operator created
-serviceaccount/strimzi-cluster-operator created
-clusterrole.rbac.authorization.k8s.io/strimzi-kafka-broker created
-customresourcedefinition.apiextensions.k8s.io/kafkatopics.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkabridges.kafka.strimzi.io created
-deployment.apps/strimzi-cluster-operator created
-customresourcedefinition.apiextensions.k8s.io/kafkaconnectors.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkaconnects2is.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkaconnects.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkamirrormakers.kafka.strimzi.io created
+± kubectl apply -k overlays/$namespace
 ```
 
 ## Kafka Cluster
 
 ```
-kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-persistent-single.yaml -n $namespace
-kafka.kafka.strimzi.io/my-cluster created
+curl https://strimzi.io/examples/latest/kafka/kafka-persistent-single.yaml > overlays/$namespace/my-cluster.yaml
+```
+
+```
+kubectl apply -k overlays/$namespace
 ```
 
 Ready
@@ -116,4 +107,4 @@ my-topic                                                      1            1
 
 # Enable the Cluster Operator to watch multiple namespaces
 
-
+https://strimzi.io/docs/0.16.2/full.html#deploying-cluster-operator-to-watch-multiple-namespacesstr
