@@ -130,6 +130,8 @@ spec:
           valueFrom: null
 ```
 
+Diff
+
 ```
 kubectl diff -k overlays/kafka-strimzi-18
 -  generation: 1
@@ -148,6 +150,8 @@ kubectl diff -k overlays/kafka-strimzi-18
 +          value: kafka-strimzi-18,kafka-strimzi-18-staging
          - name: STRIMZI_FULL_RECONCILIATION_INTERVAL_MS
 ```
+
+Apply
 
 ```
 kubectl apply -k overlays/kafka-strimzi-18
@@ -185,7 +189,7 @@ mkdir -p overlays/kafka-strimzi-18-staging/strimzi-0.18.0/install/cluster-operat
 cp overlays/kafka-strimzi-18/strimzi-0.18.0/install/cluster-operator/*-RoleBinding*yaml overlays/kafka-strimzi-18-staging/strimzi-0.18.0/install/cluster-operator
 ```
 
-
+Apply
 
 ```
 kubectl apply -k overlays/kafka-strimzi-18-staging
@@ -196,6 +200,28 @@ rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
 
 ## Kafka Cluster
 
+Prepare `my-cluster.yaml` and add it to `kustomization.yaml`
+
 ```
 cp overlays/kafka-strimzi-18/my-cluster.yaml overlays/kafka-strimzi-18-staging
+```
+
+Apply
+
+```
+kubectl apply -k overlays/kafka-strimzi-18-staging
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation unchanged
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-topic-operator-delegation unchanged
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator unchanged
+kafka.kafka.strimzi.io/my-cluster created
+```
+
+Check
+
+```
+kubectl get pod -n $namespace-staging
+NAME                                         READY   STATUS    RESTARTS   AGE
+my-cluster-entity-operator-fd45b849f-9vk62   3/3     Running   0          59s
+my-cluster-kafka-0                           2/2     Running   0          2m23s
+my-cluster-zookeeper-0                       1/1     Running   0          3m19s
 ```

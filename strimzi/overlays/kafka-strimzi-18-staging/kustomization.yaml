@@ -3,3 +3,4 @@ resources:
   - strimzi-0.18.0/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
   - strimzi-0.18.0/install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml
   - strimzi-0.18.0/install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml
+  - my-cluster.yaml
