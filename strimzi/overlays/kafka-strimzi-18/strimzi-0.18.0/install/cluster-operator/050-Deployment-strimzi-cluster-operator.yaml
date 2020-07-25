@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strimzi-cluster-operator
+spec:
+  template:
+    spec:
+      serviceAccountName: strimzi-cluster-operator
+      containers:
+      - name: strimzi-cluster-operator
+        env:
+        - name: STRIMZI_NAMESPACE
+          value: kafka-strimzi-18,kafka-strimzi-18-staging
+          valueFrom: null
