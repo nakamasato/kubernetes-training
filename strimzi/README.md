@@ -130,7 +130,27 @@ my-user   tls              simple
 
 https://strimzi.io/docs/0.16.2/full.html#deploying-kafka-connect-str
 
+```
+  annotations:
+    strimzi.io/use-connector-resources: "true" # to enable connector resource
+```
 
+```
+overlays/kafka-strimzi-18/connect/source/connect-source.yaml
+verlays/kafka-strimzi-18/connect/source/my-source-connector.yaml
+```
+
+```
+kubectl get KafkaConnect
+NAME                   DESIRED REPLICAS
+kafka-connect-source   2
+```
+
+```
+kubectl get KafkaConnector
+NAME                  AGE
+my-source-connector   9m2s
+```
 
 # Enable the Cluster Operator to watch multiple namespaces
 
@@ -252,3 +272,24 @@ my-cluster-entity-operator-fd45b849f-9vk62   3/3     Running   0          59s
 my-cluster-kafka-0                           2/2     Running   0          2m23s
 my-cluster-zookeeper-0                       1/1     Running   0          3m19s
 ```
+
+# Authentication & Authorization
+
+[Listerner authentication](https://strimzi.io/docs/operators/master/using.html#assembly-kafka-broker-listener-authentication-deployment-configuration-kafka)
+
+- Mutual TLS authentication
+    - The client supports authenticaton using mutual TLS authentication
+    - It is necessary to ue the TLS certificates rather than passwords
+    - You can reconfigure and restart client applications periodically so that they do not use expired certificates
+- SCRAM-SHA(Salted Challenge Response Authenticatoin Mechanism) authentication
+    - Support `SCRAM-SHA-512` only.
+    - The client supports authentication using SCRAM-SHA-512
+    - It is necessary to use passwords rather than the TLS certificates
+    - Authentication for unencrypted communication is required
+- no `authentication` property -> not authenticate
+
+
+# reference
+
+- Custom image for KafkaConnect: https://strimzi.io/docs/operators/0.18.0/using.html#creating-new-image-from-base-str
+- https://github.com/nakamasato/kafka-connect
