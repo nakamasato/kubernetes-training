@@ -1,0 +1,64 @@
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaConnect
+metadata:
+  name: kafka-connect-source
+  labels:
+    strimzi.io/cluster: prod-kafka-cluster
+spec:
+  version: 2.5.0
+  replicas: 2
+  bootstrapServers: my-cluster-kafka-bootstrap:9092
+  config:
+    group.id: kafka-connect-source
+    offset.storage.topic: kafka-connect-source-offset
+    config.storage.topic: kafka-connect-source-config
+    status.storage.topic: kafka-connect-source-status
+    config.storage.replication.factor: 3 # needs to be smaller than or equal to the brokers
+    offset.storage.replication.factor: 3 # needs to be smaller than or equal to the brokers
+    status.storage.replication.factor: 3 # needs to be smaller than or equal to the brokers
+    key.converter.schemas.enable: false
+    value.converter.schemas.enable: false
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+  jvmOptions:
+    "-Xmx": "800m"
+    "-Xms": "800m"
+  template:
+    pod:
+      metadata:
+        annotations:
+          app.group: strimzi-kafka
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    failureThreshold: 6
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 15
+  # metrics:
+  #   lowercaseOutputName: true
+  #   lowercaseOutputLabelNames: true
+  #   rules:
+  #   - pattern : "kafka.connect<type=connect-worker-metrics>([^:]+):"
+  #     name: "kafka_connect_connect_worker_metrics_$1"
+  #   - pattern : "kafka.connect<type=connect-worker-rebalance-metrics>([^:]+):"
+  #     name: "kafka_connect_connect_worker_rebalance_metrics_$1"
+  #   - pattern : "kafka.connect<type=connector-metrics, connector=([^:]+)><>([^:]+)"
+  #     name: "kafka_connect_connector_metrics_$1_$2"
+  #   - pattern : "kafka.connect<type=connector-task-metrics, connector=([^:]+), task=([^:]+)><>([^:]+)"
+  #     name: "kafka_connect_connector_task_metrics_$1_$2_$3"
+  #   - pattern : "kafka.connect<type=source-task-metrics, connector=([^:]+), task=([^:]+)><>([^:]+)"
+  #     name: "kafka_connect_source-task-metrics_$1_$2_$3"
+  #   - pattern : "kafka.connect<type=sink-task-metrics, connector=([^:]+), task=([^:]+)><>([^:]+)"
+  #     name: "kafka_connect_sink_task_metrics_$1_$2_$3"
+  #   - pattern : "kafka.connect<type=task-error-metrics, connector=([^:]+), task=([^:]+)><>([^:]+)"
+  #     name: "kafka_connect_task_error_metrics_$1_$2_$3"
+  #   - pattern : "kafka.connect<type=connect-metrics, client-id=([^:]+)><>([^:]+)"
+  #     name: "kafka_connect_connect_metrics_$1_$2"

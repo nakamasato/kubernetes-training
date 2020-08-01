@@ -2,14 +2,22 @@ namespace: kafka-strimzi-18
 bases:
   - ../../base-0.18.0
 resources:
+  # kafka cluster
   - my-cluster.yaml
+  # topic
   - topic/my-topic.yaml
+  # user
   - user/my-user.yaml
+  - user/kafka-connect-source.yaml
+  # kafka-connect
+  - connect/source/connect-source.yaml
+  - connect/source/my-source-connector.yaml
 patches: # to update namespace
   - strimzi-0.18.0/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
   - strimzi-0.18.0/install/cluster-operator/021-ClusterRoleBinding-strimzi-cluster-operator.yaml
   - strimzi-0.18.0/install/cluster-operator/030-ClusterRoleBinding-strimzi-cluster-operator-kafka-broker-delegation.yaml
   - strimzi-0.18.0/install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml
   - strimzi-0.18.0/install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml
+
   # to allow to watch other namespace
-  - strimzi-0.18.0/install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml
+  # - strimzi-0.18.0/install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml

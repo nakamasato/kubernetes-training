@@ -1,9 +1,11 @@
 apiVersion: kafka.strimzi.io/v1beta1
 kind: KafkaUser
 metadata:
-  name: my-user
+  name: kafka-connect-source
   labels:
     strimzi.io/cluster: my-cluster
+  annotations:
+    strimzi.io/use-connector-resources: "true" # to enable connector resource
 spec:
   authorization:
     type: simple
