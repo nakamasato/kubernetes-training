@@ -1,0 +1,19 @@
+apiVersion: kafka.strimzi.io/v1alpha1
+kind: KafkaConnector
+metadata:
+  name: twitter-connector
+  labels:
+    strimzi.io/cluster: kafka-connect-source
+spec:
+  class: com.eneco.trading.kafka.connect.twitter.TwitterSourceConnector
+  tasksMax: 2
+  config:
+    topic: twitter
+    track.terms: corona
+    language: en
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    twitter.token: xxxxx
+    twitter.secret: xxxxx
+    twitter.consumerkey: xxxx
+    twitter.consumersecret: xxxxx
