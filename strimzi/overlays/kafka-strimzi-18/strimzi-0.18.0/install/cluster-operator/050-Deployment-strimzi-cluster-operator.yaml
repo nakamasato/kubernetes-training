@@ -9,7 +9,7 @@ spec:
       containers:
       - name: strimzi-cluster-operator
         env:
-        uncomment to enable the operator to watch multiple namespaces
+        # uncomment to enable the operator to watch multiple namespaces
         - name: STRIMZI_NAMESPACE
           value: kafka-strimzi-18,kafka-strimzi-18-staging
           valueFrom: null
