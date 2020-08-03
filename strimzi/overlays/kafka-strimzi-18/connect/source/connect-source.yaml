@@ -4,7 +4,10 @@ metadata:
   name: kafka-connect-source
   labels:
     strimzi.io/cluster: prod-kafka-cluster
+  annotations:
+    strimzi.io/use-connector-resources: "true"
 spec:
+  image: masatonaka/kafka-connect:dev
   version: 2.5.0
   replicas: 2
   bootstrapServers: my-cluster-kafka-bootstrap:9092
