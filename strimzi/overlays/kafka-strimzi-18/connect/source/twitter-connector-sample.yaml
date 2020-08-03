@@ -13,7 +13,7 @@ spec:
     language: en
     value.converter: org.apache.kafka.connect.json.JsonConverter
     key.converter: org.apache.kafka.connect.json.JsonConverter
-    twitter.token: xxxxx
-    twitter.secret: xxxxx
+    twitter.token: xxxx
+    twitter.secret: xxxx
     twitter.consumerkey: xxxx
-    twitter.consumersecret: xxxxx
+    twitter.consumersecret: xxxx
