@@ -13,3 +13,5 @@
 - [ingress-nginx-controller](ingress-nginx-controller)
 - [kubernetes-the-hard-way](kubernetes-the-hard-way)
 - [traefik](traefik)
+- [strimzi](strimzi)
+- [postgres-operator](postgres-operator)
