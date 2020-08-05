@@ -66,3 +66,15 @@ deployment.apps/postgres-operator created
 
     postgres=#
     ```
+
+## Delete cluster
+
+```
+kubectl delete -f resources/minimal-postgres-manifest.yaml
+```
+
+## Remove operator
+
+```
+kubectl delete -k operator/overlays/database/
+```
