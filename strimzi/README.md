@@ -177,6 +177,8 @@ kubectl run kafka-consumer -ti --image=strimzi/kafka:0.18.0-kafka-2.5.0 --rm=tru
 ^CProcessed a total of 1056 messages
 ```
 
+- https://docs.confluent.io/current/connect/kafka-connect-elasticsearch/configuration_options.html
+
 # Enable the Cluster Operator to watch multiple namespaces
 
 https://strimzi.io/docs/0.16.2/full.html#deploying-cluster-operator-to-watch-multiple-namespacesstr
@@ -322,6 +324,31 @@ my-cluster-zookeeper-0                       1/1     Running   0          3m19s
 ```
 
 Connector was old.
+
+## KafkaConnector Elasticsearch fails
+
+
+```
+ "java.lang.NoClassDefFoundError: com/google/common/collect/ImmutableSet\n\tat
+        io.searchbox.client.AbstractJestClient.<init>(AbstractJestClient.java:38)\n\tat
+        io.searchbox.client.http.JestHttpClient.<init>(JestHttpClient.java:43)\n\tat
+        io.searchbox.client.JestClientFactory.getObject(JestClientFactory.java:51)\n\tat
+        io.confluent.connect.elasticsearch.jest.JestElasticsearchClient.<init>(JestElasticsearchClient.java:150)\n\tat
+        io.confluent.connect.elasticsearch.jest.JestElasticsearchClient.<init>(JestElasticsearchClient.java:142)\n\tat
+        io.confluent.connect.elasticsearch.ElasticsearchSinkTask.start(ElasticsearchSinkTask.java:122)\n\tat
+        io.confluent.connect.elasticsearch.ElasticsearchSinkTask.start(ElasticsearchSinkTask.java:51)\n\tat
+        org.apache.kafka.connect.runtime.WorkerSinkTask.initializeAndStart(WorkerSinkTask.java:305)\n\tat
+        org.apache.kafka.connect.runtime.WorkerSinkTask.execute(WorkerSinkTask.java:193)\n\tat
+        org.apache.kafka.connect.runtime.WorkerTask.doRun(WorkerTask.java:184)\n\tat
+        org.apache.kafka.connect.runtime.WorkerTask.run(WorkerTask.java:234)\n\tat
+        java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\n\tat
+        java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\n\tat
+        java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat
+        java.lang.Thread.run(Thread.java:748)\nCaused by: java.lang.ClassNotFoundException:
+        com.google.common.collect.ImmutableSet\n\tat java.net.URLClassLoader.findClass(URLClassLoader.java:382)\n\tat
+        java.lang.ClassLoader.loadClass(ClassLoader.java:418)\n\tat org.apache.kafka.connect.runtime.isolation.PluginClassLoader.loadClass(PluginClassLoader.java:104)\n\tat
+        java.lang.ClassLoader.loadClass(ClassLoader.java:351)\n\t... 16 more\n"
+```
 
 
 # reference
