@@ -8,10 +8,13 @@ resources:
   - topic/my-topic.yaml
   - topic/twitter.yaml
   # user
-  # kafka-connect
+  # kafka-connect-source
   - connect/source/connect-source.yaml
   - connect/source/my-source-connector.yaml
   - connect/source/twitter-connector.yaml
+  # kafka-connect-sink
+  - connect/sink/connect-sink.yaml
+  - connect/sink/twitter-connector-elasticsearch.yaml
 patches: # to update namespace
   - strimzi-0.18.0/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
   - strimzi-0.18.0/install/cluster-operator/021-ClusterRoleBinding-strimzi-cluster-operator.yaml
