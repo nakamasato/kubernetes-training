@@ -17,20 +17,11 @@ https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.18.0
 
 ## Strimzi Operator
 
-prepare namespace
-
-```
-[20-07-25 13:35:56] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
-± kubectl create namespace kafka-strimzi-18
-namespace/kafka-strimzi-18 created
-```
-
 prepare strimzi operator
-
 
 ```
 [20-07-25 13:36:02] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
-± namespace=kafka-strimzi-18
+± namespace=kafka-strimzi-18-minimum
 
 [20-07-25 13:36:19] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
 ± kubectl apply -k overlays/$namespace
@@ -120,11 +111,6 @@ my-topic                                                      1            1
 
 Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/user/kafka-user.yaml
 
-```
-kubectl get KafkaUser -n $namespace
-NAME      AUTHENTICATION   AUTHORIZATION
-my-user   tls              simple
-```
 
 ## KafkaConnect
 
