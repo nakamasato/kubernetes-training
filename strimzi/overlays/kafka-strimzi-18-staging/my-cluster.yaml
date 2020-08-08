@@ -5,7 +5,7 @@ metadata:
 spec:
   kafka:
     version: 2.5.0
-    replicas: 1
+    replicas: 3
     listeners:
       plain: {}
       tls: {}
@@ -14,6 +14,16 @@ spec:
       transaction.state.log.replication.factor: 1
       transaction.state.log.min.isr: 1
       log.message.format.version: "2.5"
+    resources:
+      requests:
+        memory: 1Gi
+        cpu: 80m
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+    jvmOptions:
+      -Xms: 800m
+      -Xmx: 800m
     storage:
       type: jbod
       volumes:
@@ -27,6 +37,16 @@ spec:
       type: persistent-claim
       size: 100Gi
       deleteClaim: false
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 50m
+      limits:
+        memory: 512Mi
+        cpu: 1000m
+    jvmOptions:
+      -Xms: 400m
+      -Xmx: 400m
   entityOperator:
     topicOperator: {}
     userOperator: {}

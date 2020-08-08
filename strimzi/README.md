@@ -336,6 +336,73 @@ Connector was old.
         java.lang.ClassLoader.loadClass(ClassLoader.java:351)\n\t... 16 more\n"
 ```
 
+Need to add gua
+
+
+## Kafka Connect Elasticsearch fails
+
+```
+org.apache.kafka.connect.errors.ConnectException: Couldn't start ElasticsearchSinkTask due to connection error:
+        at io.confluent.connect.elasticsearch.jest.JestElasticsearchClient.<init>(JestElasticsearchClient.java:159)
+        at io.confluent.connect.elasticsearch.jest.JestElasticsearchClient.<init>(JestElasticsearchClient.java:142)
+        at io.confluent.connect.elasticsearch.ElasticsearchSinkTask.start(ElasticsearchSinkTask.java:122)
+        at io.confluent.connect.elasticsearch.ElasticsearchSinkTask.start(ElasticsearchSinkTask.java:51)
+        at org.apache.kafka.connect.runtime.WorkerSinkTask.initializeAndStart(WorkerSinkTask.java:305)
+        at org.apache.kafka.connect.runtime.WorkerSinkTask.execute(WorkerSinkTask.java:193)
+        at org.apache.kafka.connect.runtime.WorkerTask.doRun(WorkerTask.java:184)
+        at org.apache.kafka.connect.runtime.WorkerTask.run(WorkerTask.java:234)
+        at java.util.concurrent.Executors.call(Executors.java:511)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor.run(ThreadPoolExecutor.java:624)
+        at java.lang.Thread.run(Thread.java:748)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+        at sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+        at sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1967)
+        at sun.security.ssl.Handshaker.fatalSE(Handshaker.java:331)
+        at sun.security.ssl.Handshaker.fatalSE(Handshaker.java:325)
+        at sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1688)
+        at sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:226)
+        at sun.security.ssl.Handshaker.processLoop(Handshaker.java:1082)
+        at sun.security.ssl.Handshaker.process_record(Handshaker.java:1010)
+        at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1079)
+        at sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1388)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1416)
+        at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1400)
+        at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:396)
+        at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:355)
+        at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+        at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:359)
+        at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:381)
+        at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:237)
+        at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:185)
+        at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+        at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:111)
+        at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+        at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+        at io.searchbox.client.http.JestHttpClient.executeRequest(JestHttpClient.java:133)
+        at io.searchbox.client.http.JestHttpClient.execute(JestHttpClient.java:70)
+        at io.searchbox.client.http.JestHttpClient.execute(JestHttpClient.java:63)
+        at io.confluent.connect.elasticsearch.jest.JestElasticsearchClient.getServerVersion(JestElasticsearchClient.java:247)
+        at io.confluent.connect.elasticsearch.jest.JestElasticsearchClient.<init>(JestElasticsearchClient.java:151)
+        ... 12 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+        at sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:450)
+        at sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:317)
+        at sun.security.validator.Validator.validate(Validator.java:262)
+        at sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:330)
+        at sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:237)
+        at sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132)
+        at sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1670)
+        ... 35 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+        at sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+        at sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+        at java.security.cert.CertPathBuilder.build(CertPathBuilder.java:280)
+        at sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:445)
+        ... 41 more
+
+```
 
 # reference
 
