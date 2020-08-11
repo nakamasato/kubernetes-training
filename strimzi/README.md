@@ -286,6 +286,115 @@ my-cluster-kafka-0                           2/2     Running   0          2m23s
 my-cluster-zookeeper-0                       1/1     Running   0          3m19s
 ```
 
+# Monitoring
+
+- `KafkaExporter` in Kafka -> [kafka-exporter-configuration](https://strimzi.io/docs/operators/master/deploying.html#proc-kafka-exporter-configuring-str)
+- `metrics` in `kafka` and `zookeeper` container -> [kafka-metrics.yaml](https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/metrics/kafka-metrics.yaml)
+- [Deploying the CoreOS Prometheus Operator](https://strimzi.io/docs/operators/master/deploying.html#proc-metrics-deploying-prometheus-operator-str)
+
+## Prometheus
+
+1. Deploy operator
+
+    ```
+    git clone https://github.com/coreos/kube-prometheus && cd kube-prometheus
+    kubectl apply -f manifests/setup
+    ```
+
+1. Deploy resources
+
+    ```
+    kubectl apply -f manifests
+    ```
+
+    <!-- `Prometheus` (the namespace Prometheus is going to be installed into)
+
+    ```
+    curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/master/examples/metrics/prometheus-install/prometheus.yaml | sed 's/namespace: .*/namespace: monitoring/' > strimzi/monitoring/prometheus.yaml
+    ``` -->
+
+1. Deploy `PodMonitor`
+
+    Update namespace with the one where the pods to scrape the metrics from are running
+
+    ```
+    curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/master/examples/metrics/prometheus-install/strimzi-pod-monitor.yaml | sed 's/myproject/kafka-strimzi-18/' > strimzi/monitoring/strimzi-pod-monitor.yaml
+    ```
+
+    ```
+    kubectl apply -f strimzi/monitoring/strimzi-pod-monitor.yaml -n monitoring
+    ```
+
+1. Deploy `PrometheusRule` and `prometheus-additonal-config` (TBD)
+    ```
+    curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/master/examples/metrics/prometheus-install/prometheus-rules.yaml > strimzi/monitoring/prometheus-rules.yaml
+    ```
+
+    ```
+    curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/master/examples/metrics/prometheus-additional-properties/prometheus-additional.yaml > strimzi/monitoring/prometheus-additional.yaml
+    kubectl create secret generic additional-scrape-configs --from-file=strimzi/monitoring/prometheus-additional.yaml -n monitoring
+    ```
+
+    ```
+    # kubectl apply -f strimzi/monitoring/prometheus-rules.yaml -n monitoring
+    # kubectl apply -f strimzi/monitoring/prometheus.yaml -n monitoring
+    ```
+
+1. Add the `podMonitorSelector` to `Prometheus` by `kubectl edit Prometheus -n monitoring`
+
+    ```
+      podMonitorSelector:
+        matchLabels:
+          app: strimzi
+    ```
+
+1. Update service account `prometheus-k8s` to add the followings:
+
+    ```
+    kubectl edit clusterrole prometheus-k8s -o yaml
+    ```
+
+    ```
+      - apiGroups: [""]
+        resources:
+          - nodes
+          - nodes/proxy
+          - services
+          - endpoints
+          - pods
+        verbs: ["get", "list", "watch"]
+      - apiGroups:
+          - extensions
+        resources:
+          - ingresses
+        verbs: ["get", "list", "watch"]
+      - nonResourceURLs: ["/metrics"]
+        verbs: ["get"]
+    ```
+
+## Alertmanager (TBD)
+
+```
+curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/master/examples/metrics/prometheus-install/alert-manager.yaml > strimzi/monitoring/alert-manager.yaml
+curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/master/examples/metrics/prometheus-alertmanager-config/alert-manager-config.yaml > strimzi/monitoring/alert-manager-config.yaml
+```
+
+Change `slack_api_url`
+
+```
+kubectl create secret generic alertmanager-alertmanager --from-file=alertmanager.yaml=strimzi/monitoring/alert-manager-config.yaml -n monitoring
+```
+
+```
+kubectl apply -f strimzi/monitoring/alert-manager.yaml -n monitoring
+```
+
+## Grafana
+
+Import [dashoboard](https://github.com/strimzi/strimzi-kafka-operator/tree/master/examples/metrics/grafana-dashboards)
+
+![](grafana.png)
+
 # Authentication & Authorization
 
 [Listerner authentication](https://strimzi.io/docs/operators/master/using.html#assembly-kafka-broker-listener-authentication-deployment-configuration-kafka)

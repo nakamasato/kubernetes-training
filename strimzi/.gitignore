@@ -1,2 +1,3 @@
 overlays/kafka-strimzi-18/connect/source/twitter-connector.yaml
 overlays/kafka-strimzi-18/connect/sink/twitter-connector-elasticsearch.yaml
+strimzi/monitoring/alert-manager-config.yaml
