@@ -76,13 +76,13 @@ curl -u "elastic:$PASSWORD" -k "https://localhost:9200"
 }
 ```
 
-## kibana
+## Kibana
 
 ```
 kubectl apply -f eck/kibana.yaml
 ```
 
-# Install with Helm
+# Install with Helm (Using this)
 
 ## Elasticsearch
 
@@ -146,3 +146,15 @@ kubectl -n eck port-forward service/kibana-kibana 5601
 ```
 
 ![](kibana.png)
+
+## Filebeat
+
+https://hub.helm.sh/charts/elastic/filebeat
+
+```
+helm repo add elastic https://helm.elastic.co
+helm show values elastic/filebeat --version 7.8.1 > helm/filebeat-config.yaml
+helm install -n eck filebeat elastic/filebeat --version 7.8.1 -f helm/filebeat-config.yaml
+```
+
+![](filebeat-index.png)

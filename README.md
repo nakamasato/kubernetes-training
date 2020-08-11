@@ -16,7 +16,7 @@
 - [strimzi](strimzi)
 - [postgres-operator](postgres-operator)
 
-# Practice 1: Kafka with Strimzi & ES & Kibana
+# Practice 1: Install ES, Kibana & Filebeat with Helm
 
 - ES & Kibana
 
@@ -35,6 +35,12 @@
     ```
     helm install -n eck kibana elastic/kibana -f helm/kb-config.yaml
     ```
+
+    ```
+    helm install -n eck filebeat elastic/filebeat --version 7.8.1 -f helm/filebeat-config.yaml
+    ```
+
+# Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
 
 - Kafka
 
@@ -73,7 +79,7 @@ kube-system        l7-default-backend-678889f899-fvswg                          
 kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                           2/2     Running   0          14h
 ```
 
-# Practice 2: Prometheus & Grafana
+# Practice 3: Install Prometheus & Grafana with kube-prometheus
 
 - Prometheus & Grafana
 
@@ -141,3 +147,9 @@ monitoring         prometheus-k8s-0                                             
 monitoring         prometheus-k8s-1                                                 3/3     Running   1          12h
 monitoring         prometheus-operator-5f75d76f9f-xtgqz                             1/1     Running   0          2d5h
 ```
+
+# Practice 4: Kafka exporter & MirrorMaker
+
+# Practice 5: Open Policy Agent
+
+# Practice 6: ArgoCD

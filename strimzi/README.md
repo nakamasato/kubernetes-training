@@ -393,7 +393,7 @@ kubectl apply -f strimzi/monitoring/alert-manager.yaml -n monitoring
 
 Import [dashoboard](https://github.com/strimzi/strimzi-kafka-operator/tree/master/examples/metrics/grafana-dashboards)
 
-![](grafana.png)
+![](docs/grafana.png)
 
 # Authentication & Authorization
 
