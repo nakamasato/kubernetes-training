@@ -98,3 +98,5 @@ kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                       
     ```
 
 - Add elasticsearch monitoring
+
+![](docs/practice-02.drawio.svg)
