@@ -16,7 +16,7 @@
 - [strimzi](strimzi)
 - [postgres-operator](postgres-operator)
 
-# Practice 1
+# Practice 1: Kafka with Strimzi & ES & Kibana
 
 - ES & Kibana
 
@@ -73,7 +73,7 @@ kube-system        l7-default-backend-678889f899-fvswg                          
 kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                           2/2     Running   0          14h
 ```
 
-# Practice 2
+# Practice 2: Prometheus & Grafana
 
 - Prometheus & Grafana
 
