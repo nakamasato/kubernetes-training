@@ -5,7 +5,7 @@ metadata:
 spec:
   kafka:
     version: 2.5.0
-    replicas: 3
+    replicas: 2
     listeners:
       plain: {}
       tls: {}
@@ -29,24 +29,24 @@ spec:
       volumes:
       - id: 0
         type: persistent-claim
-        size: 100Gi
+        size: 10Gi
         deleteClaim: false
   zookeeper:
     replicas: 1
     storage:
       type: persistent-claim
-      size: 100Gi
+      size: 10Gi
       deleteClaim: false
     resources:
       requests:
-        memory: 512Mi
+        memory: 300Mi
         cpu: 50m
       limits:
-        memory: 512Mi
+        memory: 300Mi
         cpu: 1000m
     jvmOptions:
-      -Xms: 400m
-      -Xmx: 400m
+      -Xms: 256m
+      -Xmx: 256m
   entityOperator:
     topicOperator: {}
     userOperator: {}

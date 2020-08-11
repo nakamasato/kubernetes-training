@@ -23,4 +23,4 @@ patches: # to update namespace
   - strimzi-0.18.0/install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml
 
   # to allow to watch other namespace
-  # - strimzi-0.18.0/install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml
+  - strimzi-0.18.0/install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml

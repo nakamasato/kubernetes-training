@@ -18,23 +18,31 @@
 
 # Practice 1: Install ES, Kibana & Filebeat with Helm
 
-- ES & Kibana
+1. Create namespace
 
     ```
     kubectl create namespace eck
     ```
 
+1. Add elastic Helm
+
     ```
     helm repo add elastic https://helm.elastic.co
     ```
+
+1. Install ES
 
     ```
     helm install -n eck elasticsearch elastic/elasticsearch -f helm/es-config.yaml
     ```
 
+1. Install Kibana
+
     ```
     helm install -n eck kibana elastic/kibana -f helm/kb-config.yaml
     ```
+
+1. Install filebeat
 
     ```
     helm install -n eck filebeat elastic/filebeat --version 7.8.1 -f helm/filebeat-config.yaml
@@ -148,7 +156,33 @@ monitoring         prometheus-k8s-1                                             
 monitoring         prometheus-operator-5f75d76f9f-xtgqz                             1/1     Running   0          2d5h
 ```
 
-# Practice 4: Kafka exporter & MirrorMaker
+# Practice 4: Kafka exporter & MirrorMaker2
+
+
+1. Enable the cluster operator to watch the other namespace
+
+
+    ```diff
+    +  - strimzi-0.18.0/install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml
+    ```
+
+    ```
+    kubectl apply -k strimzi/overlays/kafka-strimzi-18
+    ```
+
+1. Deploy new `Kafka` cluster and `KafkaMirrorMaker2` in the other namespace `kafka-strimzi-18-staging`
+
+    ```
+    kubectl apply -k strimzi/overlays/kafka-strimzi-18-staging
+    ```
+
+1. Clean up
+
+    ```
+    kubectl delete -k strimzi/overlays/kafka-strimzi-18-staging
+    ```
+
+![](strimzi/docs/kafka-mirror-maker-2.drawio.svg)
 
 # Practice 5: Open Policy Agent
 

@@ -286,6 +286,52 @@ my-cluster-kafka-0                           2/2     Running   0          2m23s
 my-cluster-zookeeper-0                       1/1     Running   0          3m19s
 ```
 
+## Kafka MirrorMaker
+
+https://strimzi.io/docs/operators/master/using.html#assembly-deployment-configuration-kafka-mirror-maker-str
+
+Prerequisite:
+
+- Run multiple clusters
+
+```
+kubectl apply -k strimzi/overlays/kafka-strimzi-18-staging
+```
+
+```
+kubectl get KafkaTopic -n kafka-strimzi-18-staging
+NAME                                                          PARTITIONS   REPLICATION FACTOR
+consumer-offsets---84e7a678d08f4bd226872e5cdd4eb527fadc1c6a   50           1
+heartbeats                                                    1            1
+mirrormaker2-cluster-configs                                  1            1
+mirrormaker2-cluster-offsets                                  25           1
+mirrormaker2-cluster-status                                   5            1
+my-cluster-source.checkpoints.internal                        1            1
+my-cluster-source.kafka-connect-sink-config                   1            1
+my-cluster-source.kafka-connect-sink-offset                   25           1
+my-cluster-source.kafka-connect-sink-status                   5            1
+my-cluster-source.kafka-connect-source-config                 1            1
+my-cluster-source.kafka-connect-source-offset                 25           1
+my-cluster-source.kafka-connect-source-status                 5            1
+my-cluster-source.my-topic                                    1            1
+my-cluster-source.twitter                                     1            1
+```
+
+![](docs/kafka-mirror-maker-2.drawio.svg)
+
+check
+
+```
+kubectl -n kafka-strimzi-18-staging run kafka-consumer -ti --image=strimzi/kafka:0.18.0-kafka-2.5.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-cluster-source.twitter
+
+If you don't see a command prompt, try pressing enter.
+{"schema":{"type":"struct","fields":[{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"created_at"},{"type":"struct","fields":[{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"name"},{"type":"string","optional":true,"field":"screen_name"},{"type":"string","optional":true,"field":"location"},{"type":"boolean","optional":false,"field":"verified"},{"type":"int32","optional":false,"field":"friends_count"},{"type":"int32","optional":false,"field":"followers_count"},{"type":"int32","optional":false,"field":"statuses_count"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.User","field":"user"},{"type":"string","optional":true,"field":"text"},{"type":"string","optional":true,"field":"lang"},{"type":"boolean","optional":false,"field":"is_retweet"},{"type":"struct","fields":[{"type":"array","items":{"type":"struct","fields":[{"type":"string","optional":true,"field":"text"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Hashtag"},"optional":true,"field":"hashtags"},{"type":"array","items":{"type":"struct","fields":[{"type":"string","optional":true,"field":"display_url"},{"type":"string","optional":true,"field":"expanded_url"},{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"type"},{"type":"string","optional":true,"field":"url"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Medium"},"optional":true,"field":"media"},{"type":"array","items":{"type":"struct","fields":[{"type":"string","optional":true,"field":"display_url"},{"type":"string","optional":true,"field":"expanded_url"},{"type":"string","optional":true,"field":"url"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Url"},"optional":true,"field":"urls"},{"type":"array","items":{"type":"struct","fields":[{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"name"},{"type":"string","optional":true,"field":"screen_name"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.UserMention"},"optional":true,"field":"user_mentions"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Entities","field":"entities"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Tweet"},"payload":{"id":1293333835531329545,"created_at":"2020-08-11T23:49:50.000+0000","user":{"id":1129412194779766784,"name":"Mizibak \uD83C\uDDEC\uD83C\uDDE7","screen_name":"mizibak","location":null,"verified":false,"friends_count":1022,"followers_count":675,"statuses_count":25644},"text":"RT @NeuroNerd78: Take a strain of viruses that are abundant,Corona for example,say a new one has emerged, give it a name,apply a list of sy…","lang":"en","is_retweet":true,"entities":{"hashtags":[],"media":[],"urls":[],"user_mentions":[{"id":1182033581755031552,"name":"Angie \uD83D\uDC1DOverlord of the Wasps\uD83D\uDC1D","screen_name":"NeuroNerd78"}]}}}
+{"schema":{"type":"struct","fields":[{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"created_at"},{"type":"struct","fields":[{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"name"},{"type":"string","optional":true,"field":"screen_name"},{"type":"string","optional":true,"field":"location"},{"type":"boolean","optional":false,"field":"verified"},{"type":"int32","optional":false,"field":"friends_count"},{"type":"int32","optional":false,"field":"followers_count"},{"type":"int32","optional":false,"field":"statuses_count"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.User","field":"user"},{"type":"string","optional":true,"field":"text"},{"type":"string","optional":true,"field":"lang"},{"type":"boolean","optional":false,"field":"is_retweet"},{"type":"struct","fields":[{"type":"array","items":{"type":"struct","fields":[{"type":"string","optional":true,"field":"text"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Hashtag"},"optional":true,"field":"hashtags"},{"type":"array","items":{"type":"struct","fields":[{"type":"string","optional":true,"field":"display_url"},{"type":"string","optional":true,"field":"expanded_url"},{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"type"},{"type":"string","optional":true,"field":"url"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Medium"},"optional":true,"field":"media"},{"type":"array","items":{"type":"struct","fields":[{"type":"string","optional":true,"field":"display_url"},{"type":"string","optional":true,"field":"expanded_url"},{"type":"string","optional":true,"field":"url"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Url"},"optional":true,"field":"urls"},{"type":"array","items":{"type":"struct","fields":[{"type":"int64","optional":false,"field":"id"},{"type":"string","optional":true,"field":"name"},{"type":"string","optional":true,"field":"screen_name"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.UserMention"},"optional":true,"field":"user_mentions"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Entities","field":"entities"}],"optional":false,"name":"com.eneco.trading.kafka.connect.twitter.Tweet"},"payload":{"id":1293333835531329545,"created_at":"2020-08-11T23:49:50.000+0000","user":{"id":1129412194779766784,"name":"Mizibak \uD83C\uDDEC\uD83C\uDDE7","screen_name":"mizibak","location":null,"verified":false,"friends_count":1022,"followers_count":675,"statuses_count":25644},"text":"RT @NeuroNerd78: Take a strain of viruses that are abundant,Corona for example,say a new one has emerged, give it a name,apply a list of sy…","lang":"en","is_retweet":true,"entities":{"hashtags":[],"media":[],"urls":[],"user_mentions":[{"id":1182033581755031552,"name":"Angie \uD83D\uDC1DOverlord of the Wasps\uD83D\uDC1D","screen_name":"NeuroNerd78"}]}}}
+^CProcessed a total of 2 messages
+pod "kafka-consumer" deleted
+pod kafka-strimzi-18-staging/kafka-consumer terminated (Error)
+```
+
 # Monitoring
 
 - `KafkaExporter` in Kafka -> [kafka-exporter-configuration](https://strimzi.io/docs/operators/master/deploying.html#proc-kafka-exporter-configuring-str)
