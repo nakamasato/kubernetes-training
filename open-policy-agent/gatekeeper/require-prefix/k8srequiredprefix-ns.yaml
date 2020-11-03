@@ -1,11 +1,11 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sRequiredPrefixes
 metadata:
-  name: ns-must-start-with-ns
+  name: ns-must-start-with-prefix
 spec:
   match:
     kinds:
       - apiGroups: [""]
         kinds: ["Namespace"]
   parameters:
-    prefix: "ns"
+    prefix: "dev"

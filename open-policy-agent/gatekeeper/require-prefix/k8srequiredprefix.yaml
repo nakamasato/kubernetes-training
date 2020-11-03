@@ -22,7 +22,7 @@ spec:
         package k8srequiredprefixes
 
         violation[{"msg": msg, "details": {"missing_prefix": required}}] {
-          required := {label | label := input.parameters.prefix}
-          not startswith(input.review.object.metadata.name, "ns")
+          required := input.parameters.prefix
+          not startswith(input.review.object.metadata.name, required)
           msg := sprintf("you must provide prefix: %v, provided: %v", [required, input.review.object.metadata.name])
         }
