@@ -12,14 +12,6 @@ jobs:
   approve-and-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: set assignee
-        run: |
-          curl -X POST \
-               -H "Content-Type: application/json" \
-               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -d "{ \"assignees\": [ \"${{ github.actor }}\" ] }" \
-               https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/assignees
-      # auto format
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: pre-commit/action@v2.0.0
@@ -37,6 +29,7 @@ jobs:
             git commit -m "Auto-commit pre-commit"
             echo "::set-output name=NEED_TO_PUSH::TRUE"
           fi
+
       - name: Push changes
         if: steps.commit-change.outputs.NEED_TO_PUSH == 'TRUE'
         uses: ad-m/github-push-action@master
