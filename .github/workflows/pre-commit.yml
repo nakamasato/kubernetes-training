@@ -27,6 +27,7 @@ jobs:
             git config --local user.name "GitHub Action"
             git add .
             git commit -m "Auto-commit pre-commit"
+            git pull -r
             echo "::set-output name=NEED_TO_PUSH::TRUE"
           fi
 
