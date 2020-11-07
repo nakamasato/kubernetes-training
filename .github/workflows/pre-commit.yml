@@ -1,13 +1,6 @@
 name: pre-commit
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - ready_for_review # draft -> ready
-  pull_request_review:
-    types:
-      - submitted
+  push:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
@@ -15,25 +8,3 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: pre-commit/action@v2.0.0
-        continue-on-error: true
-
-      - name: "Commit changes"
-        id: commit-change
-        run: |
-          git status
-          changed_file_num=$(git diff --name-only | wc -l | sed 's/ //g')
-          if [[ $changed_file_num -gt 0 ]];then
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git add .
-            git commit -m "Auto-commit pre-commit"
-            git pull -r
-            echo "::set-output name=NEED_TO_PUSH::TRUE"
-          fi
-
-      - name: Push changes
-        if: steps.commit-change.outputs.NEED_TO_PUSH == 'TRUE'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
