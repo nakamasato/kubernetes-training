@@ -12,6 +12,8 @@ spec:
       labels:
         app: hello
     spec:
+      nodeSelector:
+        nodeType: memory_optimized
       securityContext:
         runAsNonRoot: true
       containers:
