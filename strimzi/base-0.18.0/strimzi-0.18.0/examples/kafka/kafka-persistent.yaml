@@ -30,4 +30,3 @@ spec:
   entityOperator:
     topicOperator: {}
     userOperator: {}
-

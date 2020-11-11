@@ -65,5 +65,3 @@ helm list
 NAME                            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
 helloworld-chart-0-1589247182   default         1               2020-05-12 10:33:03.884258 +0900 JST    deployed        helloworld-chart-0.1.0  1.16.0
 ```
-
-

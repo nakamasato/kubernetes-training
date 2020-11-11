@@ -138,7 +138,7 @@ Error from server ([denied by ns-must-have-gk] you must provide labels: {"gateke
 ```
 kubectl apply -f gatekeeper/container-name/k8srequiredlables.yaml
 kubectl apply -f gatekeeper/container-name/k8srequiredlabels-ns.yaml
-kubectl create ns naka                                                                                                                      
+kubectl create ns naka
 Error from server ([denied by ns-must-have-hr] you must provide labels: {"hr"}): admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-hr] you must provide labels: {"hr"}
 ```
 
