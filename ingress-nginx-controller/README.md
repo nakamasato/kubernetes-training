@@ -148,4 +148,3 @@ curl -XPOST "http://localhost/flights" -d '
 '
 {"id":"piyasara-api1588680669155","code":201,"message":"created"}
 ```
-
