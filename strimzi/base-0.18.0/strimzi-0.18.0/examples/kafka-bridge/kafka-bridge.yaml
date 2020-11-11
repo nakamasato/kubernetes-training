@@ -7,5 +7,5 @@ spec:
   bootstrapServers: my-cluster-kafka-bootstrap:9092
   http:
     port: 8080
- 
+
 
