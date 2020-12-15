@@ -45,3 +45,11 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
     ```
     kubectl apply -f argocd/project/dev
     ```
+
+## Clean up
+
+```
+kubectl delete -f argocd/project/dev
+kubectl delete -k argocd/setup
+kubectl delete ns dev
+```
