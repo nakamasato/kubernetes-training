@@ -187,3 +187,5 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 # Practice 5: Open Policy Agent
 
 # Practice 6: ArgoCD
+
+[argocd](argocd)
