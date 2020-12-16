@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/nakamasato/kubernetes-training.git
-    targetRevision: add-argocd
+    targetRevision: master
     path: argocd/setup
 
   destination:
