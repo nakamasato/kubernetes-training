@@ -5,6 +5,7 @@
 - kubernetes: 1.15
 - Helm: 3.2.1
 - Traefik: 2.2
+- ArgoCD: v1.6.0
 
 # Contents
 
@@ -186,7 +187,7 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 # Practice 5: Open Policy Agent
 
-# Practice 6: ArgoCD (v1.6.0)
+# Practice 6: ArgoCD
 
 1. Deploy argocd
 
