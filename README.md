@@ -186,7 +186,7 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 # Practice 5: Open Policy Agent
 
-# Practice 6: ArgoCD (v1.9.0)
+# Practice 6: ArgoCD (v1.7.0)
 
 1. Deploy argocd
 
