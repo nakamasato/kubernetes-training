@@ -5,6 +5,7 @@
 - kubernetes: 1.15
 - Helm: 3.2.1
 - Traefik: 2.2
+- ArgoCD: v1.6.0
 
 # Contents
 
@@ -187,3 +188,36 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 # Practice 5: Open Policy Agent
 
 # Practice 6: ArgoCD
+
+1. Deploy argocd
+
+    ```
+    kubectl apply -k argocd/setup
+    ```
+
+1. Login
+
+    ```
+    kubectl -n argocd port-forward service/argocd-server 8080:80
+    ```
+
+    open: https://localhost:8080
+
+    - user: `admin`
+    - password: `kubectl get po -n argocd | grep argocd-server | awk '{print $1}'`
+
+1. Deploy AppProject and Application
+
+    ```
+    kubectl apply -f argocd/project/dev
+    ```
+
+1. Manage ArgoCD by ArgoCD
+
+    ```
+    kubectl apply -f argocd/project/argocd
+    ```
+
+    ![](argocd/img/argocd-by-argocd.png)
+
+For more details: [argocd](argocd)
