@@ -1,5 +1,5 @@
 namespace: argocd
 bases:
-  - github.com/argoproj/argo-cd//manifests/cluster-install?ref=v1.7.0
+  - github.com/argoproj/argo-cd//manifests/cluster-install?ref=v1.9.0
 resources:
   - namespace.yaml
