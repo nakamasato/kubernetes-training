@@ -2,7 +2,7 @@
 
 ## Version
 
-v1.6.0
+v1.9.0
 ## Install
 
 ```
