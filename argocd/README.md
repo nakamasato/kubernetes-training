@@ -52,6 +52,14 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 
     ![](img/argocd-guestbook-kustomize-dev.png)
 
+## Manage argocd by argocd
+
+```
+kubectl apply -f argocd/project/argocd
+```
+
+![](img/argocd-by-argocd.png)
+
 ## Clean up
 
 ```
