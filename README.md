@@ -188,4 +188,35 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 # Practice 6: ArgoCD
 
-[argocd](argocd)
+1. Deploy argocd
+
+    ```
+    kubectl apply -k argocd/setup
+    ```
+
+1. Login
+
+    ```
+    kubectl -n argocd port-forward service/argocd-server 8080:80
+    ```
+
+    open: https://localhost:8080
+
+    - user: `admin`
+    - password: `kubectl get po -n argocd | grep argocd-server | awk '{print $1}'`
+
+1. Deploy AppProject and Application
+
+    ```
+    kubectl apply -f argocd/project/dev
+    ```
+
+1. Manage ArgoCD by ArgoCD
+
+    ```
+    kubectl apply -f argocd/project/argocd
+    ```
+
+    ![](argocd/img/argocd-by-argocd.png)
+
+For more details: [argocd](argocd)
