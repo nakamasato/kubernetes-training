@@ -20,6 +20,8 @@ spec:
       kind: ClusterRole
     - group: rbac.authorization.k8s.io
       kind: ClusterRoleBinding
+    - group: ''
+      kind: Namespace
 
   namespaceResourceBlacklist:
     - group: ""
