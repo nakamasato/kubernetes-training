@@ -34,17 +34,23 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 - AppProject: `dev`
 - Application: `guestbook-kustomize-dev`
 
-1. Crate namespace
-
-    ```
-    kubectl create ns dev
-    ```
-
 1. Deploy application with ArgoCD
 
     ```
     kubectl apply -f argocd/project/dev
     ```
+
+1. Check in console
+
+    ```
+    kubectl get pod -n dev
+    NAME                                          READY   STATUS    RESTARTS   AGE
+    dev-kustomize-guestbook-ui-7574c75879-6cfnq   1/1     Running   0          95s
+    ```
+
+1. Check on ArgoCD
+
+    ![](img/argocd-guestbook-kustomize-dev.png)
 
 ## Clean up
 
