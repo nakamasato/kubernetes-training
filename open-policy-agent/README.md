@@ -125,21 +125,23 @@ ns-must-have-gk   75s
 
 ```
 [20-08-05 23:34:43] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/open-policy-agent on postgres-operator ✘
-± kubectl apply -f gatekeeper/valid-namespace.yaml --dry-run=server
+± kubectl apply -f gatekeeper/examples/valid-namespace.yaml --dry-run=server
 namespace/valid-namespace created (server dry run)
 
 [20-08-05 23:35:14] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/open-policy-agent on postgres-operator ✘
-± kubectl apply -f gatekeeper/invalid-namespace.yaml --dry-run=server
+± kubectl apply -f gatekeeper/examples/invalid-namespace.yaml --dry-run=server
 Error from server ([denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}): error when creating "gatekeeper/invalid-namespace.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
 ```
 
 ## Example 1
 
 ```
-kubectl apply -f gatekeeper/container-name/k8srequiredlables.yaml
-kubectl apply -f gatekeeper/container-name/k8srequiredlabels-ns.yaml
+kubectl apply -f gatekeeper/require-labels/k8srequiredlabels.yaml
+kubectl apply -f gatekeeper/require-labels/k8srequiredlabels-ns.yaml
 kubectl create ns naka
-Error from server ([denied by ns-must-have-hr] you must provide labels: {"hr"}): admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-hr] you must provide labels: {"hr"}
+Error from server ([denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
+[denied by ns-must-have-hr] you must provide labels: {"hr"}): admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
+[denied by ns-must-have-hr] you must provide labels: {"hr"}
 ```
 
 ## Conftest
@@ -166,3 +168,4 @@ https://github.com/open-policy-agent/gatekeeper#running-on-private-gke-cluster-n
   - 1.17 ([Platform versions](https://docs.aws.amazon.com/eks/latest/userguide/platform-versions.html)): `NamespaceLifecycle, LimitRanger, ServiceAccount, DefaultStorageClass, ResourceQuota, DefaultTolerationSeconds, NodeRestriction, MutatingAdmissionWebhook, ValidatingAdmissionWebhook, PodSecurityPolicy, TaintNodesByCondition, Priority, StorageObjectInUseProtection, PersistentVolumeClaimResize`
 
 - [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
+- [Integrating Open Policy Agent (OPA) With Kubernetes](https://www.magalix.com/blog/integrating-open-policy-agent-opa-with-kubernetes-a-deep-dive-tutorial)
