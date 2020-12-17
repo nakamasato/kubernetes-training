@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+spec:
+  selector:
+    matchLabels:
+      app: busybox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command: ['sh', '-c', 'echo Container 1 is Running ; sleep 3600']
