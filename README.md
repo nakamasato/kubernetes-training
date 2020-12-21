@@ -187,6 +187,25 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 # Practice 5: Open Policy Agent
 
+[open-policy-agent]()
+
+## gatekeeper
+
+https://github.com/open-policy-agent/gatekeeper
+
+1. Install gatekeeper
+
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml
+    ```
+
+1. Create `ConstraintTemplate`
+1. Create custom policy defined in the previous step.
+
+## conftest
+
+https://github.com/open-policy-agent/conftest
+
 # Practice 6: ArgoCD
 
 1. Deploy argocd
