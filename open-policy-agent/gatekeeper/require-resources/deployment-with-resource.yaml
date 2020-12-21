@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-with-resource
+spec:
+  selector:
+    matchLabels:
+      app: busybox-with-resource
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: busybox-with-resource
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command: ['sh', '-c', 'echo Container 1 is Running ; sleep 3600']
+          resources:
+            limits:
+              memory: 256Mi
+

