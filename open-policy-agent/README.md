@@ -282,6 +282,14 @@ Rules:
 
 - https://hack.nikkei.com/blog/advent20201224/
 - https://qiita.com/tkusumi/items/3f7157d180a932b277d4
+## konstraints
+
+Install
+
+```
+GO111MODULE=on go get github.com/plexsystems/konstraint
+```
+
 
 # FAQ
 
@@ -304,3 +312,6 @@ https://github.com/open-policy-agent/gatekeeper#running-on-private-gke-cluster-n
 
 - [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
 - [Integrating Open Policy Agent (OPA) With Kubernetes](https://www.magalix.com/blog/integrating-open-policy-agent-opa-with-kubernetes-a-deep-dive-tutorial)
+- [Conftestを用いたCIでのポリシーチェックの紹介](https://engineering.mercari.com/blog/entry/introduce_conftest/)
+- [Enforcing policies and governance for Kubernetes workloads](https://learnk8s.io/kubernetes-policies)
+- [konstraints](https://github.com/plexsystems/konstraint)
