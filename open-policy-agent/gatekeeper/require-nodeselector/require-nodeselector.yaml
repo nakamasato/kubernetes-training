@@ -1,0 +1,9 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: RequireNodeSelectors
+metadata:
+  name: require-node-selector
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["StatefulSet", "Deployment", "Namespace", "Pod"]
