@@ -17,17 +17,6 @@ spec:
         package requirenodeselectors
 
         violation[{"msg": msg, "details": {"missing_prefix": "nodeSelector"}}] {
-          hasNodeSelector
+          not input.review.object.spec.template.spec.nodeSelector
           msg := sprintf("you must provide nodeSelector: %v", ["test"])
         }
-
-        hasNodeSelector {
-          input.review.object.spec.template.spec.nodeSelector
-          count(input.review.object.spec.template.spec.nodeSelector) > 0
-        }
-
-        # violation[{"msg": msg, "details": {"missing_prefix": required}}] {
-        #   required := "ns"
-        #   not startswith(input.review.object.metadata.name, required)
-        #   msg := sprintf("you must provide prefix: %v, provided: %v", [required, input.review.object.metadata.name])
-        # }
