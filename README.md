@@ -16,6 +16,7 @@
 - [traefik](traefik)
 - [strimzi](strimzi)
 - [postgres-operator](postgres-operator)
+- [Kubeadm in local](kubeadm-local)
 
 # Practice 1: Install ES, Kibana & Filebeat with Helm
 
