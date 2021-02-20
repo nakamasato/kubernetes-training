@@ -330,3 +330,31 @@
     kubectl delete pod nginx
     pod "nginx" deleted
     ```
+
+1. Clean up vagrant
+
+    ```
+    vagrant destroy
+        kubenode02: Are you sure you want to destroy the 'kubenode02' VM? [y/N] y
+    ==> kubenode02: Forcing shutdown of VM...
+    ==> kubenode02: Destroying VM and associated drives...
+        kubenode01: Are you sure you want to destroy the 'kubenode01' VM? [y/N] y
+    ==> kubenode01: Forcing shutdown of VM...
+    ==> kubenode01: Destroying VM and associated drives...
+        kubemaster: Are you sure you want to destroy the 'kubemaster' VM? [y/N] y
+    ==> kubemaster: Forcing shutdown of VM...
+    ==> kubemaster: Destroying VM and associated drives...
+    ```
+
+    ```
+    vagrant status
+    Current machine states:
+
+    kubemaster                not created (virtualbox)
+    kubenode01                not created (virtualbox)
+    kubenode02                not created (virtualbox)
+
+    This environment represents multiple VMs. The VMs are all listed
+    above with their current state. For more information about a specific
+    VM, run `vagrant status NAME`.
+    ```
