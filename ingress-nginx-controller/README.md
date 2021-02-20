@@ -1,6 +1,7 @@
 # Ingress Nginx Controller
 
-https://kubernetes.github.io/ingress-nginx/deploy
+- https://kubernetes.github.io/ingress-nginx/deploy
+- https://docs.nginx.com/nginx-ingress-controller
 
 ## Prerequisite
 
