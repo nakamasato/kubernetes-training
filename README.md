@@ -9,14 +9,27 @@
 
 # Contents
 
-- [helm](helm)
-- [amazon-eks-workshop](amazon-eks-workshop)
-- [ingress-nginx-controller](ingress-nginx-controller)
-- [kubernetes-the-hard-way](kubernetes-the-hard-way)
-- [traefik](traefik)
-- [strimzi](strimzi)
-- [postgres-operator](postgres-operator)
-- [Kubeadm in local](kubeadm-local)
+- General Kubernetes Usage
+    - [amazon-eks-workshop](eksworkshop)
+    - [helm](helm)
+- Cluster Setup
+    - [kubernetes-the-hard-way](kubernetes-the-hard-way)
+    - [Kubeadm in local](kubeadm-local)
+- Kubernetes Features
+    - [Autoscaling HPA](autoscaling-hpa)
+- Networking
+    - [traefik](traefik)
+    - [ingress-nginx-controller](ingress-nginx-controller)
+- Middleware (Operator)
+    - [strimzi](strimzi)
+    - [postgres-operator](postgres-operator)
+    - [eck](eck)
+- Security
+    - [open-policy-agent]
+- Controller
+    - [custom-controller]
+- CD
+    - [argocd](argocd)
 
 # Practice 1: Install ES, Kibana & Filebeat with Helm
 
