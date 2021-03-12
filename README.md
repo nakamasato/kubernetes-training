@@ -25,13 +25,13 @@
     - [postgres-operator](postgres-operator)
     - [eck](eck)
 - Security
-    - [open-policy-agent]
+    - [open-policy-agent](open-policy-agent)
 - Controller
-    - [custom-controller]
+    - custom-controller
 - CD
     - [argocd](argocd)
 
-# Practice 1: Install ES, Kibana & Filebeat with Helm
+# Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
 
 1. Create namespace
 
@@ -77,6 +77,7 @@
 
 ![](docs/practice-01.drawio.svg)
 
+<details>
 
 ```
 NAMESPACE          NAME                                                             READY   STATUS    RESTARTS   AGE
@@ -102,12 +103,14 @@ kube-system        l7-default-backend-678889f899-fvswg                          
 kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                           2/2     Running   0          14h
 ```
 
+</details>
+
 # Practice 3: Install Prometheus & Grafana with kube-prometheus
 
 - Prometheus & Grafana
 
     ```
-    g clone https://github.com/coreos/kube-prometheus.git && kube-prometheus
+    git clone https://github.com/coreos/kube-prometheus.git && kube-prometheus
     ```
 
     ```
@@ -129,6 +132,8 @@ kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                       
 - Add elasticsearch monitoring
 
 ![](docs/practice-02.drawio.svg)
+
+<details>
 
 ```
 kubectl get pod --all-namespaces
@@ -170,6 +175,8 @@ monitoring         prometheus-k8s-0                                             
 monitoring         prometheus-k8s-1                                                 3/3     Running   1          12h
 monitoring         prometheus-operator-5f75d76f9f-xtgqz                             1/1     Running   0          2d5h
 ```
+
+</details>
 
 # Practice 4: Kafka exporter & MirrorMaker2
 
