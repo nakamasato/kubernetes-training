@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: rabbitmq-consumer
   name: rabbitmq-consumer
@@ -10,15 +9,24 @@ spec:
   selector:
     matchLabels:
       app: rabbitmq-consumer
-  strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: rabbitmq-consumer
     spec:
       containers:
-      - image: nakamasato/rabbitmq-consumer
-        name: rabbitmq-consumer
-        resources: {}
-status: {}
+        - image: nakamasato/rabbitmq-consumer
+          name: rabbitmq-consumer
+          env:
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+            - name: RABBITMQ_HOST
+              value: rabbitmq
