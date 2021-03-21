@@ -9,8 +9,6 @@ spec:
       name: rabbitmq-producer
     spec:
       template:
-        metadata:
-          creationTimestamp: null
         spec:
           restartPolicy: Never
           containers:
