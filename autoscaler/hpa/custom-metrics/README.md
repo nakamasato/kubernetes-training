@@ -119,11 +119,11 @@ log in to http://localhost:32000 with `admin` for both username and password
 
 import dashboard https://grafana.com/grafana/dashboards/10991
 
-
+![img](grafana-dashboard-for-rabbitmq.png)
 ## Clean up
 
 ```
-for component in prometheus grafana rabbitmq rabbitmq-consumer rabbitmq-producer; do
+for component in grafana rabbitmq rabbitmq-consumer rabbitmq-producer; do
     kubectl delete -f $component
 done
 kubectl delete -f "https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml"
