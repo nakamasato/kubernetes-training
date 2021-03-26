@@ -1,4 +1,4 @@
-# HPA example
+# HPA with custom metrics
 
 ## Overview
 
@@ -138,6 +138,7 @@ kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/promethe
 ```
 
 ## References
+- [Horizontal Pod Autoscaler#support-for-custom-metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-custom-metrics)
 - [Prometheus ServiceMonitor vs PodMonitor](https://github.com/prometheus-operator/prometheus-operator/issues/3119)
 - https://qiita.com/Kameneko/items/071c2a064775badd939e
     > ただし、1点注意が必要で、これはPodのラベルではなく、Service…更に正しく言えばEndpointsのラベルを指定する必要があります。
