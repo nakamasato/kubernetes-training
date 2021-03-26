@@ -8,6 +8,9 @@
 - Prometheus -> http://localhost:30900
 - Grafana -> http://localhost:32000
 
+![](diagram.drawio.svg)
+
+
 ## Deploy RabbitMQ with operator
 
 https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html
@@ -99,7 +102,7 @@ Steps:
 
     You can check [targets](http://localhost:30900/targets)
 
-    ![img](prometheus-target.png)
+    ![](prometheus-target.png)
 
 
 Monitoring RabbitMQ: https://www.rabbitmq.com/kubernetes/operator/operator-monitoring.html
@@ -119,7 +122,11 @@ log in to http://localhost:32000 with `admin` for both username and password
 
 import dashboard https://grafana.com/grafana/dashboards/10991
 
-![img](grafana-dashboard-for-rabbitmq.png)
+![](grafana-dashboard-for-rabbitmq.png)
+
+## HPA with custom metrics
+
+TBD
 ## Clean up
 
 ```
