@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: rabbitmq-producer
 spec:
-  schedule: 0 * * * *
+  schedule: '* * * * *'
   jobTemplate:
     metadata:
       name: rabbitmq-producer
@@ -28,4 +28,4 @@ spec:
                 - name: RABBITMQ_HOST
                   value: rabbitmq
                 - name: NUM_OF_MESSAGES
-                  value: "5"
+                  value: "20"
