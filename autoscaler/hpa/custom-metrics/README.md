@@ -6,9 +6,40 @@
 - RabbitMQ
 - RabbitMQ Consumer (Java app)
 - Prometheus -> http://localhost:30900
-- Grafana -> http://localhost:32000
+- Grafana -> http://localhost:32111
 
 ![](diagram.drawio.svg)
+
+## Deploy Prometheus
+
+References:
+- https://github.com/prometheus-operator/prometheus-operator#quickstart
+- https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md
+
+Steps:
+
+1. Create prometheus operator
+
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    ```
+
+1. Prometheus
+
+    ```
+    kubectl apply -f ../../../prometheus-operator
+    ```
+
+1. Check UI at http://localhost:30900
+
+    You can check [targets](http://localhost:30900/targets)
+
+    ![](prometheus-target.png)
+
+
+Monitoring RabbitMQ: https://www.rabbitmq.com/kubernetes/operator/operator-monitoring.html
+
+We cannot use `ServiceMonitor` for RabbitMQ as RabbitMQ service doesn't have prometheus port (15692). We need to use `PodMonitor` as is recommended in the documentation.
 
 
 ## Deploy RabbitMQ with operator
@@ -78,38 +109,6 @@ Create `rabbitmq-consumer` `Deployment`
 kubectl apply -f rabbitmq-consumer
 ```
 
-## Deploy Prometheus
-
-References:
-- https://github.com/prometheus-operator/prometheus-operator#quickstart
-- https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md
-
-Steps:
-
-1. Create prometheus operator
-
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
-    ```
-
-1. Prometheus
-
-    ```
-    kubectl apply -f ../../../prometheus-operator
-    ```
-
-1. Check UI at http://localhost:30900
-
-    You can check [targets](http://localhost:30900/targets)
-
-    ![](prometheus-target.png)
-
-
-Monitoring RabbitMQ: https://www.rabbitmq.com/kubernetes/operator/operator-monitoring.html
-
-We cannot use `ServiceMonitor` for RabbitMQ as RabbitMQ service doesn't have prometheus port (15692). We need to use `PodMonitor` as is recommended in the documentation.
-
-
 ## Deploy Grafana
 
 https://devopscube.com/setup-grafana-kubernetes/
@@ -118,7 +117,7 @@ https://devopscube.com/setup-grafana-kubernetes/
 kubectl apply -f grafana
 ```
 
-log in to http://localhost:32000 with `admin` for both username and password
+log in to http://localhost:32111 with `admin` for both username and password
 
 import dashboard https://grafana.com/grafana/dashboards/10991
 

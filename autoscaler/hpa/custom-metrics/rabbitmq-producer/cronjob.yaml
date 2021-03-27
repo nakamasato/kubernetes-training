@@ -3,7 +3,8 @@ kind: CronJob
 metadata:
   name: rabbitmq-producer
 spec:
-  schedule: '0 * * * *'
+  schedule: '* * * * *'
+  successfulJobsHistoryLimit: 1
   jobTemplate:
     metadata:
       name: rabbitmq-producer
