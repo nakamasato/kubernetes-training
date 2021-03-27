@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: rabbitmq-producer
 spec:
-  schedule: '* * * * *'
+  schedule: '0 * * * *'
   jobTemplate:
     metadata:
       name: rabbitmq-producer

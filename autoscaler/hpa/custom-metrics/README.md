@@ -18,7 +18,7 @@ https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html
 1. RabbitMQ Operator
 
     ```
-    kubectl apply -f "https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml"
+    kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
     ```
 
 1. Create a RabbitMQ cluster
@@ -133,7 +133,7 @@ TBD
 for component in grafana rabbitmq rabbitmq-consumer rabbitmq-producer; do
     kubectl delete -f $component
 done
-kubectl delete -f "https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml"
+kubectl delete -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
 kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
 ```
 
