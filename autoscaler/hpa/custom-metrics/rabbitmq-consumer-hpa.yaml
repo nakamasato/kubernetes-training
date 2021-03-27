@@ -1,0 +1,37 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: rabbitmq-consumer
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: rabbitmq-consumer
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    # - type: Pods
+    #   pods:
+    #     metric:
+    #       name: rabbitmq_queue_messages_ready
+    #     target:
+    #       type: AverageValue
+    #       averageValue: 1
+    # - type: External
+    #   external:
+    #     metric:
+    #       name: rabbitmq_queue_messages_ready
+    #     target:
+    #       type: Value
+    #       averageValue: 1
+    - type: Object
+      object:
+        metric:
+          name: rabbitmq_queue_messages_ready
+        describedObject:
+          kind: Pod
+          name: rabbitmq-server-0
+          apiVersion: v1
+        target:
+          type: Value
+          averageValue: 1

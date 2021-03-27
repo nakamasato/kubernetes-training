@@ -27,7 +27,11 @@ Steps:
 1. Prometheus
 
     ```
-    kubectl apply -f ../../../prometheus-operator
+    kubectl create ns monitoring
+    ```
+
+    ```
+    kubectl apply -f ../../../prometheus-operator -n monitoring
     ```
 
 1. Check UI at http://localhost:30900
@@ -114,7 +118,7 @@ kubectl apply -f rabbitmq-consumer
 https://devopscube.com/setup-grafana-kubernetes/
 
 ```
-kubectl apply -f grafana
+kubectl apply -f grafana -n monitoring
 ```
 
 log in to http://localhost:32111 with `admin` for both username and password
@@ -125,7 +129,77 @@ import dashboard https://grafana.com/grafana/dashboards/10991
 
 ## HPA with custom metrics
 
-TBD
+1. Collects metrics from your applications. (Prometheus)
+1. Extends the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
+
+
+Generate secrets
+
+```
+git clone git@github.com:stefanprodan/k8s-prom-hpa.git
+cd k8s-prom-hpa
+touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
+make certs
+```
+
+Deploy `prometheus-adapter`
+
+```
+kubectl create -f ./namespaces.yaml
+kubectl create -f ./custom-metrics-api
+```
+
+```
+kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/rabbitmq_queue_messages_ready"| jq .
+{
+  "kind": "MetricValueList",
+  "apiVersion": "custom.metrics.k8s.io/v1beta1",
+  "metadata": {
+    "selfLink": "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/rabbitmq_queue_messages_ready"
+  },
+  "items": [
+    {
+      "describedObject": {
+        "kind": "Pod",
+        "namespace": "default",
+        "name": "rabbitmq-server-0",
+        "apiVersion": "/v1"
+      },
+      "metricName": "rabbitmq_queue_messages_ready",
+      "timestamp": "2021-03-27T12:01:15Z",
+      "value": "1274"
+    }
+  ]
+}
+```
+
+
+```
+kubectl describe hpa rabbitmq-consumer
+Name:                                                                               rabbitmq-consumer
+Namespace:                                                                          default
+Labels:                                                                             <none>
+Annotations:                                                                        <none>
+CreationTimestamp:                                                                  Sat, 27 Mar 2021 21:36:14 +0900
+Reference:                                                                          Deployment/rabbitmq-consumer
+Metrics:                                                                            ( current / target )
+  "rabbitmq_queue_messages_ready" on Pod/rabbitmq-server-0 (target average value):  442 / 1
+Min replicas:                                                                       1
+Max replicas:                                                                       10
+Deployment pods:                                                                    4 current / 8 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    SucceededRescale  the HPA controller was able to update the target scale to 8
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from external metric rabbitmq_queue_messages_ready(nil)
+  ScalingLimited  True    ScaleUpLimit      the desired replica count is increasing faster than the maximum scale rate
+Events:
+  Type    Reason             Age   From                       Message
+  ----    ------             ----  ----                       -------
+  Normal  SuccessfulRescale  20s   horizontal-pod-autoscaler  New size: 8; reason: external metric rabbitmq_queue_messages_ready(nil) above target
+```
+
+
 ## Clean up
 
 ```
@@ -143,3 +217,6 @@ kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/promethe
     > ただし、1点注意が必要で、これはPodのラベルではなく、Service…更に正しく言えばEndpointsのラベルを指定する必要があります。
 - https://grafana.com/docs/grafana-cloud/quickstart/prometheus_operator/
 - [Troubleshooting ServiceMonitor Changes](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/troubleshooting.md)
+- https://github.com/stefanprodan/k8s-prom-hpa
+- https://github.com/kubernetes-sigs/prometheus-adapter
+- https://github.com/luxas/kubeadm-workshop
