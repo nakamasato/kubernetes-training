@@ -147,6 +147,14 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
     kubectl create -f ./k8s-prom-hpa/custom-metrics-api
     ```
 
+    Check the custom metrics API
+
+    ```
+    kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/rabbitmq_queue_messages_ready"| jq .
+    ```
+
+    <details><summary>Custom Metrics API Result</summary>
+
     ```
     kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/rabbitmq_queue_messages_ready"| jq .
     {
@@ -171,11 +179,15 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
     }
     ```
 
+    </details>
+
 1. With custom API
 
     ```
     kubectl apply -f rabbitmq-consumer-hpa.yaml
     ```
+
+    <details>
 
     ```
     kubectl describe hpa rabbitmq-consumer
@@ -201,6 +213,8 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
       ----    ------             ----  ----                       -------
       Normal  SuccessfulRescale  20s   horizontal-pod-autoscaler  New size: 8; reason: external metric rabbitmq_queue_messages_ready(nil) above target
     ```
+
+    </details>
 
 ## 7. Observe the behavior
 
