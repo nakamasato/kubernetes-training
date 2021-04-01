@@ -1,0 +1,17 @@
+commonLabels:
+  app: grafana
+
+namespace: monitoring
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: datasources
+    files:
+      - config/datasources/prometheus.yaml
+  - name: dashboards
+    files:
+      - config/dashboards/rabbitmq.json
+      - config/dashboards/dashboard.yaml

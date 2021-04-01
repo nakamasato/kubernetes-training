@@ -93,7 +93,7 @@ kubectl exec -it rabbitmq-server-0 -- rabbitmq-plugins list | grep prometheus
 
 ## Deploy producer
 
-Create `rabbitmq-producer` `CronJob` (run hourly)
+Create `rabbitmq-producer` `CronJob` (run every five minutes)
 
 ```
 kubectl apply -f rabbitmq-producer
@@ -118,12 +118,12 @@ kubectl apply -f rabbitmq-consumer
 https://devopscube.com/setup-grafana-kubernetes/
 
 ```
-kubectl apply -f grafana -n monitoring
+kubectl apply -k grafana
 ```
 
 log in to http://localhost:32111 with `admin` for both username and password
 
-import dashboard https://grafana.com/grafana/dashboards/10991
+Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already imported
 
 ![](grafana-dashboard-for-rabbitmq.png)
 
@@ -211,7 +211,7 @@ import dashboard https://grafana.com/grafana/dashboards/10991
 
 ```
 kubectl delete -f rabbitmq-consumer-hpa.yaml
-kubectl delete -f grafana -n monitoring
+kubectl delete -k grafana
 for component in rabbitmq rabbitmq-consumer rabbitmq-producer; do
     kubectl delete -f $component
 done
