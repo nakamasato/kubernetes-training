@@ -235,7 +235,7 @@ kubectl delete -k grafana
 for component in rabbitmq rabbitmq-consumer rabbitmq-producer; do
     kubectl delete -f $component
 done
-kubectl apply -f ../../../prometheus-operator -n monitoring
+kubectl delete -f ../../../prometheus-operator -n monitoring
 kubectl delete -f ./k8s-prom-hpa/custom-metrics-api
 kubectl delete -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
 kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
