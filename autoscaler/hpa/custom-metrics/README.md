@@ -10,7 +10,7 @@
 
 ![](diagram.drawio.svg)
 
-## Deploy Prometheus
+## 1. Deploy Prometheus with prometheus-operator
 
 References:
 - https://github.com/prometheus-operator/prometheus-operator#quickstart
@@ -46,7 +46,7 @@ Monitoring RabbitMQ: https://www.rabbitmq.com/kubernetes/operator/operator-monit
 We cannot use `ServiceMonitor` for RabbitMQ as RabbitMQ service doesn't have prometheus port (15692). We need to use `PodMonitor` as is recommended in the documentation.
 
 
-## Deploy RabbitMQ with operator
+## 2. Deploy RabbitMQ with operator
 
 https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html
 
@@ -91,7 +91,7 @@ kubectl exec -it rabbitmq-server-0 -- rabbitmq-plugins list | grep prometheus
 [E*] rabbitmq_prometheus               3.8.12
 ```
 
-## Deploy producer
+## 3. Deploy RabbitMQ producer (simple JAVA app)
 
 Create `rabbitmq-producer` `CronJob` (run every five minutes)
 
@@ -105,7 +105,7 @@ If you want to run a job manually, you can run the following command after creat
 kubectl create job --from=cronjob/rabbitmq-producer rabbitmq-producer-$(date '+%s')
 ```
 
-## Deploy consumer
+## 4. Deploy RabbitMQ consumer (simple JAVA app)
 
 Create `rabbitmq-consumer` `Deployment`
 
@@ -113,7 +113,7 @@ Create `rabbitmq-consumer` `Deployment`
 kubectl apply -f rabbitmq-consumer
 ```
 
-## Deploy Grafana
+## 5. Deploy Grafana
 
 https://devopscube.com/setup-grafana-kubernetes/
 
@@ -127,7 +127,7 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
 
 ![](grafana-dashboard-for-rabbitmq.png)
 
-## HPA with custom metrics
+## 6. Create HPA with custom metrics
 
 1. Collects metrics from your applications. (Prometheus)
 1. Extends the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
@@ -202,7 +202,7 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
       Normal  SuccessfulRescale  20s   horizontal-pod-autoscaler  New size: 8; reason: external metric rabbitmq_queue_messages_ready(nil) above target
     ```
 
-## Observe the behavior
+## 7. Observe the behavior
 
 - Without HPA ()
 
@@ -213,7 +213,7 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
     <img src="grafana-dashboard-queue-change-with-hpa.png" width="500"/>
 
 
-## Clean up
+## 8. Clean up
 
 ```
 kubectl delete -f rabbitmq-consumer-hpa.yaml
