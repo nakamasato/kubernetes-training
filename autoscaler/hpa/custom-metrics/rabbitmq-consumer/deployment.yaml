@@ -30,3 +30,5 @@ spec:
                   key: password
             - name: RABBITMQ_HOST
               value: rabbitmq
+            - name: PROCESS_SECONDS
+              value: "10"

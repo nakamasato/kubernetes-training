@@ -132,72 +132,79 @@ import dashboard https://grafana.com/grafana/dashboards/10991
 1. Collects metrics from your applications. (Prometheus)
 1. Extends the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
 
+    Generate secrets
 
-Generate secrets
+    ```
+    git clone git@github.com:stefanprodan/k8s-prom-hpa.git
+    cd k8s-prom-hpa
+    touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
+    make certs
+    ```
 
-```
-git clone git@github.com:stefanprodan/k8s-prom-hpa.git
-cd k8s-prom-hpa
-touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
-make certs
-```
+1. Deploy `prometheus-adapter`
 
-Deploy `prometheus-adapter`
+    ```
+    kubectl create -f ./custom-metrics-api
+    ```
 
-```
-kubectl create -f ./namespaces.yaml
-kubectl create -f ./custom-metrics-api
-```
-
-```
-kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/rabbitmq_queue_messages_ready"| jq .
-{
-  "kind": "MetricValueList",
-  "apiVersion": "custom.metrics.k8s.io/v1beta1",
-  "metadata": {
-    "selfLink": "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/rabbitmq_queue_messages_ready"
-  },
-  "items": [
+    ```
+    kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/rabbitmq_queue_messages_ready"| jq .
     {
-      "describedObject": {
-        "kind": "Pod",
-        "namespace": "default",
-        "name": "rabbitmq-server-0",
-        "apiVersion": "/v1"
+      "kind": "MetricValueList",
+      "apiVersion": "custom.metrics.k8s.io/v1beta1",
+      "metadata": {
+        "selfLink": "/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/rabbitmq_queue_messages_ready"
       },
-      "metricName": "rabbitmq_queue_messages_ready",
-      "timestamp": "2021-03-27T12:01:15Z",
-      "value": "1274"
+      "items": [
+        {
+          "describedObject": {
+            "kind": "Pod",
+            "namespace": "default",
+            "name": "rabbitmq-server-0",
+            "apiVersion": "/v1"
+          },
+          "metricName": "rabbitmq_queue_messages_ready",
+          "timestamp": "2021-03-27T12:01:15Z",
+          "value": "1274"
+        }
+      ]
     }
-  ]
-}
-```
+    ```
 
+1. With custom API
 
-```
-kubectl describe hpa rabbitmq-consumer
-Name:                                                                               rabbitmq-consumer
-Namespace:                                                                          default
-Labels:                                                                             <none>
-Annotations:                                                                        <none>
-CreationTimestamp:                                                                  Sat, 27 Mar 2021 21:36:14 +0900
-Reference:                                                                          Deployment/rabbitmq-consumer
-Metrics:                                                                            ( current / target )
-  "rabbitmq_queue_messages_ready" on Pod/rabbitmq-server-0 (target average value):  442 / 1
-Min replicas:                                                                       1
-Max replicas:                                                                       10
-Deployment pods:                                                                    4 current / 8 desired
-Conditions:
-  Type            Status  Reason            Message
-  ----            ------  ------            -------
-  AbleToScale     True    SucceededRescale  the HPA controller was able to update the target scale to 8
-  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from external metric rabbitmq_queue_messages_ready(nil)
-  ScalingLimited  True    ScaleUpLimit      the desired replica count is increasing faster than the maximum scale rate
-Events:
-  Type    Reason             Age   From                       Message
-  ----    ------             ----  ----                       -------
-  Normal  SuccessfulRescale  20s   horizontal-pod-autoscaler  New size: 8; reason: external metric rabbitmq_queue_messages_ready(nil) above target
-```
+    ```
+    kubectl apply -f rabbitmq-consumer-hpa.yaml
+    ```
+
+    ```
+    kubectl describe hpa rabbitmq-consumer
+    Name:                                                                               rabbitmq-consumer
+    Namespace:                                                                          default
+    Labels:                                                                             <none>
+    Annotations:                                                                        <none>
+    CreationTimestamp:                                                                  Sat, 27 Mar 2021 21:36:14 +0900
+    Reference:                                                                          Deployment/rabbitmq-consumer
+    Metrics:                                                                            ( current / target )
+      "rabbitmq_queue_messages_ready" on Pod/rabbitmq-server-0 (target average value):  442 / 1
+    Min replicas:                                                                       1
+    Max replicas:                                                                       10
+    Deployment pods:                                                                    4 current / 8 desired
+    Conditions:
+      Type            Status  Reason            Message
+      ----            ------  ------            -------
+      AbleToScale     True    SucceededRescale  the HPA controller was able to update the target scale to 8
+      ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from external metric rabbitmq_queue_messages_ready(nil)
+      ScalingLimited  True    ScaleUpLimit      the desired replica count is increasing faster than the maximum scale rate
+    Events:
+      Type    Reason             Age   From                       Message
+      ----    ------             ----  ----                       -------
+      Normal  SuccessfulRescale  20s   horizontal-pod-autoscaler  New size: 8; reason: external metric rabbitmq_queue_messages_ready(nil) above target
+    ```
+
+## Observe the behavior
+
+![](grafana-dashboard-queue-change.png)
 
 
 ## Clean up
@@ -220,3 +227,12 @@ kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/promethe
 - https://github.com/stefanprodan/k8s-prom-hpa
 - https://github.com/kubernetes-sigs/prometheus-adapter
 - https://github.com/luxas/kubeadm-workshop
+
+## Related Topics
+
+- [ ] [Shutdown RabbitMQ consumer gracefully](https://kiritox.me/archives/shutdown-rabbitmq-consumer-gracefully.html)
+- [ ] [Issue] Too fast to scale out.
+- [ ] Scale down to zero.
+  - Actually Kubernetes supports the scaling to zero only by means of an API call, since the Horizontal Pod Autoscaler does support scaling down to 1 replica only. (https://stackoverflow.com/questions/61596711/in-kubernetes-how-can-i-scale-a-deployment-to-zero-when-idle#:~:text=Actually%20Kubernetes%20supports%20the%20scaling,or%20by%20inspecting%20some%20metrics.)
+  - [zero-pod-autoscaler](https://github.com/greenkeytech/zero-pod-autoscaler)
+  - [Allow HPA to scale to 0](https://github.com/kubernetes/kubernetes/issues/69687)
