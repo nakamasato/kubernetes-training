@@ -204,7 +204,13 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
 
 ## Observe the behavior
 
-![](grafana-dashboard-queue-change.png)
+- Without HPA ()
+
+    <img src="grafana-dashboard-queue-change-without-hpa.png" width="500"/>
+
+- With HPA
+
+    <img src="grafana-dashboard-queue-change-with-hpa.png" width="500"/>
 
 
 ## Clean up
