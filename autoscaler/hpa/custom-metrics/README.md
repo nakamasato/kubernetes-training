@@ -135,16 +135,16 @@ import dashboard https://grafana.com/grafana/dashboards/10991
     Generate secrets
 
     ```
-    git clone git@github.com:stefanprodan/k8s-prom-hpa.git
     cd k8s-prom-hpa
     touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
     make certs
+    cd -
     ```
 
 1. Deploy `prometheus-adapter`
 
     ```
-    kubectl create -f ./custom-metrics-api
+    kubectl create -f ./k8s-prom-hpa/custom-metrics-api
     ```
 
     ```
@@ -210,11 +210,16 @@ import dashboard https://grafana.com/grafana/dashboards/10991
 ## Clean up
 
 ```
-for component in grafana rabbitmq rabbitmq-consumer rabbitmq-producer; do
+kubectl delete -f rabbitmq-consumer-hpa.yaml
+kubectl delete -f grafana -n monitoring
+for component in rabbitmq rabbitmq-consumer rabbitmq-producer; do
     kubectl delete -f $component
 done
+kubectl apply -f ../../../prometheus-operator -n monitoring
+kubectl delete -f ./k8s-prom-hpa/custom-metrics-api
 kubectl delete -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
 kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+kubectl delete ns monitoring
 ```
 
 ## References
