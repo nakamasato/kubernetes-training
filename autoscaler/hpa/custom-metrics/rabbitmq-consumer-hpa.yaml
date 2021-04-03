@@ -7,7 +7,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: rabbitmq-consumer
-  minReplicas: 1
+  minReplicas: 1 # The HorizontalPodAutoscaler "rabbitmq-consumer" is invalid: spec.minReplicas: Invalid value: 0: must be greater than or equal to 1
   maxReplicas: 20
   metrics:
     - type: Object
