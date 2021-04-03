@@ -16,7 +16,7 @@
     - [kubernetes-the-hard-way](kubernetes-the-hard-way)
     - [Kubeadm in local](kubeadm-local)
 - Kubernetes Features
-    - [Autoscaling HPA](autoscaling-hpa)
+    - [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
 - Networking
     - [traefik](traefik)
     - [ingress-nginx-controller](ingress-nginx-controller)
@@ -24,6 +24,8 @@
     - [strimzi](strimzi)
     - [postgres-operator](postgres-operator)
     - [eck](eck)
+- Monitoring
+    - [prometheus](prometheus-operator)
 - Security
     - [open-policy-agent](open-policy-agent)
 - Controller
