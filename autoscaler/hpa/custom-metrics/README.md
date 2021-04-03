@@ -59,7 +59,13 @@ https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html
 1. Create a RabbitMQ cluster
 
     ```
-    kubectl apply -f rabbitmq
+    kubectl apply -f rabbitmq/rabbitmq-cluster.yaml
+    ```
+
+1. Create `PodMonitor` for RabbitMQ
+
+    ```
+    kubectl apply -f rabbitmq/pod-monitor-rabbitmq.yaml
     ```
 
 1. Get username and password
@@ -96,7 +102,7 @@ kubectl exec -it rabbitmq-server-0 -- rabbitmq-plugins list | grep prometheus
 Create `rabbitmq-producer` `CronJob` (run every five minutes)
 
 ```
-kubectl apply -f rabbitmq-producer
+kubectl apply -f rabbitmq-producer-cronjob.yaml
 ```
 
 If you want to run a job manually, you can run the following command after creating `CronJob`
@@ -110,7 +116,7 @@ kubectl create job --from=cronjob/rabbitmq-producer rabbitmq-producer-$(date '+%
 Create `rabbitmq-consumer` `Deployment`
 
 ```
-kubectl apply -f rabbitmq-consumer
+kubectl apply -f rabbitmq-consumer-deployment.yaml
 ```
 
 ## 5. Deploy Grafana
@@ -218,7 +224,7 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
 
 ## 7. Observe the behavior
 
-- Without HPA ()
+- Without HPA
 
     <img src="grafana-dashboard-queue-change-without-hpa.png" width="500"/>
 
@@ -232,7 +238,7 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
 ```
 kubectl delete -f rabbitmq-consumer-hpa.yaml
 kubectl delete -k grafana
-for component in rabbitmq rabbitmq-consumer rabbitmq-producer; do
+for component in rabbitmq rabbitmq-consumer-deployment.yaml rabbitmq-producer-cronjob.yaml; do
     kubectl delete -f $component
 done
 kubectl delete -f ../../../prometheus-operator -n monitoring
@@ -261,3 +267,6 @@ kubectl delete ns monitoring
   - Actually Kubernetes supports the scaling to zero only by means of an API call, since the Horizontal Pod Autoscaler does support scaling down to 1 replica only. (https://stackoverflow.com/questions/61596711/in-kubernetes-how-can-i-scale-a-deployment-to-zero-when-idle#:~:text=Actually%20Kubernetes%20supports%20the%20scaling,or%20by%20inspecting%20some%20metrics.)
   - [zero-pod-autoscaler](https://github.com/greenkeytech/zero-pod-autoscaler)
   - [Allow HPA to scale to 0](https://github.com/kubernetes/kubernetes/issues/69687)
+  - [Support scaling HPA to/from zero pods for object/external metrics](https://github.com/kubernetes/kubernetes/pull/74526)
+  - `HPAScaleToZero` in 1.16 [Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
+      > HPAScaleToZero: Enables setting minReplicas to 0 for HorizontalPodAutoscaler resources when using custom or external metrics.
