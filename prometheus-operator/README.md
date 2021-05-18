@@ -7,7 +7,7 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 
 ```
-kubectl apply -f .
+kubectl apply -k .
 ```
 
 ```
