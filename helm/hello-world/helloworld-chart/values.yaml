@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: hello-world
+  repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -47,7 +47,11 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
-      paths: []
+      paths:
+      - path: /
+        backend:
+          serviceName: chart-example.local
+          servicePort: 80
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
