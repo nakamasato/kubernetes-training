@@ -2,7 +2,7 @@
 
 ## Version
 
-`v3.2.4` (https://github.com/helm/helm/releases/tag/v3.2.4)
+`v3.5.4` (https://github.com/helm/helm/releases/tag/v3.5.4)
 
 
 ## Install helm
@@ -13,6 +13,11 @@ https://helm.sh/docs/intro/install/
 brew install helm
 ```
 
+```
+helm version --short
+v3.5.4+g1b5edb6
+```
+
 ## Update helm version
 
 ```
@@ -21,7 +26,7 @@ brew upgrade helm
 
 ## Usage
 
-### Install
+### 1. Install
 
 ```
 helm repo add elastic https://helm.elastic.co
@@ -41,21 +46,26 @@ NOTES:
   $ helm test elasticsearch --cleanup
 ```
 
-### Customize
+### 2. Customize
 
 ```
 helm show values elastic/elasticsearch > helm/es-config.yaml
 helm install -n eck elasticsearch elastic/elasticsearch -f helm/es-config.yaml
 ```
 
-## Upgrade
+### 3. Upgrade
 
 ```
 helm upgrade elasticsearch elastic/elasticsearch -n eck -f helm/es-config.yaml
 ```
 
-### Uninstall
+### 4. Uninstall
 
 ```
 helm uninstall elasticsearch elastic/elasticsearch
 ```
+
+## Reference
+
+- [Quick Start](https://helm.sh/docs/intro/quickstart/)
+- [helm (github)](https://github.com/helm/helm)
