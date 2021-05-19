@@ -2,10 +2,15 @@
 
 # Version
 
-- kubernetes: 1.15
-- Helm: 3.2.1
-- Traefik: 2.2
+- Kubernetes: 1.15
+- Helm: 3.5.4
+- Traefik: v2.2
 - ArgoCD: v1.6.0
+- Prometheus: v2.22.1
+- Grafana:
+- Strimzi: 0.18.0
+- Kind: v0.10.0
+- Ingress Nginx Controller: v0.32.0
 
 # Contents
 
