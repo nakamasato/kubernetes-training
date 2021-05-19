@@ -22,6 +22,14 @@ kubectl autoscale rs foo --min=2 --max=5 --cpu-percent=80
 
 ### CPU
 
+1. Install `metrics-server`
+
+    > The HorizontalPodAutoscaler normally fetches metrics from a series of aggregated APIs (metrics.k8s.io, custom.metrics.k8s.io, and external.metrics.k8s.io). The metrics.k8s.io API is usually provided by metrics-server
+
+    ```
+    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    ```
+
 1. Apply an apache application
 
     ```
