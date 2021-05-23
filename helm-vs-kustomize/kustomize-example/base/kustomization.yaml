@@ -5,3 +5,7 @@ resources:
   - configmap.yaml
   - service.yaml
   - secret.yaml
+configMapGenerator:
+  - name: kustomize-example-nginx
+    files:
+    - nginx.conf

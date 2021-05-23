@@ -11,15 +11,30 @@ spec:
       app: kustomize-example
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: kustomize-example
     spec:
       containers:
         - image: nginx
           name: nginx
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: nginx-conf
+              subPath: nginx.conf
+
+        - image: nakamasato/flask-test
+          imagePullPolicy: Always
+          name: uwsgi
           envFrom:
             - configMapRef:
-                name: kustomize-example
+                name: kustomize-example-uwsgi
             - secretRef:
-                name: kustomize-example
+                name: kustomize-example-uwsgi
+
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: kustomize-example-nginx
+            items:
+              - key: nginx.conf
+                path: nginx.conf

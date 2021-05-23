@@ -2,7 +2,8 @@ apiVersion: v1
 data:
   MYSQL_HOST: mysql.database.svc.cluster.local
   MYSQL_PORT: "3306"
-  MYSQL_USER: mysqluser
+  MYSQL_USER: user
+  MYSQL_DATABASE: test
 kind: ConfigMap
 metadata:
-  name: kustomize-example
+  name: kustomize-example-uwsgi
