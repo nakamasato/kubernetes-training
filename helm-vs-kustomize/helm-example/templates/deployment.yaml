@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm-example.fullname" . }}
+  labels:
+    {{- include "helm-example.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "helm-example.selectorLabels" . | nindent 6 }}
+  template:
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          envFrom:
+            - configMapRef:
+                name: {{ include "helm-example.fullname" . }}
+            - secretRef:
+                name: {{ include "helm-example.fullname" . }}

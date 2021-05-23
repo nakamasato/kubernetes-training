@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  MYSQL_HOST: mysql.database.svc.cluster.local
+  MYSQL_PORT: "3306"
+  MYSQL_USER: mysqluser
+kind: ConfigMap
+metadata:
+  name: kustomize-example

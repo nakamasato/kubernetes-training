@@ -1,0 +1,7 @@
+commonLabels:
+  app: kustomize-example
+resources:
+  - deployment.yaml
+  - configmap.yaml
+  - service.yaml
+  - secret.yaml

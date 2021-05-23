@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kustomize-example
+  name: kustomize-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kustomize-example
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kustomize-example
+    spec:
+      containers:
+        - image: nginx
+          name: nginx
+          envFrom:
+            - configMapRef:
+                name: kustomize-example
+            - secretRef:
+                name: kustomize-example
