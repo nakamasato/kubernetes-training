@@ -80,7 +80,6 @@
     ```
     helm install helm-example-0.1.0.tgz --generate-name
     ```
-
 ### Useful commands
 
 - Dry run a wip chart.
@@ -159,6 +158,45 @@
 
         ```
         ```
+
+## Example (web app with mysql)
+
+[](example-diagram.drawio.svg)
+
+1. Deploy dependencies.
+
+    ```
+    kubectl create ns database; kubectl apply -f dependencies/mysql.yaml -n database
+    ```
+
+1. Set up with `kustomize`
+
+    1. Deploy `kustomize-example`
+
+        ```
+        kubectl apply -f kustomize-example/base
+        ```
+
+    1. Port forward the service.
+
+        ```
+        kubectl port-forward svc/kustomize-example 8080:80
+        ```
+
+    1. Check the application functionality.
+
+        ```json
+        curl -X POST -H "Content-Type: application/json" -d '{"name": "naka", "email": "naka@example.com"}' localhost:8080/users{"id":2,"name":"naka"}
+        ```
+
+1. Set up with `helm`
+
+    1. Install Helm chart.
+        ```
+        helm install helm-example ./helm-example
+        ```
+
+
 
 ## References
 

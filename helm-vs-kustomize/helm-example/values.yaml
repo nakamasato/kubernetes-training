@@ -4,11 +4,17 @@
 
 replicaCount: 1
 
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+nginx:
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    tag: ""
+
+uwsgi:
+  image:
+    repository: nakamasato/flask-test
+    pullPolicy: Always
+    tag: ""
 
 service:
   type: ClusterIP
@@ -17,5 +23,6 @@ service:
 mysql:
   host: mysql.database.svc.cluster.local
   port: 3306
-  user: mysqluser
-  password: mysqlpassword
+  user: user
+  database: test
+  password: password

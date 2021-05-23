@@ -15,16 +15,16 @@ spec:
         app: kustomize-example
     spec:
       containers:
-        - image: nginx
-          name: nginx
+        - name: nginx
+          image: nginx
           volumeMounts:
             - mountPath: /etc/nginx/nginx.conf
               name: nginx-conf
               subPath: nginx.conf
 
-        - image: nakamasato/flask-test
+        - name: uwsgi
+          image: nakamasato/flask-test
           imagePullPolicy: Always
-          name: uwsgi
           envFrom:
             - configMapRef:
                 name: kustomize-example-uwsgi
