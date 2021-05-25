@@ -69,24 +69,89 @@
     1. `Values`: write `values.yaml` and pass them into template yaml with `{{ Values.xxx.yyy }}`
     1. Template functions: `{{ quote .Values.favorite.drink }}` or pipelines: `{{ .Values.favorite.drink | quote }}`
 
+1. Check with `--dry-run`.
+
+    ```
+    helm install helm-example --debug --dry-run ./helm-example
+    ```
+
+1. Lint
+
+    ```
+    helm lint helm-example
+    ```
+
+1. Install.
+
+    ```
+    helm install helm-example --debug ./helm-example
+    ```
+
+1. Check `helm`
+
+    ```
+    helm ls
+    NAME            NAMESPACE       REVISION        UPDATED                                 STATUS   CHART                    APP VERSION
+    helm-example    default         1               2021-05-24 07:22:45.809015 +0900 JST    deployed helm-example-0.1.0       1.16.0
+    ```
+
+1. Check pod
+
+    ```
+    kubectl get po
+    NAME                            READY   STATUS    RESTARTS   AGE
+    helm-example-5d796c89c7-v4pvw   2/2     Running   0          80m
+    ```
+1. Test
+
+    ```
+    helm test helm-example
+    ```
+
 1. Package a chart.
 
     ```
     helm package helm-example
     ```
 
-1. Deploy the application
+1. Publish the chart. (Create a Github repo for Helm chart repository. https://github.com/nakamasato/helm-charts-repo)
 
     ```
-    helm install helm-example-0.1.0.tgz --generate-name
+    helm repo index ./ --url https://nakamasato.github.io/helm-charts-repo
     ```
-### Useful commands
 
-- Dry run a wip chart.
+    This would generate `index.yaml`. Push the `index.yaml` and `helm-example-0.1.0.tgz` to the chart repo.
+
+1. Add the repo that is created above.
 
     ```
-    helm install --generate-name --debug --dry-run ./helm-example # generate random release name
-    helm install test-name --debug --dry-run ./helm-example # specify release name
+    helm repo add nakamasato https://nakamasato.github.io/helm-charts-repo
+    helm repo update # update the repository info
+    ```
+
+    Search for your chart.
+
+    ```
+    helm search repo naka
+    NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+    nakamasato/helm-example 0.1.0           v0.0.1          Simple API application.
+    ```
+
+1. Install your helm chart.
+
+    ```
+    helm install example-from-my-repo nakamasato/helm-example
+    NAME: example-from-my-repo
+    LAST DEPLOYED: Tue May 25 09:07:24 2021
+    NAMESPACE: default
+    STATUS: deployed
+    REVISION: 1
+    NOTES:
+    1. Get the application URL by running these commands:
+    export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=helm-example,app.kubernetes.io/instance=example-from-my-repo" -o jsonpath="{.items[0].metadata.name}")
+    export CONTAINER_PORT=$(kubectl get pod --namespace default $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+    echo "Visit http://127.0.0.1:8080 to use your application"
+    kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
     ```
 
 ## Kustomize
@@ -112,19 +177,37 @@
 
 1. Add necessary resources to `base` folder.
 
-    ```
-    kubectl create deployment kustomize-example --image nginx --replicas=1 --dry-run=client --output yaml > kustomize-example/base/deployment.yaml
-    kubectl create service nodeport kustomize-example --tcp=80:80 --dry-run=client --output yaml  > base/service.yaml
-    kubectl create configmap kustomize-example --from-literal=MYSQL_HOST=mysqlhost.com --from-literal=MYSQL_USER=mysqluser --from-literal=MYSQL_PORT=3306 --dry-run=client -o yaml > base/configmap.yaml
-    kubectl create secret generic kustomize-example --from-literal=MYSQL_PASSWORD=mysqlpassword --dry-run=client -o yaml > base/secret.yaml
-    ```
+    1. Prepare `nginx.conf`.
+
+        Set `localhost:3031`, which is the endpoint of uwsgi in the same pod.
+
+    1. Create `kustomization.yaml`.
+
+        - Use `ConfigMapGenerator` for `kustomize-example-nginx` ConfigMap.
+        - Include all the resources (`deployment.yaml`, `configmap.yaml`, `secret.yaml`, `service.yaml`).
+
+    1. Generate `yaml` with `kubectl`
+
+        ```
+        kubectl create deployment kustomize-example --image nginx --replicas=1 --dry-run=client --output yaml > kustomize-example/base/deployment.yaml # need manual modification
+        kubectl create service clusterip kustomize-example --tcp=80:80 --dry-run=client --output yaml > kustomize-example/base/service.yaml
+        kubectl create configmap kustomize-example-uwsgi --from-literal=MYSQL_HOST=mysql.database.svc.cluster.local --from-literal=MYSQL_USER=user --from-literal=MYSQL_PORT=3306 --from-literal=MYSQL_DATABASE=test --dry-run=client -o yaml > kustomize-example/base/configmap.yaml
+        kubectl create secret generic kustomize-example-uwsgi --from-literal=MYSQL_PASSWORD=password --dry-run=client -o yaml > kustomize-example/base/secret.yaml
+        ```
+
+    1. Modify `kustomize-example/base/deployment.yaml`.
+
+        - Make two containers (Add `uwsgi` container).
+        - Mount volume `kustomize-example-nginx` for `nginx.conf`.
+        - Configure environment variables using `kustomize-example-uwsgi` `ConfigMap` and `Secret`.
+
 
 1. Create `Namespace` `kustomize-dev` and `kustomize-prod`.
 
     ```
-    kubectl create ns kustomize-dev --dry-run=client -o yaml > ns-kustomize-dev.yaml
-    kubectl create ns kustomize-prod --dry-run=client -o yaml > ns-kustomize-prod.yaml
-    kubectl apply -f ns-kustomize-dev.yaml,ns-kustomize-prod.yaml
+    kubectl create ns kustomize-dev --dry-run=client -o yaml > kustomize-example/ns-kustomize-dev.yaml
+    kubectl create ns kustomize-prod --dry-run=client -o yaml > kustomize-example/ns-kustomize-prod.yaml
+    kubectl apply -f kustomize-example/ns-kustomize-dev.yaml,kustomize-example/ns-kustomize-prod.yaml
     ```
 
 1. Create overlays.
@@ -132,14 +215,14 @@
     1. Make each overlay same as `base`.
 
 
-        - `overlays/dev/kustomization.yaml`:
+        - `kustomize-example/overlays/dev/kustomization.yaml`:
 
             ```yaml
             namespace: kustomize-dev
             bases:
               - ../../base
             ```
-        - `overlays/prod/kustomization.yaml`:
+        - `kustomize-example/overlays/prod/kustomization.yaml`:
 
             ```yaml
             namespace: kustomize-prod
@@ -150,13 +233,85 @@
         - Check
 
             ```
-            kubectl diff -k overlays/dev
-            kustomize diff -k overlays/prod
+            kubectl diff -k kustomize-example/overlays/dev
+            kubectl diff -k kustomize-example/overlays/prod
             ```
 
     1. Create files to overwrite `base`.
 
+        Example:
+        - Add resource request/limit to prod.
+        - Increase replicas for prod.
+
+        1. Add `patches` to `kustomize-example/overlays/prod/kustomization.yaml`
+
+            ```diff
+            + patches:
+            +  - deployment.yaml
+            ```
+
+        1. Add `resources` to each container in `kustomize-example/overlays/prod/deployemnt.yaml`
+
+            ```diff
+            +        resources:
+            +          requests:
+            +            cpu: "100m"
+            +            memory: "256Mi"
+            +          limits:
+            +            cpu: "1000m"
+            +            memory: "256Mi"
+            ```
+
+    1. Apply overlays (`prod` in this case.).
+
         ```
+        kubectl diff -k kustomize-example/overlays/prod
+        ```
+
+        ```diff
+        @@ -123,7 +141,7 @@
+        uid: 8a415db8-48c3-4a5b-831a-b70dd9adbf4c
+        spec:
+        progressDeadlineSeconds: 600
+        -  replicas: 1
+        +  replicas: 2
+        revisionHistoryLimit: 10
+        selector:
+            matchLabels:
+        @@ -143,7 +161,13 @@
+            - image: nginx
+                imagePullPolicy: Always
+                name: nginx
+        -        resources: {}
+        +        resources:
+        +          limits:
+        +            cpu: "1"
+        +            memory: 256Mi
+        +          requests:
+        +            cpu: 100m
+        +            memory: 256Mi
+                terminationMessagePath: /dev/termination-log
+                terminationMessagePolicy: File
+                volumeMounts:
+        @@ -158,7 +182,13 @@
+                image: nakamasato/flask-test
+                imagePullPolicy: Always
+                name: uwsgi
+        -        resources: {}
+        +        resources:
+        +          limits:
+        +            cpu: "1"
+        +            memory: 256Mi
+        +          requests:
+        +            cpu: 100m
+        +            memory: 256Mi
+                terminationMessagePath: /dev/termination-log
+                terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+        ```
+
+        ```
+        kubectl apply -k kustomize-example/overlays/prod
         ```
 
 ## Example (web app with mysql)
@@ -177,7 +332,7 @@
         kubectl apply -f kustomize-example/base
         ```
 
-    1. Port forward the service.
+    1. Port-forward the service.
 
         ```
         kubectl port-forward svc/kustomize-example 8080:80
@@ -196,7 +351,17 @@
         helm install helm-example ./helm-example
         ```
 
+    1. Port-forward the service.
 
+        ```
+        kubectl port-forward svc/helm-example 8080:80
+        ```
+
+    1. Check `GET`
+
+        ```
+        curl localhost:8080/users/1
+        ```
 
 ## References
 

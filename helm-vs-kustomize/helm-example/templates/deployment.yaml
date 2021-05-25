@@ -22,11 +22,11 @@ spec:
               name: nginx-conf
               subPath: nginx.conf
           ports:
-            - containerPort: 80
-              name: http
+            - name: http
+              containerPort: 80
 
         - name: uwsgi
-          image: "{{ .Values.uwsgi.image.repository }}:{{ .Values.uwsgi.image.tag | default "latest" }}"
+          image: "{{ .Values.uwsgi.image.repository }}:{{ .Values.uwsgi.image.tag | default .Chart.AppVersion }}"
           envFrom:
             - configMapRef:
                 name: {{ include "helm-example.fullname" . }}-uwsgi

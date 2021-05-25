@@ -13,7 +13,7 @@ nginx:
 uwsgi:
   image:
     repository: nakamasato/flask-test
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     tag: ""
 
 service:
