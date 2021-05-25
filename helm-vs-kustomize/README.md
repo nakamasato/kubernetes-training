@@ -156,6 +156,8 @@
 
 ## Kustomize
 
+### Steps to create yaml for multiple envs
+
 1. Make a directory
 
     ```
@@ -314,28 +316,35 @@
         kubectl apply -k kustomize-example/overlays/prod
         ```
 
-## Example (web app with mysql)
+## Example 1 (web app with mysql)
 
 [](example-diagram.drawio.svg)
 
 1. Deploy dependencies.
 
     ```
-    kubectl create ns database; kubectl apply -f dependencies/mysql.yaml -n database
+    kubectl create ns database; kubectl apply -k dependencies/mysql
     ```
 
 1. Set up with `kustomize`
 
-    1. Deploy `kustomize-example`
+    1. Create `Namespace`s.
 
         ```
-        kubectl apply -f kustomize-example/base
+        kubectl apply -f kustomize-example/ns-kustomize-dev.yaml,kustomize-example/ns-kustomize-prod.yaml
+        ```
+
+    1. Deploy `kustomize-example`.
+
+        ```
+        kubectl apply -k kustomize-example/overlays/dev
+        kubectl apply -k kustomize-example/overlays/prod
         ```
 
     1. Port-forward the service.
 
         ```
-        kubectl port-forward svc/kustomize-example 8080:80
+        kubectl port-forward svc/kustomize-example 8080:80 -n <namespace>
         ```
 
     1. Check the application functionality.
@@ -348,13 +357,14 @@
 
     1. Install Helm chart.
         ```
-        helm install helm-example ./helm-example
+        helm install helm-example nakamasato/helm-example -n helm-dev --create-namespace
+        helm install helm-example nakamasato/helm-example -n helm-prod --create-namespace
         ```
 
     1. Port-forward the service.
 
         ```
-        kubectl port-forward svc/helm-example 8080:80
+        kubectl port-forward svc/helm-example 8080:80 -n <namespace>
         ```
 
     1. Check `GET`
@@ -362,6 +372,35 @@
         ```
         curl localhost:8080/users/1
         ```
+
+1. Update image.
+
+    1. `helm`
+        - `helm upgrade --set nginx.image.tag=1.15.2 helm-example nakamasato/helm-example -n helm-dev`
+
+        or
+
+        - Prepare `values-prod.yaml`
+        - Apply
+
+            ```
+            helm upgrade -f values-prod.yaml helm-example nakamasato/helm-example -n helm-prod
+            ```
+
+    1. `kustomize`
+        - Add the following code to `kustomize-example/overlays/prod/kustomization.yaml`
+
+            ```yaml
+            images:
+              - name: nginx
+                newName: nginx
+                newTag: 1.15.2
+            ```
+        - Apply
+
+            ```
+            kubectl apply -k kustomize-example/overlays/prod
+            ```
 
 ## References
 
