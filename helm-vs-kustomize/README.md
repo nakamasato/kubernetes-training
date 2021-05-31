@@ -10,13 +10,19 @@
 
 ### Steps to create a chart
 
+1. Create directory for practice `helm-example` and move into the new directory.
+
+    ```
+    mkdir helm-example && cd helm-example
+    ```
+
 1. Create helm. -> would generate a folder `helm-example` and files in it.
 
     ```
     helm create helm-example
     ```
 
-1. Go into the directory `helm-example` and check the generated files.
+1. Go into the directory `helm-example` (a directory for chart) and check the generated files.
 
     ```
     cd helm-example
@@ -72,6 +78,7 @@
 1. Check with `--dry-run`.
 
     ```
+    cd ..
     helm install helm-example --debug --dry-run ./helm-example
     ```
 
@@ -158,7 +165,7 @@
 
 ### Steps to create yaml for multiple envs
 
-1. Make a directory
+1. Make a directory for two envs (`dev` and `prod`)
 
     ```
     mkdir -p kustomize-example/{base,overlays/dev,overlays/prod} && cd kustomize-example
@@ -401,6 +408,9 @@
             ```
             kubectl apply -k kustomize-example/overlays/prod
             ```
+
+## ArgoCD
+
 
 ## References
 
