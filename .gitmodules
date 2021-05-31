@@ -1,3 +1,3 @@
 [submodule "autoscaler/hpa/custom-metrics/k8s-prom-hpa"]
 	path = autoscaler/hpa/custom-metrics/k8s-prom-hpa
-	url = git@github.com:stefanprodan/k8s-prom-hpa.git
+	url = https://github.com/stefanprodan/k8s-prom-hpa.git

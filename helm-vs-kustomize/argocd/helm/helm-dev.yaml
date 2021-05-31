@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-example-dev
+  namespace: helm-dev
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: helm
+
+  source:
+    helm:
+      releaseName: helm-example-managed-by-argocd
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helm-dev
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    validate: true

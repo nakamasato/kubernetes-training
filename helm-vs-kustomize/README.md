@@ -411,6 +411,29 @@
 
 ## ArgoCD
 
+Version: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
+
+```
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.0.3/manifests/install.yaml
+```
+
+1. Deploy with Kustomize
+
+    1. Namespace
+
+        ```
+        kubectl apply -f kustomize-example/ns-kustomize-dev.yaml,kustomize-example/ns-kustomize-prod.yaml
+        ```
+
+    1. Apply dev
+
+        ```
+        kubectl apply -f argocd/kustomize
+        ```
+
+
+
 
 ## References
 
