@@ -1,11 +1,5 @@
 # Helm vs Kustomize
 
-## Requirement
-
-- Deploy a web application with `Deployment`.
-- The web application needs to connect to `MySQL` which is given by `ConfigMap` and `Secret`.
-- The `Deployment` is exposed with `Service` with `NodePort`.
-
 ## Helm
 
 ### Steps to create a chart
@@ -165,7 +159,7 @@
 
 ### Steps to create yaml for multiple envs
 
-1. Make a directory for two envs (`dev` and `prod`)
+1. Make a directory for two envs (`dev`, `prod` or any necessary envs)
 
     ```
     mkdir -p kustomize-example/{base,overlays/dev,overlays/prod} && cd kustomize-example
@@ -186,29 +180,32 @@
 
 1. Add necessary resources to `base` folder.
 
-    1. Prepare `nginx.conf`.
 
-        Set `localhost:3031`, which is the endpoint of uwsgi in the same pod.
+    **Tips**: Generate `yaml` with `kubectl` with `--dry-run=client -o yaml`
 
-    1. Create `kustomization.yaml`.
+    Examples:
 
-        - Use `ConfigMapGenerator` for `kustomize-example-nginx` ConfigMap.
-        - Include all the resources (`deployment.yaml`, `configmap.yaml`, `secret.yaml`, `service.yaml`).
+    ```
+    kubectl create deployment kustomize-example --image nginx --replicas=1 --dry-run=client --output yaml > kustomize-example/base/deployment.yaml # need manual modification
+    ```
 
-    1. Generate `yaml` with `kubectl`
+    ```
+    kubectl create service clusterip kustomize-example --tcp=80:80 --dry-run=client --output yaml > kustomize-example/base/service.yaml
+    ```
 
-        ```
-        kubectl create deployment kustomize-example --image nginx --replicas=1 --dry-run=client --output yaml > kustomize-example/base/deployment.yaml # need manual modification
-        kubectl create service clusterip kustomize-example --tcp=80:80 --dry-run=client --output yaml > kustomize-example/base/service.yaml
-        kubectl create configmap kustomize-example-uwsgi --from-literal=MYSQL_HOST=mysql.database.svc.cluster.local --from-literal=MYSQL_USER=user --from-literal=MYSQL_PORT=3306 --from-literal=MYSQL_DATABASE=test --dry-run=client -o yaml > kustomize-example/base/configmap.yaml
-        kubectl create secret generic kustomize-example-uwsgi --from-literal=MYSQL_PASSWORD=password --dry-run=client -o yaml > kustomize-example/base/secret.yaml
-        ```
+    ```
+    kubectl create configmap kustomize-example-uwsgi --from-literal=MYSQL_HOST=mysql.database.svc.cluster.local --from-literal=MYSQL_USER=user --from-literal=MYSQL_PORT=3306 --from-literal=MYSQL_DATABASE=test --dry-run=client -o yaml > kustomize-example/base/configmap.yaml
+    ```
 
-    1. Modify `kustomize-example/base/deployment.yaml`.
+    ```
+    kubectl create secret generic kustomize-example-uwsgi --from-literal=MYSQL_PASSWORD=password --dry-run=client -o yaml > kustomize-example/base/secret.yaml
+    ```
 
-        - Make two containers (Add `uwsgi` container).
-        - Mount volume `kustomize-example-nginx` for `nginx.conf`.
-        - Configure environment variables using `kustomize-example-uwsgi` `ConfigMap` and `Secret`.
+1. Check if `base` is valid.
+
+    ```
+    kubectl apply -k kustomize-example/base --dry-run=client
+    ```
 
 
 1. Create `Namespace` `kustomize-dev` and `kustomize-prod`.
@@ -252,14 +249,18 @@
         - Add resource request/limit to prod.
         - Increase replicas for prod.
 
-        1. Add `patches` to `kustomize-example/overlays/prod/kustomization.yaml`
+        1. Add `patches` to `kustomize-example/overlays/prod/kustomization.yaml`.
+
+            Example:
 
             ```diff
             + patches:
             +  - deployment.yaml
             ```
 
-        1. Add `resources` to each container in `kustomize-example/overlays/prod/deployemnt.yaml`
+        1. Update resources to override `base`
+
+            Example: `kustomize-example/overlays/prod/deployemnt.yaml`
 
             ```diff
             +        resources:
@@ -271,57 +272,57 @@
             +            memory: "256Mi"
             ```
 
-    1. Apply overlays (`prod` in this case.).
+1. Apply overlays (`prod` in this case.).
 
-        ```
-        kubectl diff -k kustomize-example/overlays/prod
-        ```
+    ```
+    kubectl diff -k kustomize-example/overlays/prod
+    ```
 
-        ```diff
-        @@ -123,7 +141,7 @@
-        uid: 8a415db8-48c3-4a5b-831a-b70dd9adbf4c
-        spec:
-        progressDeadlineSeconds: 600
-        -  replicas: 1
-        +  replicas: 2
-        revisionHistoryLimit: 10
-        selector:
-            matchLabels:
-        @@ -143,7 +161,13 @@
-            - image: nginx
-                imagePullPolicy: Always
-                name: nginx
-        -        resources: {}
-        +        resources:
-        +          limits:
-        +            cpu: "1"
-        +            memory: 256Mi
-        +          requests:
-        +            cpu: 100m
-        +            memory: 256Mi
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                volumeMounts:
-        @@ -158,7 +182,13 @@
-                image: nakamasato/flask-test
-                imagePullPolicy: Always
-                name: uwsgi
-        -        resources: {}
-        +        resources:
-        +          limits:
-        +            cpu: "1"
-        +            memory: 256Mi
-        +          requests:
-        +            cpu: 100m
-        +            memory: 256Mi
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-            dnsPolicy: ClusterFirst
-        ```
+    ```diff
+    @@ -123,7 +141,7 @@
+    uid: 8a415db8-48c3-4a5b-831a-b70dd9adbf4c
+    spec:
+    progressDeadlineSeconds: 600
+    -  replicas: 1
+    +  replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+        matchLabels:
+    @@ -143,7 +161,13 @@
+        - image: nginx
+            imagePullPolicy: Always
+            name: nginx
+    -        resources: {}
+    +        resources:
+    +          limits:
+    +            cpu: "1"
+    +            memory: 256Mi
+    +          requests:
+    +            cpu: 100m
+    +            memory: 256Mi
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            volumeMounts:
+    @@ -158,7 +182,13 @@
+            image: nakamasato/flask-test
+            imagePullPolicy: Always
+            name: uwsgi
+    -        resources: {}
+    +        resources:
+    +          limits:
+    +            cpu: "1"
+    +            memory: 256Mi
+    +          requests:
+    +            cpu: 100m
+    +            memory: 256Mi
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+    ```
 
-        ```
-        kubectl apply -k kustomize-example/overlays/prod
-        ```
+    ```
+    kubectl apply -k kustomize-example/overlays/prod
+    ```
 
 ## Example 1 (web app with mysql)
 
@@ -418,7 +419,7 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.0.3/manifests/install.yaml
 ```
 
-1. Deploy with Kustomize
+1. Deploy using Kustomize
 
     1. Namespace
 
@@ -426,14 +427,21 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2
         kubectl apply -f kustomize-example/ns-kustomize-dev.yaml,kustomize-example/ns-kustomize-prod.yaml
         ```
 
-    1. Apply dev
+    1. Apply `ArgoProject`, dev and prod `Application`.
 
         ```
         kubectl apply -f argocd/kustomize
         ```
 
+1. Deploy using Helm
 
+    1. Apply `ArgoProject`, dev and prod `Application`.
 
+        ```
+        kubectl apply -f argocd/helm
+        ```
+
+![](argocd/argocd.png)
 
 ## References
 
