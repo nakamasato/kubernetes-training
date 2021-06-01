@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/nakamasato/kubernetes-training.git
-    targetRevision: helm-vs-kustomize
+    targetRevision: master
     path: helm-vs-kustomize/helm-example/helm-example
     helm:
       releaseName: helm-prod
