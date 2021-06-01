@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: helm
+
+  source:
+    repoURL: https://github.com/nakamasato/kubernetes-training.git
+    targetRevision: master
+    path: helm-vs-kustomize/helm-example/helm-example
+    helm:
+      releaseName: helm-dev
+      parameters:
+        - name: "controller.admissionWebhooks.enable"
+          value: "false"
+      valueFiles:
+        - values-dev.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helm-dev
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
