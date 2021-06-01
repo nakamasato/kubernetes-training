@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: helm-dev
+  name: helm-prod
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -13,16 +13,16 @@ spec:
     targetRevision: helm-vs-kustomize
     path: helm-vs-kustomize/helm-example/helm-example
     helm:
-      releaseName: helm-dev
+      releaseName: helm-prod
       parameters:
         - name: "controller.admissionWebhooks.enable"
           value: "false"
       valueFiles:
-        - values-dev.yaml
+        - values-prod.yaml
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: helm-dev
+    namespace: helm-prod
 
   syncPolicy:
     automated:
