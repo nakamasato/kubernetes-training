@@ -326,7 +326,7 @@
 
 ## Example 1 (web app with mysql)
 
-[](example-diagram.drawio.svg)
+![](example-diagram.drawio.svg)
 
 1. Deploy dependencies.
 
