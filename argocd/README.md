@@ -32,7 +32,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 ```
 
 - user: `admin`
-- password: `kubectl get po -n argocd | grep argocd-server | awk '{print $1}'`
+- password: `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 --decode` (v1.9.0 or later, there's a secret for initial admin password.)
 
 ![](img/argocd.png)
 
