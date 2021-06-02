@@ -14,9 +14,6 @@ spec:
     path: helm-vs-kustomize/helm-example/helm-example
     helm:
       releaseName: helm-dev
-      parameters:
-        - name: "controller.admissionWebhooks.enable"
-          value: "false"
       valueFiles:
         - values-dev.yaml
 
