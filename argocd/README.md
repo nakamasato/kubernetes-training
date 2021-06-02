@@ -2,11 +2,15 @@
 
 ## Version
 
-v1.6.0
+[v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
 ## Install
 
 ```
-kubectl apply -k argocd/setup
+kustomize build argocd/setup | kubectl apply -f -
+```
+
+```
+kubectl apply -k argocd/setup # after v1.21
 ```
 
 Check all the pods are running

@@ -3,9 +3,10 @@
 # Version
 
 - Kubernetes: 1.15
-- Helm: 3.5.4
+- kustomize: [v4.1.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.1.3)
+- Helm: [3.5.4](https://github.com/helm/helm/releases/tag/v3.5.4)
 - Traefik: v2.2
-- ArgoCD: v1.6.0
+- ArgoCD: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
 - Prometheus: v2.22.1
 - Grafana:
 - Strimzi: 0.18.0
