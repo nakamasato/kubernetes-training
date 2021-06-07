@@ -272,3 +272,5 @@ https://github.com/open-policy-agent/conftest
     ![](argocd/img/argocd-by-argocd.png)
 
 For more details: [argocd](argocd)
+
+# Practice N: Controller
