@@ -1,5 +1,6 @@
 # Open Policy Agent
 
+
 ## Getting Started
 
 ```
@@ -76,64 +77,65 @@ https://github.com/open-policy-agent/gatekeeper
 
 1. Install
 
-```
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml
-namespace/gatekeeper-system created
-customresourcedefinition.apiextensions.k8s.io/configs.config.gatekeeper.sh created
-customresourcedefinition.apiextensions.k8s.io/constrainttemplates.templates.gatekeeper.sh created
-serviceaccount/gatekeeper-admin created
-role.rbac.authorization.k8s.io/gatekeeper-manager-role created
-clusterrole.rbac.authorization.k8s.io/gatekeeper-manager-role created
-rolebinding.rbac.authorization.k8s.io/gatekeeper-manager-rolebinding created
-clusterrolebinding.rbac.authorization.k8s.io/gatekeeper-manager-rolebinding created
-secret/gatekeeper-webhook-server-cert created
-service/gatekeeper-webhook-service created
-deployment.apps/gatekeeper-audit created
-deployment.apps/gatekeeper-controller-manager created
-validatingwebhookconfiguration.admissionregistration.k8s.io/gatekeeper-validating-webhook-configuration created
-```
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml
+    namespace/gatekeeper-system created
+    customresourcedefinition.apiextensions.k8s.io/configs.config.gatekeeper.sh created
+    customresourcedefinition.apiextensions.k8s.io/constrainttemplates.templates.gatekeeper.sh created
+    serviceaccount/gatekeeper-admin created
+    role.rbac.authorization.k8s.io/gatekeeper-manager-role created
+    clusterrole.rbac.authorization.k8s.io/gatekeeper-manager-role created
+    rolebinding.rbac.authorization.k8s.io/gatekeeper-manager-rolebinding created
+    clusterrolebinding.rbac.authorization.k8s.io/gatekeeper-manager-rolebinding created
+    secret/gatekeeper-webhook-server-cert created
+    service/gatekeeper-webhook-service created
+    deployment.apps/gatekeeper-audit created
+    deployment.apps/gatekeeper-controller-manager created
+    validatingwebhookconfiguration.admissionregistration.k8s.io/gatekeeper-validating-webhook-configuration created
+    ```
 
 1. Install `ConstraintTemplate` (CRD) to require `label`
 
-```
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/demo/basic/templates/k8srequiredlabels_template.yaml
-constrainttemplate.templates.gatekeeper.sh/k8srequiredlabels created
-```
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/demo/basic/templates/k8srequiredlabels_template.yaml
+    constrainttemplate.templates.gatekeeper.sh/k8srequiredlabels created
+    ```
 
-```
-○ kubectl get ConstraintTemplate
+    ```
+    ○ kubectl get ConstraintTemplate
 
-NAME                AGE
-k8srequiredlabels   45s
-```
+    NAME                AGE
+    k8srequiredlabels   45s
+    ```
 
 1. Create `Constraint`
 
-```
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/demo/basic/constraints/all_ns_must_have_gatekeeper.yaml
-k8srequiredlabels.constraints.gatekeeper.sh/ns-must-have-gk created
-```
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/demo/basic/constraints/all_ns_must_have_gatekeeper.yaml
+    k8srequiredlabels.constraints.gatekeeper.sh/ns-must-have-gk created
+    ```
 
-```
-kubectl get K8sRequiredLabels
+    ```
+    kubectl get K8sRequiredLabels
 
-NAME              AGE
-ns-must-have-gk   75s
-```
+    NAME              AGE
+    ns-must-have-gk   75s
+    ```
 
 1. Check
 
-```
-[20-08-05 23:34:43] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/open-policy-agent on postgres-operator ✘
-± kubectl apply -f gatekeeper/examples/valid-namespace.yaml --dry-run=server
-namespace/valid-namespace created (server dry run)
+    ```
+    [20-08-05 23:34:43] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/open-policy-agent on postgres-operator ✘
+    ± kubectl apply -f gatekeeper/examples/valid-namespace.yaml --dry-run=server
+    namespace/valid-namespace created (server dry run)
 
-[20-08-05 23:35:14] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/open-policy-agent on postgres-operator ✘
-± kubectl apply -f gatekeeper/examples/invalid-namespace.yaml --dry-run=server
-Error from server ([denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}): error when creating "gatekeeper/invalid-namespace.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
-```
+    [20-08-05 23:35:14] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/open-policy-agent on postgres-operator ✘
+    ± kubectl apply -f gatekeeper/examples/invalid-namespace.yaml --dry-run=server
+    Error from server ([denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}): error when creating "gatekeeper/invalid-namespace.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
+    ```
 
-## Example 1: Require namespace to have label
+### Example
+#### Example 1: Require namespace to have label
 
 ```
 kubectl apply -f gatekeeper/require-labels/k8srequiredlabels.yaml
@@ -148,7 +150,7 @@ Error from server ([denied by ns-must-have-gk] you must provide labels: {"gateke
 kubectl delete -f gatekeeper/require-labels
 ```
 
-## Example 2: Require each pod to have resource
+#### Example 2: Require each pod to have resource
 
 1. Apply `ConstraintTemplate` and `RequireResource`
 
@@ -186,7 +188,7 @@ kubectl delete -f gatekeeper/require-labels
     ReplicaSet "busybox-without-resource-56c8cf4569" has timed out progressing.
     ```
 
-## How to develop your own policy
+### How to develop your own policy
 
 1. Apply deny all `ConstraintTemplate` and `K8sDenyAll`
 
