@@ -252,7 +252,7 @@ Rules:
 - [x] Containers must not run as root
 - [x] Containers must provide app label for pod selector
 - [x] Deployment must have nodeSelector
-- [ ] nodeSelector must use key `nodegroup`
+- [x] nodeSelector must use key `nodegroup`
 - [ ] nodeSelector must use one of the followings `dev`, `staging` and `prod`
 
 1. Check valid deployment
