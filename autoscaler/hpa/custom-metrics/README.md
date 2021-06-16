@@ -135,8 +135,8 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
 
 ## 6. Create HPA with custom metrics
 
-1. Collects metrics from your applications. (Prometheus)
-1. Extends the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
+1. Collect metrics from your applications. (Already done by Prometheus)
+1. Extend the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
 
     Generate secrets
 
@@ -264,7 +264,7 @@ kubectl delete ns monitoring
 - [ ] [Shutdown RabbitMQ consumer gracefully](https://kiritox.me/archives/shutdown-rabbitmq-consumer-gracefully.html)
 - [ ] [Issue] Too fast to scale out.
 - [ ] Scale down to zero.
-  - Actually Kubernetes supports the scaling to zero only by means of an API call, since the Horizontal Pod Autoscaler does support scaling down to 1 replica only. (https://stackoverflow.com/questions/61596711/in-kubernetes-how-can-i-scale-a-deployment-to-zero-when-idle#:~:text=Actually%20Kubernetes%20supports%20the%20scaling,or%20by%20inspecting%20some%20metrics.)
+  - Actually Kubernetes supports the scaling to zero only by means of an API call, since the Horizontal Pod Autoscaler does support scaling down to 1 replica only. ([In Kubernetes, how can I scale a Deployment to zero when idle](https://stackoverflow.com/questions/61596711/in-kubernetes-how-can-i-scale-a-deployment-to-zero-when-idle#:~:text=Actually%20Kubernetes%20supports%20the%20scaling,or%20by%20inspecting%20some%20metrics).)
   - [zero-pod-autoscaler](https://github.com/greenkeytech/zero-pod-autoscaler)
   - [Allow HPA to scale to 0](https://github.com/kubernetes/kubernetes/issues/69687)
   - [Support scaling HPA to/from zero pods for object/external metrics](https://github.com/kubernetes/kubernetes/pull/74526)

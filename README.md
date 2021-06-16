@@ -319,3 +319,89 @@ https://github.com/open-policy-agent/conftest
     ![](argocd/img/argocd-by-argocd.png)
 
 For more details: [argocd](argocd)
+
+# Practice 7: Horizontal Pod Autoscaler (HPA) (basic)
+
+1. Install metrics-server
+
+    ```
+    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    ```
+
+1. Apply an apache application
+
+    ```
+    kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
+    ```
+
+1. Set autoscale by kubectl
+
+    ```
+    kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+    ```
+
+1. Increase load -> confirm HPA is working
+
+    ```
+    kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+    ```
+
+    ```
+    kubectl get hpa
+
+    NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+    php-apache   Deployment/php-apache   76%/50%   1         10        7          4m10s
+    ```
+
+# Practice 8: HPA with custom metrics (advanced)
+
+[autoscaler/hpa/custom-metrics]()
+
+Steps:
+
+1. Prometheus Operator:
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    ```
+1. Prometheus:
+    ```
+    kubectl create ns monitoring; kubectl apply -k prometheus-operator -n monitoring
+    ```
+1. RabbitMQ Operator:
+    ```
+    kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
+    ````
+1. RabbitMQ:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/rabbitmq-cluster.yaml
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/pod-monitor-rabbitmq.yaml
+    ```
+1. RabbitMQ producer:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-producer-cronjob.yaml
+    ```
+1. RabbitMQ consumer:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-deployment.yaml
+    ```
+1. Prometheus-Adapter: Extend the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
+    ```
+    cd autoscaler/hpa/custom-metrics/k8s-prom-hpa
+    touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
+    make certs
+    cd -
+    kubectl create -f autoscaler/hpa/custom-metrics/k8s-prom-hpa/custom-metrics-api
+    ```
+1. Apply HPA
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-hpa.yaml
+    ```
+
+![](autoscaler/hpa/custom-metrics/diagram.drawio.svg)
+
+# Practice 9: Set up Kubernetes Cluster with kubeadm (local)
+
+[kubeadm-local]()
+# Practice 10: Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
+
+https://github.com/kelseyhightower/kubernetes-the-hard-way
