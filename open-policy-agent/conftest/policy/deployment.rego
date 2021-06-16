@@ -18,12 +18,35 @@ contains(array, elem) {
 
 deny[msg] {
   input.kind = "Deployment"
+  not input.spec.template.spec.nodeSelector
+  msg = "Deployment must have nodeSelector"
+}
+
+deny[msg] {
+  input.kind = "Deployment"
   not input.spec.template.spec.nodeSelector.nodegroup
   msg = "Deployment must have nodeSelector with nodegroup as a key"
 }
 
 deny[msg] {
   input.kind = "Deployment"
+  input.spec.template.spec.nodeSelector.nodegroup
+  not contains(["dev", "prod"], input.spec.template.spec.nodeSelector.nodegroup)
+  msg = "Deployment must have nodeSelector with nodegroup as a key and prod or dev as value"
+}
+
+deny[msg] {
+  input.kind = "Deployment"
+  input.metadata.namespace = "prod"
+  input.spec.template.spec.nodeSelector.nodegroup
   not input.spec.template.spec.nodeSelector.nodegroup = "prod"
-  msg = "Deployment must have nodeSelector with nodegroup as a key and prod as value"
+  msg = "nodegroup must be prod in prod namespace"
+}
+
+deny[msg] {
+  input.kind = "Deployment"
+  not input.metadata.namespace = "prod"
+  input.spec.template.spec.nodeSelector.nodegroup
+  not input.spec.template.spec.nodeSelector.nodegroup = "dev"
+  msg = "nodegroup must be dev in non-prod namespace"
 }
