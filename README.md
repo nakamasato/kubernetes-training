@@ -39,7 +39,8 @@
 - Yaml Management
     - [helm](helm)
     - [Helm vs Kustomize](helm-vs-kustomize)
-- CD
+- CI/CD
+    - [conftest](open-policy-agent/conftest)
     - [argocd](argocd)
 
 # Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
@@ -237,6 +238,52 @@ https://github.com/open-policy-agent/gatekeeper
 ## conftest
 
 https://github.com/open-policy-agent/conftest
+
+
+1. Write policy in `policy` directory.
+
+    ```rego
+    deny[msg] {
+      input.kind = "Deployment"
+      not input.spec.template.spec.nodeSelector
+      msg = "Deployment must have nodeSelector"
+    }
+    ```
+
+1. Write tests in the same directory.
+
+    ```rego
+    test_no_nodeSelector {
+      deny["Deployment must have nodeSelector"] with input as
+      {
+        "kind": "Deployment",
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+              ],
+            }
+          }
+        }
+      }
+    }
+    ```
+
+1. Run test.
+
+    ```
+    conftest verify
+
+    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
+    ```
+
+1. Validate a manifest file.
+
+    ```
+    conftest test manifests/valid/deployment.yaml
+
+    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
+    ```
 
 # Practice 6: ArgoCD
 

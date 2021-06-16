@@ -239,6 +239,50 @@ kubectl delete -f gatekeeper/require-labels
 
 https://github.com/open-policy-agent/conftest
 
+
+### Example
+
+    ```
+    cd conftest
+    ```
+
+#### Deployment
+
+Rules:
+- [x] Containers must not run as root
+- [x] Containers must provide app label for pod selector
+- [x] Deployment must have nodeSelector
+- [x] nodeSelector must use key `nodegroup`
+- [ ] nodeSelector must use one of the followings `dev`, `staging` and `prod`
+
+1. Check valid deployment
+
+    ```
+    conftest test manifests/valid/deployment.yaml
+
+    3 tests, 3 passed, 0 warnings, 0 failures, 0 exceptions
+    ```
+
+1. Check invalid deployment
+
+    ```
+    conftest test manifests/invalid/deployment.yaml
+    FAIL - manifests/invalid/deployment.yaml - Containers must not run as root
+    FAIL - manifests/invalid/deployment.yaml - Containers must provide app label for pod selectors
+    FAIL - manifests/invalid/deployment.yaml - Deployment should have nodeSelector
+
+    3 tests, 0 passed, 0 warnings, 3 failures, 0 exceptions
+    ```
+
+1. Test the policy
+
+  ```
+  conftest verify
+  ```
+
+- https://hack.nikkei.com/blog/advent20201224/
+- https://qiita.com/tkusumi/items/3f7157d180a932b277d4
+
 # FAQ
 
 1. Run on GKE
