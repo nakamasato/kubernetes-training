@@ -6,11 +6,12 @@ on:
       - opened
       - synchronize
       - reopened
+
     paths-ignore:
       - "**.md"
       - "**.svg"
       - ".github/**"
-      - "!.github/workflows/k8s-diff.yaml"
+      - "!.github/workflows/conftest.yaml"
 
 jobs:
   conftest:
