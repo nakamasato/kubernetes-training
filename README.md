@@ -3,15 +3,16 @@
 # Version
 
 - Kubernetes: 1.15
-- kustomize: [v4.1.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.1.3)
-- Helm: [3.5.4](https://github.com/helm/helm/releases/tag/v3.5.4)
+- kustomize: [v4.1.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.1.3) (released on 2021-05-21)
+- Helm: [3.5.4](https://github.com/helm/helm/releases/tag/v3.5.4) (released on 2021-04-15)
 - Traefik: v2.2
-- ArgoCD: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
+- ArgoCD: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3) (released on 2021-05-28)
 - Prometheus: v2.22.1
 - Grafana:
 - Strimzi: 0.18.0
 - Kind: v0.10.0
 - Ingress Nginx Controller: v0.32.0
+- Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
 
 # Contents
 

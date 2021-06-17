@@ -1,0 +1,27 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  name: hello
+  namespace: prod
+spec:
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+      name: hello
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+          - image: nginx
+            name: hello
+            resources: {}
+          securityContext:
+            runAsNonRoot: true
+          restartPolicy: OnFailure
+          nodeSelector:
+            nodegroup: prod
+  schedule: 0/5 * * * ?
+status: {}
