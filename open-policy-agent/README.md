@@ -255,41 +255,48 @@ Rules:
 - [x] Containers must provide app label for pod selector
 - [x] Deployment must have nodeSelector
 - [x] nodeSelector must use key `nodegroup`
-- [ ] nodeSelector must use one of the followings `dev`, `staging` and `prod`
+- [x] nodeSelector must use one of the followings `dev` and `prod`
 
 1. Check valid deployment
 
     ```
-    conftest test manifests/valid/deployment.yaml
+    conftest test conftest/manifests/valid/deployment.yaml --policy conftest/policy
 
-    3 tests, 3 passed, 0 warnings, 0 failures, 0 exceptions
+    7 tests, 7 passed, 0 warnings, 0 failures, 0 exceptions
     ```
 
 1. Check invalid deployment
 
     ```
-    conftest test manifests/invalid/deployment.yaml
-    FAIL - manifests/invalid/deployment.yaml - Containers must not run as root
-    FAIL - manifests/invalid/deployment.yaml - Containers must provide app label for pod selectors
-    FAIL - manifests/invalid/deployment.yaml - Deployment should have nodeSelector
+    conftest test conftest/manifests/invalid/deployment.yaml --policy conftest/policy
+    FAIL - conftest/manifests/invalid/deployment.yaml - Containers must not run as root
+    FAIL - conftest/manifests/invalid/deployment.yaml - Containers must provide app label for pod selectors
+    FAIL - conftest/manifests/invalid/deployment.yaml - Deployment must have nodeSelector with nodegroup as a key
 
-    3 tests, 0 passed, 0 warnings, 3 failures, 0 exceptions
+    7 tests, 4 passed, 0 warnings, 3 failures, 0 exceptions
     ```
 
 1. Test the policy
 
-  ```
-  conftest verify
-  ```
+    ```
+    conftest verify --policy conftest/policy
+
+    7 tests, 7 passed, 0 warnings, 0 failures, 0 exceptions
+    ```
 
 - https://hack.nikkei.com/blog/advent20201224/
 - https://qiita.com/tkusumi/items/3f7157d180a932b277d4
 ## konstraints
 
+Prerequisite
+
+- https://golang.org/doc/install
+
 Install
 
 ```
-GO111MODULE=on go get github.com/plexsystems/konstraint
+export PATH=/usr/local/go/bin:$PATH
+go install github.com/plexsystems/konstraint@latest
 ```
 
 
