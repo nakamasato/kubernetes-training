@@ -142,6 +142,10 @@ kubectl create ns naka
 Error from server ([denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
 [denied by ns-must-have-hr] you must provide labels: {"hr"}): admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-have-gk] you must provide labels: {"gatekeeper"}
 [denied by ns-must-have-hr] you must provide labels: {"hr"}
+kubectl apply -f gatekeeper/require-prefix/k8srequiredprefix.yaml
+kubectl apply -f gatekeeper/require-prefix/k8srequiredprefix-ns.yaml
+kubectl create ns naka
+Error from server ([denied by ns-must-start-with-prefix] you must provide prefix: dev, provided: naka): admission webhook "validation.gatekeeper.sh" denied the request: [denied by ns-must-start-with-prefix] you must provide prefix: dev, provided: naka
 ```
 
 ```
@@ -282,6 +286,18 @@ Rules:
 
 - https://hack.nikkei.com/blog/advent20201224/
 - https://qiita.com/tkusumi/items/3f7157d180a932b277d4
+install
+
+```
+brew tap instrumenta/instrumenta
+brew install conftest
+```
+
+```
+conftest test manifest/deployment.yaml
+
+2 tests, 2 passed, 0 warnings, 0 failures, 0 exceptions
+```
 
 # FAQ
 
@@ -302,5 +318,8 @@ https://github.com/open-policy-agent/gatekeeper#running-on-private-gke-cluster-n
 
   - 1.17 ([Platform versions](https://docs.aws.amazon.com/eks/latest/userguide/platform-versions.html)): `NamespaceLifecycle, LimitRanger, ServiceAccount, DefaultStorageClass, ResourceQuota, DefaultTolerationSeconds, NodeRestriction, MutatingAdmissionWebhook, ValidatingAdmissionWebhook, PodSecurityPolicy, TaintNodesByCondition, Priority, StorageObjectInUseProtection, PersistentVolumeClaimResize`
 
+
 - [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
 - [Integrating Open Policy Agent (OPA) With Kubernetes](https://www.magalix.com/blog/integrating-open-policy-agent-opa-with-kubernetes-a-deep-dive-tutorial)
+- [USING OPEN POLICY AGENT (OPA) FOR POLICY-BASED CONTROL IN EKS](https://www.eksworkshop.com/intermediate/310_open_policy_agent/)
+- [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
