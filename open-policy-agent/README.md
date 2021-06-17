@@ -243,6 +243,12 @@ kubectl delete -f gatekeeper/require-labels
 
 https://github.com/open-policy-agent/conftest
 
+install
+
+```
+brew tap instrumenta/instrumenta
+brew install conftest
+```
 
 ### Example
 
@@ -286,18 +292,6 @@ Rules:
 
 - https://hack.nikkei.com/blog/advent20201224/
 - https://qiita.com/tkusumi/items/3f7157d180a932b277d4
-install
-
-```
-brew tap instrumenta/instrumenta
-brew install conftest
-```
-
-```
-conftest test manifest/deployment.yaml
-
-2 tests, 2 passed, 0 warnings, 0 failures, 0 exceptions
-```
 
 # FAQ
 
