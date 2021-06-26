@@ -4,14 +4,8 @@
 
 https://eksworkshop.com/scaling/deploy_ca/
 
-
-## add autoscaling policy to worker node group
-
-eks-worker-node-iam-cluster-autoscaler.tf (in aws/eks/)
-
-```
-terraform plan
-```
+## Prerequisite
+- add autoscaling policy to worker node group
 
 ## apply autoscaling yaml
 
