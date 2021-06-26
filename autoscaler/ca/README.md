@@ -2,17 +2,44 @@
 
 ## Reference
 
-https://eksworkshop.com/scaling/deploy_ca/
+- AWS: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md
 
 ## Prerequisite
-- add autoscaling policy to worker node group
+AWS:
+    - Need the following policy:
 
-## apply autoscaling yaml
+        ```json
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "autoscaling:DescribeAutoScalingGroups",
+                        "autoscaling:DescribeAutoScalingInstances",
+                        "autoscaling:DescribeLaunchConfigurations",
+                        "autoscaling:SetDesiredCapacity",
+                        "autoscaling:TerminateInstanceInAutoScalingGroup"
+                    ],
+                    "Resource": ["*"]
+                }
+            ]
+        }
+        ```
+    - Need one of the followings to grant the permission to cluster-autoscaler:
+        - Add the policy to an IAM role and grant the permission to `ServiceAccount` (EKS)
+        - Add the policy to an IAM user and set the access key and secret key in `Secret`
+    - Auto-discovery:
+        - Worker nodes need specific tag: `k8s.io/cluster-autoscaler/enabled: true`
+        - args of cluster-autoscaler:  `--node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<cluster-name>`
 
-```
-kubectl apply -f cluster_autoscaler.yaml -n kube-system
-```
+## Install Cluster Autoscaler
 
+AWS:
+
+    ```
+    kubectl apply -k autoscaler/ca/aws/
+    ```
 
 ## test app
 
