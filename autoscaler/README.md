@@ -2,8 +2,8 @@
 
 ## Overview
 
-1. Cluster Autoscaler (CA)
-1. Horizontal Pod Autoscaler (HPA)
+1. Cluster Autoscaler (CA) [ca](ca)
+1. Horizontal Pod Autoscaler (HPA) [hpa](hpa)
 1. Virtical Pod Autoscaler (VPA)
 
 ## Details
