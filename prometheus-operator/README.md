@@ -47,8 +47,8 @@ Official:
           kubeconfig_file: ""
           follow_redirects: true
           namespaces:
-          names:
-          - default
+            names:
+            - default
         ```
 
 1. Deploy example application with PodMonitor.
@@ -69,8 +69,8 @@ Official:
           kubeconfig_file: ""
           follow_redirects: true
           namespaces:
-          names:
-          - default
+            names:
+            - default
         ```
 
 ## Important Configurations
