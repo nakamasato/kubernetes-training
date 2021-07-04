@@ -5,7 +5,7 @@ metadata:
   labels:
     app: prometheus
 spec:
-  image: quay.io/prometheus/prometheus:v2.22.1
+  image: quay.io/prometheus/prometheus:v2.28.1
   replicas: 2
   resources:
     requests:
@@ -15,7 +15,7 @@ spec:
     runAsNonRoot: true
     runAsUser: 1000
   serviceAccountName: prometheus
-  version: v2.22.1
+  version: v2.28.1
   serviceMonitorSelector: {}
   podMonitorSelector: {}
   serviceMonitorNamespaceSelector: {}

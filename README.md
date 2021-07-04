@@ -7,7 +7,8 @@
 - Helm: [3.5.4](https://github.com/helm/helm/releases/tag/v3.5.4) (released on 2021-04-15)
 - Traefik: v2.2
 - ArgoCD: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3) (released on 2021-05-28)
-- Prometheus: v2.22.1
+- Prometheus-Operator: [v0.48.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.48.1) (released on 2021-06-01)
+- Prometheus: [v2.28.1](https://github.com/prometheus/prometheus/releases/tag/v2.28.1) (released on 2021-07-01)
 - Grafana:
 - Strimzi: 0.18.0
 - Kind: v0.10.0
