@@ -18,3 +18,5 @@ spec:
   version: v2.22.1
   serviceMonitorSelector: {}
   podMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {}
+  podMonitorNamespaceSelector: {}
