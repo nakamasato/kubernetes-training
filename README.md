@@ -45,7 +45,8 @@
     - [conftest](open-policy-agent/conftest)
     - [argocd](argocd)
 
-# Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
+# Practice
+## Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
 
 1. Create namespace
 
@@ -77,7 +78,7 @@
     helm install -n eck filebeat elastic/filebeat --version 7.8.1 -f helm/filebeat-config.yaml
     ```
 
-# Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
+## Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
 
 - Kafka
 
@@ -119,7 +120,7 @@ kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                       
 
 </details>
 
-# Practice 3: Install Prometheus & Grafana with kube-prometheus
+## Practice 3: Install Prometheus & Grafana with kube-prometheus
 
 - Prometheus & Grafana
 
@@ -192,7 +193,7 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 </details>
 
-# Practice 4: Kafka exporter & MirrorMaker2
+## Practice 4: Kafka exporter & MirrorMaker2
 
 
 1. Enable the cluster operator to watch the other namespace
@@ -220,11 +221,11 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 ![](strimzi/docs/kafka-mirror-maker-2.drawio.svg)
 
-# Practice 5: Open Policy Agent
+## Practice 5: Open Policy Agent
 
 [open-policy-agent]()
 
-## gatekeeper
+### gatekeeper
 
 https://github.com/open-policy-agent/gatekeeper
 
@@ -237,7 +238,7 @@ https://github.com/open-policy-agent/gatekeeper
 1. Create `ConstraintTemplate`
 1. Create custom policy defined in the previous step.
 
-## conftest
+### conftest
 
 https://github.com/open-policy-agent/conftest
 
@@ -287,7 +288,7 @@ https://github.com/open-policy-agent/conftest
     1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
     ```
 
-# Practice 6: ArgoCD
+## Practice 6: [CI/CD] ArgoCD
 
 1. Deploy argocd
 
@@ -322,7 +323,7 @@ https://github.com/open-policy-agent/conftest
 
 For more details: [argocd](argocd)
 
-# Practice 7: Horizontal Pod Autoscaler (HPA) (basic)
+## Practice 7: Horizontal Pod Autoscaler (HPA) (basic)
 
 1. Install metrics-server
 
@@ -355,7 +356,7 @@ For more details: [argocd](argocd)
     php-apache   Deployment/php-apache   76%/50%   1         10        7          4m10s
     ```
 
-# Practice 8: HPA with custom metrics (advanced)
+## Practice 8: HPA with custom metrics (advanced)
 
 [autoscaler/hpa/custom-metrics]()
 
@@ -401,9 +402,27 @@ Steps:
 
 ![](autoscaler/hpa/custom-metrics/diagram.drawio.svg)
 
-# Practice 9: Set up Kubernetes Cluster with kubeadm (local)
+## Practice 9: Set up Kubernetes Cluster with kubeadm (local)
 
 [kubeadm-local]()
-# Practice 10: Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
+## Practice 10: Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
 
 https://github.com/kelseyhightower/kubernetes-the-hard-way
+
+
+# Cloud Native Trail Map
+
+- https://github.com/cncf/trailmap
+- https://www.cncf.io/blog/2018/03/08/introducing-the-cloud-native-landscape-2-0-interactive-edition/
+
+## 1. CONTAINERIZATION
+
+## 2. CI/CD
+
+## 3. ORCHESTRATION & APPLICATION DEFINITION
+
+## 4. OBSERVABILITY & ANALYTICS
+
+### 4.1. Monitor application with Prometheus
+
+![](prometheus-operator/diagram.drawio.svg)
