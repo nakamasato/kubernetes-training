@@ -6,7 +6,11 @@ Official:
 
 ## Overview
 
-![](diagram.drawio.svg)
+### Prometheus Operator
+![](prometheus-operator.drawio.svg)
+
+### Prometheus
+![](prometheus.drawio.svg)
 
 ## Basic Usage
 
