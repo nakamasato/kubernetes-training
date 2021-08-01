@@ -6,7 +6,7 @@
 - kustomize: [v4.1.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.1.3) (released on 2021-05-21)
 - Helm: [3.5.4](https://github.com/helm/helm/releases/tag/v3.5.4) (released on 2021-04-15)
 - Traefik: v2.2
-- ArgoCD: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3) (released on 2021-05-28)
+- ArgoCD: [v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1) (released on 2021-07-29)
 - Prometheus-Operator: [v0.48.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.48.1) (released on 2021-06-01)
 - Prometheus: [v2.28.1](https://github.com/prometheus/prometheus/releases/tag/v2.28.1) (released on 2021-07-01)
 - Grafana:

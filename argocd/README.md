@@ -2,20 +2,18 @@
 
 ## Version
 
-[v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
+[v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1)
 ## Install
 
-```
-kustomize build argocd/setup | kubectl apply -f -
-```
-
-```
-kubectl apply -k argocd/setup # after v1.21
+```bash
+kubectl create namespace argocd
+kubectl kustomize argocd/setup | kubectl apply -f - # before v1.21
+kubectl apply -k argocd/setup # v1.21 or later
 ```
 
 Check all the pods are running
 
-```
+```bash
 kubectl get pod -n argocd
 NAME                                             READY   STATUS    RESTARTS   AGE
 argocd-application-controller-74b8d7b888-5pcd6   1/1     Running   0          45s
@@ -27,7 +25,7 @@ argocd-server-78ffb87fd8-5rtb7                   1/1     Running   0          45
 
 ## Login
 
-```
+```bash
 kubectl -n argocd port-forward service/argocd-server 8080:80
 ```
 
@@ -43,13 +41,13 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 
 1. Deploy application with ArgoCD
 
-    ```
+    ```bash
     kubectl apply -f argocd/project/dev
     ```
 
 1. Check in console
 
-    ```
+    ```bash
     kubectl get pod -n dev
     NAME                                          READY   STATUS    RESTARTS   AGE
     dev-kustomize-guestbook-ui-7574c75879-6cfnq   1/1     Running   0          95s
@@ -61,7 +59,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 
 ## Manage argocd by argocd
 
-```
+```bash
 kubectl apply -f argocd/project/argocd
 ```
 
@@ -69,7 +67,7 @@ kubectl apply -f argocd/project/argocd
 
 ## Clean up
 
-```
+```bash
 kubectl delete -f argocd/project/dev
 kubectl delete -k argocd/setup
 kubectl delete ns dev
