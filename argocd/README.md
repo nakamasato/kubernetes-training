@@ -1,8 +1,10 @@
 # ArgoCD
 
+- Github: https://github.com/argoproj/argo-cd
+- Docs: https://argo-cd.readthedocs.io/en/stable/
 ## Version
 
-[v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1)
+- [v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1)
 ## Install
 
 ```bash
@@ -60,7 +62,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 ## Manage argocd by argocd
 
 ```bash
-kubectl apply -f argocd/project/argocd
+kubectl apply -f argocd/project/argocd{project.yaml,app-argocd.yaml}
 ```
 
 ![](img/argocd-by-argocd.png)
@@ -72,3 +74,41 @@ kubectl delete -f argocd/project/dev
 kubectl delete -k argocd/setup
 kubectl delete ns dev
 ```
+
+# ArgoCD Notifications
+
+Github: https://github.com/argoproj-labs/argocd-notifications
+Docs: https://argocd-notifications.readthedocs.io/en/stable/
+
+## Version
+
+- [v1.1.1](https://github.com/argoproj-labs/argocd-notifications/releases/tag/v1.1.1)
+
+
+## Install
+
+```bash
+kubectl apply -k argocd/setup-notifications/base
+```
+
+## Manage by ArgoCD
+
+```bash
+kubectl apply -f argocd/project/argocd{project.yaml,app-argocd-notifications.yaml}
+```
+
+## Configure Slack Notification
+
+https://argocd-notifications.readthedocs.io/en/stable/services/slack/
+
+1. Create Slack Application with `chat:write:bot` permission.
+1. Get OAuth token.
+1. Create Slack channel (e.g. `#argocd-notifications`).
+1. Add your bot to this channel. (`/invite @<your-app-name>`)
+1. Create Secret `argocd-notifications-secret` (`setup-notifications/overlays/slack/argocd-notification-secret.yaml`)
+1. Use the OAuth token in `argocd-notifications-cm` (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
+1. Create a subscription for your Slack integration (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
+1. Apply
+    ```base
+    kubectl apply -k argocd/setup-notifications/overlays/slack
+    ```

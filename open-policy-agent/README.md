@@ -252,9 +252,9 @@ brew install conftest
 
 ### Example
 
-    ```
-    cd conftest
-    ```
+```
+cd conftest
+```
 
 #### Deployment
 
