@@ -41,13 +41,13 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 
 1. Deploy application with ArgoCD
 
-    ```
+    ```bash
     kubectl apply -f argocd/project/dev
     ```
 
 1. Check in console
 
-    ```
+    ```bash
     kubectl get pod -n dev
     NAME                                          READY   STATUS    RESTARTS   AGE
     dev-kustomize-guestbook-ui-7574c75879-6cfnq   1/1     Running   0          95s
@@ -59,7 +59,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 
 ## Manage argocd by argocd
 
-```
+```bash
 kubectl apply -f argocd/project/argocd
 ```
 
@@ -67,7 +67,7 @@ kubectl apply -f argocd/project/argocd
 
 ## Clean up
 
-```
+```bash
 kubectl delete -f argocd/project/dev
 kubectl delete -k argocd/setup
 kubectl delete ns dev
