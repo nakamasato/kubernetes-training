@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/nakamasato/kubernetes-training.git
     targetRevision: master
-    path: argocd/setup-notifications
+    path: argocd/setup-notifications/base
 
   destination:
     server: https://kubernetes.default.svc
