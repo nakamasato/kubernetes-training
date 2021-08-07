@@ -2,6 +2,7 @@
 
 - Github: https://github.com/argoproj/argo-cd
 - Docs: https://argo-cd.readthedocs.io/en/stable/
+- Icon: https://cncf-branding.netlify.app/projects/argo/
 ## Version
 
 - [v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1)
@@ -62,7 +63,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 ## Manage argocd by argocd
 
 ```bash
-kubectl apply -f argocd/project/argocd{project.yaml,app-argocd.yaml}
+kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-argocd.yaml
 ```
 
 ![](img/argocd-by-argocd.png)
@@ -72,13 +73,17 @@ kubectl apply -f argocd/project/argocd{project.yaml,app-argocd.yaml}
 ```bash
 kubectl delete -f argocd/project/dev
 kubectl delete -k argocd/setup
-kubectl delete ns dev
+kubectl delete ns argocd
 ```
 
 # ArgoCD Notifications
 
 Github: https://github.com/argoproj-labs/argocd-notifications
 Docs: https://argocd-notifications.readthedocs.io/en/stable/
+
+## Prerequisite
+
+ArgoCD is installed.
 
 ## Version
 
@@ -94,7 +99,7 @@ kubectl apply -k argocd/setup-notifications/base
 ## Manage by ArgoCD
 
 ```bash
-kubectl apply -f argocd/project/argocd{project.yaml,app-argocd-notifications.yaml}
+kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-argocd-notifications.yaml
 ```
 
 ## Configure Slack Notification
@@ -108,6 +113,11 @@ https://argocd-notifications.readthedocs.io/en/stable/services/slack/
 1. Create Secret `argocd-notifications-secret` (`setup-notifications/overlays/slack/argocd-notification-secret.yaml`)
 1. Use the OAuth token in `argocd-notifications-cm` (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
 1. Create a subscription for your Slack integration (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
+    - Optionally, you can set argo icon https://cncf-branding.netlify.app/projects/argo/ in your Slack workspace. (seems not working)
+    - Just writing ConfigMap doesn't work -> Added annotation in Application or Project (Subscribe to notifications by adding the notifications.argoproj.io/subscribe.on-sync-succeeded.slack annotation to the Argo CD application or project)
+        ```
+        kubectl patch app <my-app> -n argocd -p '{"metadata": {"annotations": {"notifications.argoproj.io/subscribe.on-sync-succeeded.slack":"<my-channel>"}}}' --type merge
+        ```
 1. Apply
     ```base
     kubectl apply -k argocd/setup-notifications/overlays/slack

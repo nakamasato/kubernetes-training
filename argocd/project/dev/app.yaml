@@ -3,15 +3,19 @@ kind: Application
 metadata:
   name: guestbook-kustomize-dev
   namespace: argocd
+  labels:
+    app: guestbook-ui
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: argocd-notifications-guestbook-ui
 spec:
   project: dev
 
   # Source of the application manifests
   source:
     repoURL: https://github.com/nakamasato/k8s-deploy-test.git
-    targetRevision: master
+    targetRevision: dev
     path: apps/guestbook-kustomize/overlays/dev
 
   # Destination cluster and namespace to deploy the application
