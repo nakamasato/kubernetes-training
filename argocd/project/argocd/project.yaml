@@ -3,6 +3,8 @@ kind: AppProject
 metadata:
   name: argocd
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io # not to delete AppProject before deleting its Applications
 spec:
   description: manage argocd by argocd
 
