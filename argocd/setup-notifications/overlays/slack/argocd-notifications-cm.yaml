@@ -6,7 +6,7 @@ data:
   # Contains centrally managed global application subscriptions
   context: |
     argocdUrl: localhost:8080
-    
+
   subscriptions: |
     # subscription for on-sync-status-unknown trigger notifications
     - recipients:
