@@ -50,6 +50,9 @@
 - https://github.com/cncf/trailmap
 - https://www.cncf.io/blog/2018/03/08/introducing-the-cloud-native-landscape-2-0-interactive-edition/
 
+![alt text](https://github.com/cncf/trailmap/blob/master/CNCF_TrailMap_latest.png?raw=true)
+
+
 ## 1. CONTAINERIZATION
 
 ## 2. CI/CD
