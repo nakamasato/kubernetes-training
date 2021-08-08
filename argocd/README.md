@@ -90,35 +90,72 @@ ArgoCD is installed.
 - [v1.1.1](https://github.com/argoproj-labs/argocd-notifications/releases/tag/v1.1.1)
 
 
-## Install
+## Manage by kustomize
 
-```bash
-kubectl apply -k argocd/setup-notifications/base
-```
+### Basic
 
-## Manage by ArgoCD
+1. Install
+
+    ```bash
+    kubectl apply -k argocd/setup-notifications/base
+    ```
+
+1. Clean up
+
+    ```
+    kubectl delete -k argocd/setup-notifications/base
+    ```
+
+### Manage by ArgoCD
+
 
 ```bash
 kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-argocd-notifications.yaml
 ```
 
+## Manage by Helm
+
+1. Install
+
+    ```
+    helm repo add argo https://argoproj.github.io/argo-helm
+    helm install argo/argocd-notifications --generate-name -n argocd -f argocd/setup-notification-with-helm/value.yaml
+    ```
+
+    <details>
+
+    failed:
+
+    ```
+    Error: YAML parse error on argocd-notifications/templates/configmap.yaml: error converting YAML to JSON: yaml: line 15: did not find expected key
+    ```
+
+    https://github.com/argoproj/argo-helm/issues/616 → fixed in https://github.com/argoproj-labs/argocd-notifications/pull/315
+
+    </details>
+
 ## Configure Slack Notification
 
 https://argocd-notifications.readthedocs.io/en/stable/services/slack/
 
-1. Create Slack Application with `chat:write:bot` permission.
-1. Get OAuth token.
-1. Create Slack channel (e.g. `#argocd-notifications`).
-1. Add your bot to this channel. (`/invite @<your-app-name>`)
-1. Create Secret `argocd-notifications-secret` (`setup-notifications/overlays/slack/argocd-notification-secret.yaml`)
-1. Use the OAuth token in `argocd-notifications-cm` (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
-1. Create a subscription for your Slack integration (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
-    - Optionally, you can set argo icon https://cncf-branding.netlify.app/projects/argo/ in your Slack workspace. (seems not working)
-    - Just writing ConfigMap doesn't work -> Added annotation in Application or Project (Subscribe to notifications by adding the notifications.argoproj.io/subscribe.on-sync-succeeded.slack annotation to the Argo CD application or project)
-        ```
-        kubectl patch app <my-app> -n argocd -p '{"metadata": {"annotations": {"notifications.argoproj.io/subscribe.on-sync-succeeded.slack":"<my-channel>"}}}' --type merge
-        ```
-1. Apply
-    ```base
-    kubectl apply -k argocd/setup-notifications/overlays/slack
-    ```
+1. Prepare Slack bot and channel.
+    1. Create Slack Application with `chat:write:bot` permission.
+    1. Get OAuth token.
+    1. Create Slack channel (e.g. `#argocd-notifications`).
+    1. Add your bot to this channel. (`/invite @<your-app-name>`)
+1. Install either by Kustomize or Helm:
+    - Kustomize:
+        1. Create Secret `argocd-notifications-secret` (`setup-notifications/overlays/slack/argocd-notification-secret.yaml`)
+        1. Use the OAuth token in `argocd-notifications-cm` (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
+        1. Create a subscription for your Slack integration (`setup-notifications/overlays/slack/argocd-notification-cm.yaml`)
+            - Optionally, you can set argo icon https://cncf-branding.netlify.app/projects/argo/ in your Slack workspace. (seems not working)
+            - Just writing ConfigMap doesn't work -> Added annotation in Application or Project (Subscribe to notifications by adding the notifications.argoproj.io/subscribe.on-sync-succeeded.slack annotation to the Argo CD application or project)
+                ```
+                kubectl patch app <my-app> -n argocd -p '{"metadata": {"annotations": {"notifications.argoproj.io/subscribe.on-sync-succeeded.slack":"<my-channel>"}}}' --type merge
+                ```
+        1. Apply
+            ```base
+            kubectl apply -k argocd/setup-notifications/overlays/slack
+            ```
+    - Helm:
+
