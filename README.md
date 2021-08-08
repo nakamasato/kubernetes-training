@@ -1,6 +1,6 @@
 # kubernetes-training
 
-# Version
+# Versions
 
 - Kubernetes: 1.15
 - kustomize: [v4.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.2.0) (released on 2021-07-02)
@@ -45,8 +45,60 @@
     - [conftest](open-policy-agent/conftest)
     - [argocd](argocd)
 
-# Practice
-## Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
+# Cloud Native Trail Map
+
+- https://github.com/cncf/trailmap
+- https://www.cncf.io/blog/2018/03/08/introducing-the-cloud-native-landscape-2-0-interactive-edition/
+
+## 1. CONTAINERIZATION
+
+## 2. CI/CD
+
+### 2.1 ArgoCD
+
+1. Create namespace.
+
+    ```
+    kubectl create namespace argocd
+    ```
+
+1. Deploy argocd.
+
+    ```
+    kubectl apply -k argocd/setup
+    ```
+
+1. Login
+
+    ```
+    kubectl -n argocd port-forward service/argocd-server 8080:80
+    ```
+
+    open: https://localhost:8080
+
+    - user: `admin`
+    - password: `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 --decode`
+
+1. Deploy AppProject and Application
+
+    ```
+    kubectl apply -f argocd/project/dev
+    ```
+
+1. Manage ArgoCD by ArgoCD
+
+    ```
+    kubectl apply -f argocd/project/argocd
+    ```
+
+    ![](argocd/img/argocd-by-argocd.png)
+
+For more details: [argocd](argocd)
+## 3. ORCHESTRATION & APPLICATION DEFINITION
+
+### 3.1 Kubernetes
+
+#### Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
 
 1. Create namespace
 
@@ -78,7 +130,7 @@
     helm install -n eck filebeat elastic/filebeat --version 7.8.1 -f helm/filebeat-config.yaml
     ```
 
-## Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
+#### Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
 
 - Kafka
 
@@ -120,7 +172,7 @@ kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                       
 
 </details>
 
-## Practice 3: Install Prometheus & Grafana with kube-prometheus
+#### Practice 3: Install Prometheus & Grafana with kube-prometheus
 
 - Prometheus & Grafana
 
@@ -193,7 +245,7 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 </details>
 
-## Practice 4: Kafka exporter & MirrorMaker2
+#### Practice 4: Kafka exporter & MirrorMaker2
 
 
 1. Enable the cluster operator to watch the other namespace
@@ -221,7 +273,148 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 ![](strimzi/docs/kafka-mirror-maker-2.drawio.svg)
 
-## Practice 5: Open Policy Agent
+#### Practice 5: Horizontal Pod Autoscaler (HPA) (basic)
+
+1. Install metrics-server
+
+    ```
+    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    ```
+
+1. Apply an apache application
+
+    ```
+    kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
+    ```
+
+1. Set autoscale by kubectl
+
+    ```
+    kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+    ```
+
+1. Increase load -> confirm HPA is working
+
+    ```
+    kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+    ```
+
+    ```
+    kubectl get hpa
+
+    NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+    php-apache   Deployment/php-apache   76%/50%   1         10        7          4m10s
+    ```
+
+#### Practice 6: HPA with custom metrics (advanced)
+
+[autoscaler/hpa/custom-metrics]()
+
+Steps:
+
+1. Prometheus Operator:
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    ```
+1. Prometheus:
+    ```
+    kubectl create ns monitoring; kubectl apply -k prometheus-operator -n monitoring
+    ```
+1. RabbitMQ Operator:
+    ```
+    kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
+    ````
+1. RabbitMQ:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/rabbitmq-cluster.yaml
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/pod-monitor-rabbitmq.yaml
+    ```
+1. RabbitMQ producer:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-producer-cronjob.yaml
+    ```
+1. RabbitMQ consumer:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-deployment.yaml
+    ```
+1. Prometheus-Adapter: Extend the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
+    ```
+    cd autoscaler/hpa/custom-metrics/k8s-prom-hpa
+    touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
+    make certs
+    cd -
+    kubectl create -f autoscaler/hpa/custom-metrics/k8s-prom-hpa/custom-metrics-api
+    ```
+1. Apply HPA
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-hpa.yaml
+    ```
+
+![](autoscaler/hpa/custom-metrics/diagram.drawio.svg)
+
+#### Practice 7: Set up Kubernetes Cluster with kubeadm (local)
+
+[kubeadm-local]()
+#### Practice 8: Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
+
+https://github.com/kelseyhightower/kubernetes-the-hard-way
+
+### 3.2 Helm
+
+1. Create Helm chart.
+
+    ```
+    helm create <chart-name e.g. helm-example>
+    ```
+
+1. Update files under `templates` and `values.yaml`
+1. Test apply.
+
+    ```
+    helm install helm-example --debug ./helm-example
+    ```
+
+1. Make a package.
+
+    ```
+    helm package helm-example
+    ```
+
+1. Create repository and set index.
+
+    ```
+    helm repo index ./ --url https://nakamasato.github.io/helm-charts-repo
+    ```
+
+1. Install a chart.
+
+    ```
+    helm repo add nakamasato https://nakamasato.github.io/helm-charts-repo
+    helm repo update # update the repository info
+    helm install example-from-my-repo nakamasato/helm-example
+    ```
+
+## 4. OBSERVABILITY & ANALYTICS
+
+### 4.1. Prometheus
+
+![](prometheus-operator/diagram.drawio.svg)
+
+### TBD
+- fluentd
+- Jaeger
+- Open Tracing
+
+## 5. SERVICE PROXY, DISCOVERY & MESH
+
+### TBD
+- envoy
+- CoreDNS
+- Linkerd
+
+## 6. NETWORKING, POLICY & SECURITY
+
+### 6.1 Open Policy Agent
 
 [open-policy-agent]()
 
@@ -288,141 +481,37 @@ https://github.com/open-policy-agent/conftest
     1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
     ```
 
-## Practice 6: [CI/CD] ArgoCD
-
-1. Deploy argocd
-
-    ```
-    kubectl apply -k argocd/setup
-    ```
-
-1. Login
-
-    ```
-    kubectl -n argocd port-forward service/argocd-server 8080:80
-    ```
-
-    open: https://localhost:8080
-
-    - user: `admin`
-    - password: `kubectl get po -n argocd | grep argocd-server | awk '{print $1}'`
-
-1. Deploy AppProject and Application
-
-    ```
-    kubectl apply -f argocd/project/dev
-    ```
-
-1. Manage ArgoCD by ArgoCD
-
-    ```
-    kubectl apply -f argocd/project/argocd
-    ```
-
-    ![](argocd/img/argocd-by-argocd.png)
-
-For more details: [argocd](argocd)
-
-## Practice 7: Horizontal Pod Autoscaler (HPA) (basic)
-
-1. Install metrics-server
-
-    ```
-    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-    ```
-
-1. Apply an apache application
-
-    ```
-    kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
-    ```
-
-1. Set autoscale by kubectl
-
-    ```
-    kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-    ```
-
-1. Increase load -> confirm HPA is working
-
-    ```
-    kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
-    ```
-
-    ```
-    kubectl get hpa
-
-    NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-    php-apache   Deployment/php-apache   76%/50%   1         10        7          4m10s
-    ```
-
-## Practice 8: HPA with custom metrics (advanced)
-
-[autoscaler/hpa/custom-metrics]()
-
-Steps:
-
-1. Prometheus Operator:
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
-    ```
-1. Prometheus:
-    ```
-    kubectl create ns monitoring; kubectl apply -k prometheus-operator -n monitoring
-    ```
-1. RabbitMQ Operator:
-    ```
-    kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
-    ````
-1. RabbitMQ:
-    ```
-    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/rabbitmq-cluster.yaml
-    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/pod-monitor-rabbitmq.yaml
-    ```
-1. RabbitMQ producer:
-    ```
-    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-producer-cronjob.yaml
-    ```
-1. RabbitMQ consumer:
-    ```
-    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-deployment.yaml
-    ```
-1. Prometheus-Adapter: Extend the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
-    ```
-    cd autoscaler/hpa/custom-metrics/k8s-prom-hpa
-    touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
-    make certs
-    cd -
-    kubectl create -f autoscaler/hpa/custom-metrics/k8s-prom-hpa/custom-metrics-api
-    ```
-1. Apply HPA
-    ```
-    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-hpa.yaml
-    ```
-
-![](autoscaler/hpa/custom-metrics/diagram.drawio.svg)
-
-## Practice 9: Set up Kubernetes Cluster with kubeadm (local)
-
-[kubeadm-local]()
-## Practice 10: Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
-
-https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 
-# Cloud Native Trail Map
+### TBD
+- CNI
+- falco
 
-- https://github.com/cncf/trailmap
-- https://www.cncf.io/blog/2018/03/08/introducing-the-cloud-native-landscape-2-0-interactive-edition/
+## 7. DISTRIBUTED DATABASE & STORAGE
 
-## 1. CONTAINERIZATION
 
-## 2. CI/CD
+### TBD
+- Vitess
+- Rook
+- etcd
+- TiKV
 
-## 3. ORCHESTRATION & APPLICATION DEFINITION
+## 8. STREAMING & MESSAGING
 
-## 4. OBSERVABILITY & ANALYTICS
+### TBD
+- gRPC
+- NATS
+- cloudevents
 
-### 4.1. Monitor application with Prometheus
+## 9. CONTAINER REGISTRY & RUNTIME
 
-![](prometheus-operator/diagram.drawio.svg)
+### TBD
+- containerd
+- harbor
+- cri-o
+
+## 10. SOFTWARE DISTRIBUTION
+
+### TBD
+- TUF
+- notaru
