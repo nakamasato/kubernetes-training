@@ -10,7 +10,7 @@
 - Prometheus-Operator: [v0.48.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.48.1) (released on 2021-06-01)
 - Prometheus: [v2.28.1](https://github.com/prometheus/prometheus/releases/tag/v2.28.1) (released on 2021-07-01)
 - Grafana:
-- Strimzi: 0.18.0
+- Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0)
 - Kind: v0.10.0
 - Ingress Nginx Controller: v0.32.0
 - Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
