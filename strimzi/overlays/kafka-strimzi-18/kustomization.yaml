@@ -1,6 +1,6 @@
 namespace: kafka-strimzi-18
 bases:
-  - ../../base-0.18.0
+  - ../../base/strimzi-0.18.0
 resources:
   # kafka cluster
   - my-cluster.yaml
