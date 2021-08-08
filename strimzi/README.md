@@ -1,116 +1,116 @@
-# Set up
+# Setup
 
 https://strimzi.io/quickstarts/
 
+## Versions
 
-## Download Strimzi (0.18)
+https://strimzi.io/docs/operators/in-development/full/deploying.html#ref-kafka-versions-str
 
-Download `strimzi-0.18.0.zip`
+|Kafka version|InterBroker protocol version|Log message format version|ZooKeeper version|
+|---|---|---|---|
+|2.7.0|2.7|2.7|3.5.8|
+|2.7.1|2.7|2.7|3.5.9|
+|2.8.0|2.8|2.8|3.5.9|
 
-https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.18.0
+## Prepare new Strimzi version
 
-1. Put it under `base` and unzip
-2. Create `kustomization.yaml`
-3. Create `overlays/<younamespace>`
-4. Add `rolebinding` + `clusterrolebinding` to overwrite `namespace`
+Download `strimzi-x.xx.x.zip` from https://github.com/strimzi/strimzi-kafka-operator/releases
+
+1. Put it under `cluster-operator/base` and unzip. (exclude `docs`)
+2. Create `cluster-operator/base/strimzi-x.xx.x/kustomization.yaml`.
+3. Create `cluster-operator/overlays/<younamespace>`.
+4. Add `rolebinding` + `clusterrolebinding` to overwrite `namespace`.
+    ```
+    sed -i 's/namespace: .*/namespace: <yournamespace>/' cluster-operator/overlays/<yournamespace>/cluster-operator/*RoleBinding*.yaml
+    ```
 
 
 ## Strimzi Operator
 
 prepare strimzi operator
 
-```
-[20-07-25 13:36:02] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
-± namespace=kafka-strimzi-18-minimum
-
-[20-07-25 13:36:19] nakamasato at Masatos-MacBook-Pro in ~/Code/MasatoNaka/kubernetes-training/strimzi on master ✘
-± kubectl apply -k overlays/$namespace
-```
-
-## Kafka Cluster
+- `namespace`: `kafka`
 
 ```
-curl https://strimzi.io/examples/latest/kafka/kafka-persistent-single.yaml > overlays/$namespace/my-cluster.yaml
+kubectl apply -f namespace.yaml
+kubectl apply -k cluster-operator/overlays/kafka
 ```
 
 ```
-kubectl apply -k overlays/$namespace
+kubectl get po -n kafka
+NAME                                       READY   STATUS    RESTARTS   AGE
+strimzi-cluster-operator-6948f4dc6-br56b   1/1     Running   0          2m51s
 ```
 
-Ready
+## Kafka Cluster, KafkaTopic, and KafkaUser
+
+- cluster name: `my-cluster`
+- `namespace`: `kafka`
 
 ```
-○ kubectl get pod -n $namespace
-
-NAME                                          READY   STATUS    RESTARTS   AGE
-my-cluster-entity-operator-579cdc77bc-94zth   3/3     Running   0          63s
-my-cluster-kafka-0                            2/2     Running   0          2m12s
-my-cluster-zookeeper-0                        1/1     Running   0          3m40s
-strimzi-cluster-operator-6c9d899778-pdvdj     1/1     Running   0          10m
+kubectl apply -k kafka-cluster
 ```
+1. `namespace=kafka`
+1. Check Kafka cluster
+
+    ```
+    NAME                                         READY   STATUS    RESTARTS   AGE
+    my-cluster-entity-operator-b74545ccb-2rww6   3/3     Running   0          74s
+    my-cluster-kafka-0                           1/1     Running   0          109s
+    my-cluster-kafka-1                           1/1     Running   0          109s
+    my-cluster-kafka-2                           1/1     Running   0          109s
+    my-cluster-zookeeper-0                       1/1     Running   0          2m13s
+    strimzi-cluster-operator-6948f4dc6-br56b     1/1     Running   0          8m45s
+    ```
+
+1. KafkaTopic
+
+    Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/topic/kafka-topic.yaml
+
+    ```
+    kubectl get KafkaTopic -n $namespace
+    NAME                                                                                               CLUSTER      PARTITIONS   REPLICATION FACTOR   READY
+    consumer-offsets---84e7a678d08f4bd226872e5cdd4eb527fadc1c6a                                        my-cluster   50           1                    True
+    my-topic                                                                                           my-cluster   1            1                    True
+    strimzi-store-topic---effb8e3e057afce1ecf67c3f5d8e4e3ff177fc55                                     my-cluster   1            3                    True
+    strimzi-topic-operator-kstreams-topic-store-changelog---b75e702040b99be8a9263134de3507fc0cc4017b   my-cluster   1            1                    True
+    ```
+
+1. KafkaUser
+
+    Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/user/kafka-user.yaml
+
+    ```
+    kubectl get KafkaUser -n $namespace
+    No resources found in kafka namespace.
+    ```
 
 ## Test with console-producer & console-consumer
 
-producer
+1. Set `namespace=kafka`
 
-```
-kubectl -n $namespace run kafka-producer -ti --image=strimzi/kafka:0.18.0-kafka-2.5.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --broker-list my-cluster-kafka-bootstrap:9092 --topic my-topic
+1. producer:
 
-If you don't see a command prompt, try pressing enter.
->test
-[2020-07-25 04:48:36,949] WARN [Producer clientId=console-producer] Error while fetching metadata with correlation id 3 : {my-topic=LEADER_NOT_AVAILABLE} (org.apache.kafka.clients.NetworkClient)
-[2020-07-25 04:48:37,059] WARN [Producer clientId=console-producer] Error while fetching metadata with correlation id 4 : {my-topic=LEADER_NOT_AVAILABLE} (org.apache.kafka.clients.NetworkClient)
-[2020-07-25 04:48:37,180] WARN [Producer clientId=console-producer] Error while fetching metadata with correlation id 5 : {my-topic=LEADER_NOT_AVAILABLE} (org.apache.kafka.clients.NetworkClient)
-[2020-07-25 04:48:37,296] WARN [Producer clientId=console-producer] Error while fetching metadata with correlation id 6 : {my-topic=LEADER_NOT_AVAILABLE} (org.apache.kafka.clients.NetworkClient)
->te
->test
->test
->test
->test
-```
+    ```bash
+    kubectl -n $namespace run kafka-producer -ti --image=quay.io/strimzi/kafka:0.24.0-kafka-2.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --broker-list my-cluster-kafka-bootstrap:9092 --topic my-topic
+    If you don't see a command prompt, try pressing enter.
+    >test
+    >test2
+    >^Cpod "kafka-producer" deleted
+    pod kafka/kafka-producer terminated (Error)
+    ```
 
-consumer
+1. consumer:
 
-```
-kubectl -n $namespace run kafka-consumer -ti --image=strimzi/kafka:0.18.0-kafka-2.5.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-topic --from-beginning
-
-If you don't see a command prompt, try pressing enter.
-
-
-
-test
-te
-test
-test
-test
-test
-```
-
-topic
-
-```
-kubectl get KafkaTopic -n $namespace
-
-NAME                                                          PARTITIONS   REPLICATION FACTOR
-consumer-offsets---84e7a678d08f4bd226872e5cdd4eb527fadc1c6a   50           1
-my-topic                                                      1            1
-```
-
-## KafkaTopic
-
-Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/topic/kafka-topic.yaml
-
-```
-kubectl get KafkaTopic -n $namespace
-NAME                                                          PARTITIONS   REPLICATION FACTOR
-consumer-offsets---84e7a678d08f4bd226872e5cdd4eb527fadc1c6a   50           1
-my-topic                                                      1            1
-```
-
-## KafkaUser
-
-Example: https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/user/kafka-user.yaml
-
+    ```bash
+    kubectl -n $namespace run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.24.0-kafka-2.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-topic --from-beginning
+    If you don't see a command prompt, try pressing enter.
+    test
+    test2
+    ^CProcessed a total of 3 messages
+    pod "kafka-consumer" deleted
+    pod kafka/kafka-consumer terminated (Error)
+    ```
 
 ## KafkaConnect
 
