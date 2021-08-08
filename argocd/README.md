@@ -3,6 +3,7 @@
 - Github: https://github.com/argoproj/argo-cd
 - Docs: https://argo-cd.readthedocs.io/en/stable/
 - Icon: https://cncf-branding.netlify.app/projects/argo/
+
 ## Version
 
 - [v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1)
@@ -170,4 +171,3 @@ https://argocd-notifications.readthedocs.io/en/stable/services/slack/
         ```
         helm install argo/argocd-notifications --generate-name -n argocd -f argocd/setup-notification-with-helm/value.yaml --set secret.items.slack-token=<SLACK BOT TOKEN>
         ```
-
