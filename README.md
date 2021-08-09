@@ -11,20 +11,19 @@
 - Prometheus: [v2.28.1](https://github.com/prometheus/prometheus/releases/tag/v2.28.1) (released on 2021-07-01)
 - Grafana:
 - Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0) (released on 2021-06-24)
-- Kind: v0.10.0
+- Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1) (released on 2021-05-28)
 - Ingress Nginx Controller: [v0.48.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v0.48.1) (released on 2021-07-15)
 - Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
 
 # Contents
 
-- General Kubernetes Usage
-    - [amazon-eks-workshop](eksworkshop)
-    - [helm](helm)
 - Cluster Setup
     - [kubernetes-the-hard-way](kubernetes-the-hard-way)
     - [Kubeadm in local](kubeadm-local)
+    - [kind](local-cluster/kind)
 - Kubernetes Features
     - [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
+    - [amazon-eks-workshop](eksworkshop)
 - Networking
     - [traefik](traefik)
     - [ingress-nginx-controller](ingress-nginx-controller)
