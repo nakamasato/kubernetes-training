@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: piyasara-ingress
@@ -9,10 +9,16 @@ spec:
     - http:
         paths:
           - path: /flights
+            pathType: Exact
             backend:
-              serviceName: piyasara-service
-              servicePort: 8761
+              service:
+                name: piyasara-service
+                port:
+                  number: 8761
           - path: /horas
+            pathType: Exact
             backend:
-              serviceName: hora-service
-              servicePort: 5761
+              service:
+                name: hora-service
+                port:
+                  number: 5761
