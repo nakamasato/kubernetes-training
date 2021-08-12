@@ -121,7 +121,7 @@ https://strimzi.io/docs/0.16.2/full.html#deploying-kafka-connect-str
     strimzi.io/use-connector-resources: "true" # to enable connector resource
 ```
 
-[file source connector]https://docs.confluent.io/current/connect/filestream_connector.html
+[file source connector](https://docs.confluent.io/current/connect/filestream_connector.html)
 
 ```
 overlays/kafka-strimzi-18/connect/source/connect-source.yaml
@@ -337,6 +337,7 @@ pod kafka-strimzi-18-staging/kafka-consumer terminated (Error)
 - `KafkaExporter` in Kafka -> [kafka-exporter-configuration](https://strimzi.io/docs/operators/master/deploying.html#proc-kafka-exporter-configuring-str)
 - `metrics` in `kafka` and `zookeeper` container -> [kafka-metrics.yaml](https://github.com/strimzi/strimzi-kafka-operator/blob/master/examples/metrics/kafka-metrics.yaml)
 - [Deploying the CoreOS Prometheus Operator](https://strimzi.io/docs/operators/master/deploying.html#proc-metrics-deploying-prometheus-operator-str)
+- Grafana Dashboards: `cluster-operator/base/strimzi-0.24.0/examples/metrics/grafana-dashboards`
 
 ## Prometheus
 

@@ -124,7 +124,7 @@ kubectl apply -f rabbitmq-consumer-deployment.yaml
 https://devopscube.com/setup-grafana-kubernetes/
 
 ```
-kubectl apply -k grafana
+kubectl apply -k ../../../grafana
 ```
 
 log in to http://localhost:32111 with `admin` for both username and password
@@ -237,7 +237,7 @@ Dashboard [10991](https://grafana.com/grafana/dashboards/10991) is already impor
 
 ```
 kubectl delete -f rabbitmq-consumer-hpa.yaml
-kubectl delete -k grafana
+kubectl delete -k ../../../grafana
 for component in rabbitmq rabbitmq-consumer-deployment.yaml rabbitmq-producer-cronjob.yaml; do
     kubectl delete -f $component
 done
