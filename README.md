@@ -1,28 +1,32 @@
 # kubernetes-training
 
-# Version
+# Versions
 
-- Kubernetes: 1.15
-- kustomize: [v4.1.3](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.1.3)
-- Helm: [3.5.4](https://github.com/helm/helm/releases/tag/v3.5.4)
+- Kubernetes: [v1.21.2](https://github.com/kubernetes/kubernetes/releases/tag/v1.21.2) (released on 2021-06-18)
+- kustomize: [v4.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.2.0) (released on 2021-07-02)
+- Helm: [3.6.3](https://github.com/helm/helm/releases/tag/v3.6.3) (released on 2021-07-15)
 - Traefik: v2.2
-- ArgoCD: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
-- Prometheus: v2.22.1
-- Grafana:
-- Strimzi: 0.18.0
-- Kind: v0.10.0
-- Ingress Nginx Controller: v0.32.0
+- ArgoCD: [v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1) (released on 2021-07-29)
+- Prometheus-Operator: [v0.48.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.48.1) (released on 2021-06-01)
+- Prometheus: [v2.28.1](https://github.com/prometheus/prometheus/releases/tag/v2.28.1) (released on 2021-07-01)
+- Grafana: Latest
+- Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0) (released on 2021-06-24)
+- Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1) (released on 2021-05-28)
+- Ingress Nginx Controller: [v0.48.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v0.48.1) (released on 2021-07-15)
+- Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
 
 # Contents
 
-- General Kubernetes Usage
-    - [amazon-eks-workshop](eksworkshop)
-    - [helm](helm)
 - Cluster Setup
     - [kubernetes-the-hard-way](kubernetes-the-hard-way)
     - [Kubeadm in local](kubeadm-local)
+    - [kind](local-cluster/kind)
 - Kubernetes Features
     - [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
+    - [amazon-eks-workshop](eksworkshop)
+- Kubernetes Extentions
+    - [kubernetes-operator](kubernetes-operator)
+    - plugins
 - Networking
     - [traefik](traefik)
     - [ingress-nginx-controller](ingress-nginx-controller)
@@ -32,17 +36,73 @@
     - [eck](eck)
 - Monitoring
     - [prometheus](prometheus-operator)
+    - [grafana](grafana)
 - Security
     - [open-policy-agent](open-policy-agent)
-- Controller
-    - custom-controller
 - Yaml Management
-    - [helm](helm)
+    - [Helm](helm)
     - [Helm vs Kustomize](helm-vs-kustomize)
-- CD
+- CI/CD
+    - [conftest](open-policy-agent/conftest)
     - [argocd](argocd)
 
-# Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
+# Cloud Native Trail Map
+
+- https://github.com/cncf/trailmap
+- https://www.cncf.io/blog/2018/03/08/introducing-the-cloud-native-landscape-2-0-interactive-edition/
+
+![alt text](https://github.com/cncf/trailmap/blob/master/CNCF_TrailMap_latest.png?raw=true)
+
+
+## 1. CONTAINERIZATION
+
+## 2. CI/CD
+
+### 2.1 ArgoCD
+
+1. Create namespace.
+
+    ```
+    kubectl create namespace argocd
+    ```
+
+1. Deploy argocd.
+
+    ```
+    kubectl apply -k argocd/setup
+    ```
+
+1. Login
+
+    ```
+    kubectl -n argocd port-forward service/argocd-server 8080:80
+    ```
+
+    open: https://localhost:8080
+
+    - user: `admin`
+    - password: `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 --decode`
+
+1. Deploy AppProject and Application
+
+    ```
+    kubectl apply -f argocd/project/dev
+    ```
+
+1. Manage ArgoCD by ArgoCD
+
+    ```
+    kubectl apply -f argocd/project/argocd
+    ```
+
+    ![](argocd/img/argocd-by-argocd.png)
+
+For more details: [argocd](argocd)
+## 3. ORCHESTRATION & APPLICATION DEFINITION
+
+### 3.1 Kubernetes
+
+#### Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
 
 1. Create namespace
 
@@ -74,7 +134,7 @@
     helm install -n eck filebeat elastic/filebeat --version 7.8.1 -f helm/filebeat-config.yaml
     ```
 
-# Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
+#### Practice 2: Install Kafka Cluster + Kafka Connect with Strimzi
 
 - Kafka
 
@@ -116,7 +176,7 @@ kube-system        metrics-server-v0.3.6-7b7d6c7576-msl8x                       
 
 </details>
 
-# Practice 3: Install Prometheus & Grafana with kube-prometheus
+#### Practice 3: Install Prometheus & Grafana with kube-prometheus
 
 - Prometheus & Grafana
 
@@ -189,7 +249,7 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 </details>
 
-# Practice 4: Kafka exporter & MirrorMaker2
+#### Practice 4: Kafka exporter & MirrorMaker2
 
 
 1. Enable the cluster operator to watch the other namespace
@@ -217,11 +277,152 @@ monitoring         prometheus-operator-5f75d76f9f-xtgqz                         
 
 ![](strimzi/docs/kafka-mirror-maker-2.drawio.svg)
 
-# Practice 5: Open Policy Agent
+#### Practice 5: Horizontal Pod Autoscaler (HPA) (basic)
+
+1. Install metrics-server
+
+    ```
+    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    ```
+
+1. Apply an apache application
+
+    ```
+    kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
+    ```
+
+1. Set autoscale by kubectl
+
+    ```
+    kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+    ```
+
+1. Increase load -> confirm HPA is working
+
+    ```
+    kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+    ```
+
+    ```
+    kubectl get hpa
+
+    NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+    php-apache   Deployment/php-apache   76%/50%   1         10        7          4m10s
+    ```
+
+#### Practice 6: HPA with custom metrics (advanced)
+
+[autoscaler/hpa/custom-metrics]()
+
+Steps:
+
+1. Prometheus Operator:
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    ```
+1. Prometheus:
+    ```
+    kubectl create ns monitoring; kubectl apply -k prometheus-operator -n monitoring
+    ```
+1. RabbitMQ Operator:
+    ```
+    kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
+    ````
+1. RabbitMQ:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/rabbitmq-cluster.yaml
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq/pod-monitor-rabbitmq.yaml
+    ```
+1. RabbitMQ producer:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-producer-cronjob.yaml
+    ```
+1. RabbitMQ consumer:
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-deployment.yaml
+    ```
+1. Prometheus-Adapter: Extend the Kubernetes custom metrics API with the metrics. (https://github.com/kubernetes-sigs/prometheus-adapter)
+    ```
+    cd autoscaler/hpa/custom-metrics/k8s-prom-hpa
+    touch metrics-ca.key metrics-ca.crt metrics-ca-config.json
+    make certs
+    cd -
+    kubectl create -f autoscaler/hpa/custom-metrics/k8s-prom-hpa/custom-metrics-api
+    ```
+1. Apply HPA
+    ```
+    kubectl apply -f autoscaler/hpa/custom-metrics/rabbitmq-consumer-hpa.yaml
+    ```
+
+![](autoscaler/hpa/custom-metrics/diagram.drawio.svg)
+
+#### Practice 7: Set up Kubernetes Cluster with kubeadm (local)
+
+[kubeadm-local]()
+#### Practice 8: Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
+
+https://github.com/kelseyhightower/kubernetes-the-hard-way
+
+### 3.2 Helm
+
+1. Create Helm chart.
+
+    ```
+    helm create <chart-name e.g. helm-example>
+    ```
+
+1. Update files under `templates` and `values.yaml`
+1. Test apply.
+
+    ```
+    helm install helm-example --debug ./helm-example
+    ```
+
+1. Make a package.
+
+    ```
+    helm package helm-example
+    ```
+
+1. Create repository and set index.
+
+    ```
+    helm repo index ./ --url https://nakamasato.github.io/helm-charts-repo
+    ```
+
+1. Install a chart.
+
+    ```
+    helm repo add nakamasato https://nakamasato.github.io/helm-charts-repo
+    helm repo update # update the repository info
+    helm install example-from-my-repo nakamasato/helm-example
+    ```
+
+## 4. OBSERVABILITY & ANALYTICS
+
+### 4.1. Prometheus
+
+![](prometheus-operator/diagram.drawio.svg)
+
+### TBD
+- fluentd
+- Jaeger
+- Open Tracing
+
+## 5. SERVICE PROXY, DISCOVERY & MESH
+
+### TBD
+- envoy
+- CoreDNS
+- Linkerd
+
+## 6. NETWORKING, POLICY & SECURITY
+
+### 6.1 Open Policy Agent
 
 [open-policy-agent]()
 
-## gatekeeper
+### gatekeeper
 
 https://github.com/open-policy-agent/gatekeeper
 
@@ -234,43 +435,85 @@ https://github.com/open-policy-agent/gatekeeper
 1. Create `ConstraintTemplate`
 1. Create custom policy defined in the previous step.
 
-## conftest
+### conftest
 
 https://github.com/open-policy-agent/conftest
 
-# Practice 6: ArgoCD
 
-1. Deploy argocd
+1. Write policy in `policy` directory.
 
-    ```
-    kubectl apply -k argocd/setup
-    ```
-
-1. Login
-
-    ```
-    kubectl -n argocd port-forward service/argocd-server 8080:80
+    ```rego
+    deny[msg] {
+      input.kind = "Deployment"
+      not input.spec.template.spec.nodeSelector
+      msg = "Deployment must have nodeSelector"
+    }
     ```
 
-    open: https://localhost:8080
+1. Write tests in the same directory.
 
-    - user: `admin`
-    - password: `kubectl get po -n argocd | grep argocd-server | awk '{print $1}'`
+    ```rego
+    test_no_nodeSelector {
+      deny["Deployment must have nodeSelector"] with input as
+      {
+        "kind": "Deployment",
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+              ],
+            }
+          }
+        }
+      }
+    }
+    ```
 
-1. Deploy AppProject and Application
+1. Run test.
 
     ```
-    kubectl apply -f argocd/project/dev
+    conftest verify
+
+    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
     ```
 
-1. Manage ArgoCD by ArgoCD
+1. Validate a manifest file.
 
     ```
-    kubectl apply -f argocd/project/argocd
+    conftest test manifests/valid/deployment.yaml
+
+    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
     ```
 
-    ![](argocd/img/argocd-by-argocd.png)
+### TBD
+- CNI
+- falco
 
-For more details: [argocd](argocd)
+## 7. DISTRIBUTED DATABASE & STORAGE
 
-# Practice N: Controller
+
+### TBD
+- Vitess
+- Rook
+- etcd
+- TiKV
+
+## 8. STREAMING & MESSAGING
+
+### TBD
+- gRPC
+- NATS
+- cloudevents
+
+## 9. CONTAINER REGISTRY & RUNTIME
+
+### TBD
+- containerd
+- harbor
+- cri-o
+
+## 10. SOFTWARE DISTRIBUTION
+
+### TBD
+- TUF
+- notaru

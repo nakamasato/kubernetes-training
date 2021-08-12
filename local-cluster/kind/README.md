@@ -7,7 +7,11 @@ kind is a tool for running local Kubernetes clusters using Docker container “n
 ## Prerequisite
 
 - go (1.11+)
-- docker installed
+    ```
+    go version
+    go version go1.16.6 darwin/amd64
+    ```
+- Docker
 
 ## Quick Start
 
@@ -27,7 +31,7 @@ brew install kind
 
 ```
 kind version
-kind v0.10.0 go1.15.7 darwin/amd64
+kind v0.11.1 go1.16.4 darwin/amd64
 ```
 
 ## Configure a cluster

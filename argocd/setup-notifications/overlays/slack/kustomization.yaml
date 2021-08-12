@@ -1,0 +1,5 @@
+bases:
+  - ../../base
+patchesStrategicMerge:
+  - argocd-notifications-secret.yaml
+  - argocd-notifications-cm.yaml
