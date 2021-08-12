@@ -485,8 +485,6 @@ https://github.com/open-policy-agent/conftest
     1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
     ```
 
-
-
 ### TBD
 - CNI
 - falco
