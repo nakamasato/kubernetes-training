@@ -6,7 +6,7 @@
 
 ## Version
 
-- [v2.1.0-rc1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.0-rc1)
+- [v2.1.1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.1)
 ## Install
 
 ```bash
