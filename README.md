@@ -35,8 +35,9 @@
     - [postgres-operator](postgres-operator)
     - [eck](eck)
 - Monitoring
-    - [prometheus](prometheus-operator)
-    - [grafana](grafana)
+    - [Prometheus](prometheus-operator)
+    - [Grafana](grafana)
+    - [Loki](loki)
 - Security
     - [open-policy-agent](open-policy-agent)
 - Yaml Management

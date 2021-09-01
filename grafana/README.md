@@ -23,3 +23,7 @@ Pre-configured dashboards are in `config/dashboards/dashboard.yaml`
 Configured data sources are in `config/datasources/prometheus.yaml`
 
 - Prometheus: `http://prometheus.monitoring.svc:9090`
+
+## Related
+
+You may also like [Loki](../loki)
