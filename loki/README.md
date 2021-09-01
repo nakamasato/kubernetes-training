@@ -5,37 +5,43 @@
 - Kubernetes cluster
 - Helm
 
-## Install
+## Install & Uninstall
 
 https://grafana.com/docs/loki/latest/installation/helm/
 
-Deploy Loki Stack (Loki, Promtail, Grafana, Prometheus) via Helm.
+1. Deploy Loki Stack (Loki, Promtail, Grafana, Prometheus) via Helm.
 
-```
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
-```
+    ```
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo update
+    ```
 
-```
-helm upgrade --install loki grafana/loki-stack  --set grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false
-```
+    ```
+    helm upgrade --install loki grafana/loki-stack  --set grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false
+    ```
 
-<details><summary>Pods</summary>
+    <details><summary>Pods</summary>
 
-```
-kubectl get po
-NAME                                           READY   STATUS    RESTARTS   AGE
-loki-0                                         1/1     Running   0          98s
-loki-grafana-7666b484b5-s6dkk                  1/1     Running   0          2m19s
-loki-kube-state-metrics-7f9f667d7d-9wqgr       1/1     Running   0          2m19s
-loki-prometheus-alertmanager-9bb4c6f8f-gc6jb   2/2     Running   0          2m19s
-loki-prometheus-node-exporter-ngq8l            1/1     Running   0          2m19s
-loki-prometheus-pushgateway-664fd45795-cffhg   1/1     Running   0          2m19s
-loki-prometheus-server-5d6f9d5c6c-sn699        2/2     Running   0          2m19s
-loki-promtail-bztwq                            1/1     Running   0          2m19s
-```
+    ```
+    kubectl get po
+    NAME                                           READY   STATUS    RESTARTS   AGE
+    loki-0                                         1/1     Running   0          98s
+    loki-grafana-7666b484b5-s6dkk                  1/1     Running   0          2m19s
+    loki-kube-state-metrics-7f9f667d7d-9wqgr       1/1     Running   0          2m19s
+    loki-prometheus-alertmanager-9bb4c6f8f-gc6jb   2/2     Running   0          2m19s
+    loki-prometheus-node-exporter-ngq8l            1/1     Running   0          2m19s
+    loki-prometheus-pushgateway-664fd45795-cffhg   1/1     Running   0          2m19s
+    loki-prometheus-server-5d6f9d5c6c-sn699        2/2     Running   0          2m19s
+    loki-promtail-bztwq                            1/1     Running   0          2m19s
+    ```
 
-</details>
+    </details>
+
+1. Uninstall
+
+    ```
+    helm uninstall loki
+    ```
 
 ## Promtail
 
