@@ -1,0 +1,316 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": "-- Grafana --",
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "target": {
+                    "limit": 100,
+                    "matchAny": false,
+                    "tags": [],
+                    "type": "dashboard"
+                },
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "links": [],
+    "panels": [
+        {
+            "datasource": "mysql",
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "from": 1000,
+                                "result": {
+                                    "color": "yellow",
+                                    "index": 0,
+                                    "text": "moderate"
+                                },
+                                "to": 5000
+                            },
+                            "type": "range"
+                        }
+                    ],
+                    "max": 10000,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 100
+                            },
+                            {
+                                "color": "orange",
+                                "value": 1000
+                            },
+                            {
+                                "color": "green",
+                                "value": 5000
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "id": 4,
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "text": {}
+            },
+            "pluginVersion": "8.1.2",
+            "targets": [
+                {
+                    "format": "table",
+                    "group": [],
+                    "hide": false,
+                    "metricColumn": "none",
+                    "rawQuery": true,
+                    "rawSql": "SELECT sum(num) / sum(TIME_TO_SEC(TIMEDIFF(updated_at, started_at))) * 86400 AS \"num\" FROM stat\nWHERE started_at > NOW() - INTERVAL 1 MONTH",
+                    "refId": "processed records per sec",
+                    "select": [
+                        [
+                            {
+                                "params": [
+                                    "value"
+                                ],
+                                "type": "column"
+                            }
+                        ]
+                    ],
+                    "timeColumn": "time",
+                    "where": [
+                        {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                        }
+                    ]
+                }
+            ],
+            "title": "Recent Month Performance",
+            "type": "gauge"
+        },
+        {
+            "datasource": "mysql",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "bars",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom"
+                },
+                "tooltip": {
+                    "mode": "single"
+                }
+            },
+            "targets": [
+                {
+                    "format": "time_series",
+                    "group": [
+                        {
+                            "params": [
+                                "$__interval",
+                                "none"
+                            ],
+                            "type": "time"
+                        }
+                    ],
+                    "hide": true,
+                    "metricColumn": "none",
+                    "queryType": "randomWalk",
+                    "rawQuery": true,
+                    "rawSql": "SELECT\n  $__timeGroupAlias(started_at,$__interval),\n  avg(num) AS \"num\"\nFROM stat\nWHERE\n  $__timeFilter(started_at)\nGROUP BY 1\nORDER BY $__timeGroup(started_at,$__interval)",
+                    "refId": "A",
+                    "select": [
+                        [
+                            {
+                                "params": [
+                                    "num"
+                                ],
+                                "type": "column"
+                            },
+                            {
+                                "params": [
+                                    "avg"
+                                ],
+                                "type": "aggregate"
+                            },
+                            {
+                                "params": [
+                                    "num"
+                                ],
+                                "type": "alias"
+                            }
+                        ]
+                    ],
+                    "table": "stat",
+                    "timeColumn": "started_at",
+                    "timeColumnType": "datetime",
+                    "where": [
+                        {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                        }
+                    ]
+                },
+                {
+                    "format": "time_series",
+                    "group": [
+                        {
+                            "params": [
+                                "$__interval",
+                                "none"
+                            ],
+                            "type": "time"
+                        }
+                    ],
+                    "hide": false,
+                    "metricColumn": "none",
+                    "rawQuery": false,
+                    "rawSql": "SELECT\n  $__timeGroupAlias(started_at,$__interval),\n  avg(num / TIME_TO_SEC(TIMEDIFF(updated_at, started_at))) AS \"num\"\nFROM stat\nWHERE\n  $__timeFilter(started_at)\nGROUP BY 1\nORDER BY $__timeGroup(started_at,$__interval)",
+                    "refId": "B",
+                    "select": [
+                        [
+                            {
+                                "params": [
+                                    "num"
+                                ],
+                                "type": "column"
+                            },
+                            {
+                                "params": [
+                                    "avg"
+                                ],
+                                "type": "aggregate"
+                            },
+                            {
+                                "params": [
+                                    "num"
+                                ],
+                                "type": "alias"
+                            }
+                        ]
+                    ],
+                    "table": "stat",
+                    "timeColumn": "started_at",
+                    "timeColumnType": "datetime",
+                    "where": [
+                        {
+                            "name": "$__timeFilter",
+                            "params": [],
+                            "type": "macro"
+                        }
+                    ]
+                }
+            ],
+            "title": "Panel Title",
+            "type": "timeseries"
+        }
+    ],
+    "refresh": "",
+    "schemaVersion": 30,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-2d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "MySQL test dashboard",
+    "uid": "3qGnmL4nz",
+    "version": 1
+}
