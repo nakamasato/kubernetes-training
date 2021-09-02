@@ -10,8 +10,9 @@ resources:
 configMapGenerator:
   - name: datasources
     files:
-      - config/datasources/prometheus.yaml
+      - config/datasources/datasource.yaml
   - name: dashboards
     files:
       - config/dashboards/rabbitmq.json
+      - config/dashboards/mysql-test.json
       - config/dashboards/dashboard.yaml

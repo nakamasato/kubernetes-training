@@ -7,3 +7,11 @@ datasources:
     type: prometheus
     url: http://prometheus.monitoring.svc:9090
     version: 1
+
+  - name: mysql
+    type: mysql
+    url: mysql.database.svc.cluster.local:3306
+    database: test_db
+    user: grafana
+    secureJsonData:
+      password: password
