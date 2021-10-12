@@ -59,46 +59,7 @@
 
 ## 2. CI/CD
 
-### 2.1 ArgoCD
-
-1. Create namespace.
-
-    ```
-    kubectl create namespace argocd
-    ```
-
-1. Deploy argocd.
-
-    ```
-    kubectl apply -k argocd/setup
-    ```
-
-1. Login
-
-    ```
-    kubectl -n argocd port-forward service/argocd-server 8080:80
-    ```
-
-    open: https://localhost:8080
-
-    - user: `admin`
-    - password: `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 --decode`
-
-1. Deploy AppProject and Application
-
-    ```
-    kubectl apply -f argocd/project/dev
-    ```
-
-1. Manage ArgoCD by ArgoCD
-
-    ```
-    kubectl apply -f argocd/project/argocd
-    ```
-
-    ![](argocd/img/argocd-by-argocd.png)
-
-For more details: [argocd](argocd)
+### 2.1 [ArgoCD](argocd)
 ## 3. ORCHESTRATION & APPLICATION DEFINITION
 
 ### 3.1 Kubernetes
