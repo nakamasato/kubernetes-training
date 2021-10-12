@@ -41,7 +41,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 ## Add ArgoCD AppProject & Application
 
 - AppProject: `dev`
-- Application: `guestbook-kustomize-dev`
+- Application: `guestbook-kustomize-dev`gstEN13.
 
 1. Deploy application with ArgoCD
 
