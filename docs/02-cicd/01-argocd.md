@@ -1,8 +1,8 @@
 # 2.1. ArgoCD
 
-- Github: https://github.com/argoproj/argo-cd
-- Docs: https://argo-cd.readthedocs.io/en/stable/
-- Icon: https://cncf-branding.netlify.app/projects/argo/
+- Github: [https://github.com/argoproj/argo-cd](https://github.com/argoproj/argo-cd)
+- Docs: [https://argo-cd.readthedocs.io/en/stable/](https://argo-cd.readthedocs.io/en/stable/)
+- Icon: [https://cncf-branding.netlify.app/projects/argo/](https://cncf-branding.netlify.app/projects/argo/)
 
 ## Version
 
@@ -36,7 +36,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 - user: `admin`
 - password: `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 --decode` (v1.9.0 or later, there's a secret for initial admin password.)
 
-![](img/argocd.png)
+![](argocd.png)
 
 ## Add ArgoCD AppProject & Application
 
@@ -59,7 +59,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 
 1. Check on ArgoCD
 
-    ![](img/argocd-guestbook-kustomize-dev.png)
+    ![](argocd-guestbook-kustomize-dev.png)
 
 ## Manage argocd by argocd
 
@@ -67,7 +67,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-argocd.yaml
 ```
 
-![](img/argocd-by-argocd.png)
+![](argocd-by-argocd.png)
 
 ## Clean up
 
@@ -79,8 +79,8 @@ kubectl delete ns argocd
 
 # ArgoCD Notifications
 
-Github: https://github.com/argoproj-labs/argocd-notifications
-Docs: https://argocd-notifications.readthedocs.io/en/stable/
+- Github: [https://github.com/argoproj-labs/argocd-notifications](https://github.com/argoproj-labs/argocd-notifications)
+- Docs: [https://argocd-notifications.readthedocs.io/en/stable/](https://argocd-notifications.readthedocs.io/en/stable/)
 
 ## Prerequisite
 
