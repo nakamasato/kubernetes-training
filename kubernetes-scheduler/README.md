@@ -4,6 +4,15 @@
 - `podQueue` channel
 - `quit` channel
 - `Scheduler`
+    - ScheduleOne:
+        1. Get a Pod from `podQueue`.
+        1. findNode
+            1. Get Nodes from lister.
+            1. Filter out unschedulable nodes.
+            1. Give a score for each node.
+            1. Get the node with the highest score.
+        1. bindNode
+        1. emitEvent
 
 ## Steps:
 
@@ -12,13 +21,13 @@
     package main
 
     import (
-        "fmt"
+        "log"
         "k8s.io/api/core/v1"
     )
 
 
     func main()  {
-        fmt.Println("Start a scheduler")
+        log.Println("Start a scheduler")
 
         podQueue := make(chan *v1.Pod, 300)
         defer close(podQueue)
@@ -158,4 +167,105 @@
         go run main.go
         Start a scheduler
         Run is called
+        ```
+1. Find best node for a pod in `ScheduleOne` function.
+    1. Define `ScheduleOne`.
+        The role of `ScheduleOne`:
+        1. Get a pod from `podQueue`.
+        1. Get the fit node from `findNode`.
+
+        ```go
+        func (s *Scheduler) ScheduleOne() {
+            p := <- s.podQueue
+            log.Println("found a pod to schedule:", p.Namespace, "/", p.Name)
+
+            node, err := s.findNode(p)
+            if err != nil {
+                log.Println("cannot find node that fits pod", err.Error())
+                return
+            }
+            log.Printf("node %s is chosen for Pod [%s/%s]\n", node, p.Namespace, p.Name)
+        }
+    1. Define `findNode` (find the best node for a given pod. If no schedulable node, return error.)
+        The role of `findNode`:
+        1. Get nodes from the node lister.
+        1. Return error if there's no node.
+        1. Give a score with `prioritize` for each node.
+        1. Return the node with highest score `findBestNode`.
+
+        ```go
+        func (s *Scheduler) findNode(pod *v1.Pod) (string, error) {
+            nodes, err := s.nodeLister.List(labels.Everything())
+            if err != nil {
+                return "", err
+            }
+            if len(nodes) == 0 {
+                return "", errors.New("failed to find schedulable nodes")
+            }
+            priorities := s.prioritize(nodes, pod)
+            return s.findBestNode(priorities), nil
+        }
+        ```
+
+    1. Define `prioritize`: Give a score with `priorities` for each node.
+        ```go
+        func (s *Scheduler) prioritize(nodes []*v1.Node, pod *v1.Pod) map[string]int {
+            priorities := make(map[string]int)
+            for _, node := range nodes {
+                for _, priority := range s.priorities {
+                    priorities[node.Name] += priority(node, pod)
+                }
+            }
+            log.Println("calculated priorities:", priorities)
+            return priorities
+        }
+        ```
+    1. `findBestNode`: Get the node with the highest score.
+        ```go
+        func (s *Scheduler) findBestNode(priorities map[string]int) string {
+            var maxP int
+            var bestNode string
+            for node, p := range priorities {
+                if p > maxP {
+                    maxP = p
+                    bestNode = node
+                }
+            }
+            return bestNode
+        }
+        ```
+    1. Update `Run` to call `ScheduleOne`.
+        ```go
+        func (s *Scheduler) Run(quit chan struct{}) {
+	        log.Println("Run is called")
+	        wait.Until(s.ScheduleOne, 0, quit)
+        }
+        ```
+
+    1. Run and check the scheduler (Just choose a node):
+
+        Run the scheduler:
+        ```bash
+        go run main.go
+        2021/12/26 17:21:06 Start a scheduler
+        2021/12/26 17:21:06 Run is called
+        2021/12/26 17:21:06 New node is added. kind-control-plane
+        ```
+
+        Create a pod with `schedulerName: random-scheduler`:
+        ```
+        kubectl apply -f pod.yaml
+        ```
+
+        Scheduler's log:
+        ```bash
+        2021/12/26 17:21:06 found a pod to schedule: [default/nginx]
+        2021/12/26 17:21:06 calculated priorities: map[kind-control-plane:47]
+        2021/12/26 17:21:06 node kind-control-plane is chosen for Pod [default/nginx]
+        ```
+
+        ```
+        kubectl get pod nginx
+        NAME    READY   STATUS    RESTARTS   AGE
+        nginx   0/1     Pending   0          3m55s
         ```

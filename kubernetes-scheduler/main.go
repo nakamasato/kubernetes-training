@@ -1,12 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"math/rand"
 	"path/filepath"
 
 	"k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	listersv1 "k8s.io/client-go/listers/core/v1"
@@ -20,7 +22,7 @@ import (
 const schedulerName = "random-scheduler"
 
 func main() {
-	fmt.Println("Start a scheduler")
+	log.Println("Start a scheduler")
 
 	podQueue := make(chan *v1.Pod, 300)
 	defer close(podQueue)
@@ -29,7 +31,7 @@ func main() {
 	defer close(quit)
 
 	scheduler := NewScheduler(podQueue, quit)
-	scheduler.Run()
+	scheduler.Run(quit)
 }
 
 type predicateFunc func(node *v1.Node, pod *v1.Pod) bool
@@ -43,8 +45,56 @@ type Scheduler struct {
 	priorities []priorityFunc
 }
 
-func (s *Scheduler) Run() {
-	fmt.Println("Run is called")
+func (s *Scheduler) Run(quit chan struct{}) {
+	log.Println("Run is called")
+	wait.Until(s.ScheduleOne, 0, quit)
+}
+
+func (s *Scheduler) ScheduleOne() {
+	p := <-s.podQueue
+	log.Printf("found a pod to schedule: [%s/%s]\n", p.Namespace, p.Name)
+
+	node, err := s.findNode(p)
+	if err != nil {
+		log.Println("cannot find node that fits pod", err.Error())
+		return
+	}
+	log.Printf("node %s is chosen for Pod [%s/%s]\n", node, p.Namespace, p.Name)
+}
+
+func (s *Scheduler) findNode(pod *v1.Pod) (string, error) {
+	nodes, err := s.nodeLister.List(labels.Everything())
+	if err != nil {
+		return "", err
+	}
+	if len(nodes) == 0 {
+		return "", errors.New("failed to find schedulable nodes")
+	}
+	priorities := s.prioritize(nodes, pod)
+	return s.findBestNode(priorities), nil
+}
+
+func (s *Scheduler) prioritize(nodes []*v1.Node, pod *v1.Pod) map[string]int {
+	priorities := make(map[string]int)
+	for _, node := range nodes {
+		for _, priority := range s.priorities {
+			priorities[node.Name] += priority(node, pod)
+		}
+	}
+	log.Println("calculated priorities:", priorities)
+	return priorities
+}
+
+func (s *Scheduler) findBestNode(priorities map[string]int) string {
+	var maxP int
+	var bestNode string
+	for node, p := range priorities {
+		if p > maxP {
+			maxP = p
+			bestNode = node
+		}
+	}
+	return bestNode
 }
 
 func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {
