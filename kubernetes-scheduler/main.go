@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
 	"math/rand"
 	"path/filepath"
 
 	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
@@ -60,6 +62,13 @@ func (s *Scheduler) ScheduleOne() {
 		return
 	}
 	log.Printf("node %s is chosen for Pod [%s/%s]\n", node, p.Namespace, p.Name)
+
+	err = s.bindPod(p, node)
+	if err != nil {
+		log.Println("failed to bind pod", err.Error())
+		return
+	}
+	log.Printf("pod [%s/%s] is successfully scheduled to node %s", p.Namespace, p.Name, node)
 }
 
 func (s *Scheduler) findNode(pod *v1.Pod) (string, error) {
@@ -95,6 +104,17 @@ func (s *Scheduler) findBestNode(priorities map[string]int) string {
 		}
 	}
 	return bestNode
+}
+
+func (s *Scheduler) bindPod(pod *v1.Pod, node string) error {
+	return s.clientset.CoreV1().Pods(pod.Namespace).Bind(
+		context.Background(),
+		&v1.Binding{
+			ObjectMeta: metav1.ObjectMeta{Name: pod.Name, Namespace: pod.Namespace},
+			Target:     v1.ObjectReference{APIVersion: "v1", Kind: "Node", Name: node},
+		},
+		metav1.CreateOptions{},
+	)
 }
 
 func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {

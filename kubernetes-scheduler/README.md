@@ -269,3 +269,59 @@
         NAME    READY   STATUS    RESTARTS   AGE
         nginx   0/1     Pending   0          3m55s
         ```
+1. Bind Node to Pod.
+    1. Add the following lines to `ScheduleOne`.
+
+        ```go
+            err = s.bindPod(p, node)
+            if err != nil {
+                log.Println("failed to bind pod", err.Error())
+                return
+            }
+        ```
+    1. Define `bindPod`.
+
+        ```go
+        import (
+            "context"
+            ...
+            metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+            ...
+        )
+        ...
+        func (s *Scheduler) bindPod(pod *v1.Pod, node string) error {
+            return s.clientset.CoreV1().Pods(pod.Namespace).Bind(
+                context.Background(),
+                &v1.Binding{
+                    ObjectMeta: metav1.ObjectMeta{Name: pod.Name, Namespace: pod.Namespace},
+                    Target:     v1.ObjectReference{APIVersion: "v1", Kind: "Node", Name: node},
+                },
+                metav1.CreateOptions{},
+            )
+        }
+        ```
+    1. Run the scheduler.
+        1. Run the scheduler
+            ```bash
+            go run main.go
+            2021/12/26 17:33:35 Start a scheduler
+            2021/12/26 17:33:35 Run is called
+            2021/12/26 17:33:35 New node is added. kind-control-plane
+            ```
+        1. Create a Pod.
+            ```
+            kubectl apply -f pod.yaml
+            ```
+        1. Check logs.
+            ```bash
+            2021/12/26 17:35:35 found a pod to schedule: [default/nginx]
+            2021/12/26 17:35:35 calculated priorities: map[kind-control-plane:47]
+            2021/12/26 17:35:35 node kind-control-plane is chosen for Pod [default/nginx]
+            2021/12/26 17:35:35 pod [default/nginx] is successfully scheduled to node kind-control-plane
+            ```
+        1. Check pod.
+            ```
+            kubectl get pod nginx
+            NAME    READY   STATUS    RESTARTS   AGE
+            nginx   1/1     Running   0          26s
+            ```
