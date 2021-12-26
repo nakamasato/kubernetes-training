@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
 	"path/filepath"
+	"time"
 
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -68,7 +70,14 @@ func (s *Scheduler) ScheduleOne() {
 		log.Println("failed to bind pod", err.Error())
 		return
 	}
-	log.Printf("pod [%s/%s] is successfully scheduled to node %s", p.Namespace, p.Name, node)
+	message := fmt.Sprintf("pod [%s/%s] is successfully scheduled to node %s", p.Namespace, p.Name, node)
+	log.Println(message)
+
+	err = s.emitEvent(p, message)
+	if err != nil {
+		log.Println("failed to emit scheduled event", err.Error())
+		return
+	}
 }
 
 func (s *Scheduler) findNode(pod *v1.Pod) (string, error) {
@@ -115,6 +124,38 @@ func (s *Scheduler) bindPod(pod *v1.Pod, node string) error {
 		},
 		metav1.CreateOptions{},
 	)
+}
+
+func (s *Scheduler) emitEvent(p *v1.Pod, message string) error {
+	timestamp := time.Now().UTC()
+	_, err := s.clientset.CoreV1().Events(p.Namespace).Create(
+		context.Background(),
+		&v1.Event{
+			Count:          1,
+			Message:        message,
+			Reason:         "Scheduled",
+			LastTimestamp:  metav1.NewTime(timestamp),
+			FirstTimestamp: metav1.NewTime(timestamp),
+			Type:           "Normal",
+			Source: v1.EventSource{
+				Component: schedulerName,
+			},
+			InvolvedObject: v1.ObjectReference{
+				Kind:      "Pod",
+				Name:      p.Name,
+				Namespace: p.Namespace,
+				UID:       p.UID,
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				GenerateName: p.Name + "-",
+			},
+		},
+		metav1.CreateOptions{},
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {
