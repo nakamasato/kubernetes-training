@@ -1,0 +1,11 @@
+site_name: Kubernetes Traning
+theme:
+  name: material
+  palette:
+    primary: indigo
+  features:
+    - header.autohide
+    - navigation.instant
+    - navigation.tabs
+    - navigation.indexes
+repo_url: https://github.com/nakamasato/kubernetes-training
