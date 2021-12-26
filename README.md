@@ -26,6 +26,7 @@
     - [amazon-eks-workshop](eksworkshop)
 - Kubernetes Extentions
     - [kubernetes-operator](kubernetes-operator)
+    - [kubernetes-scheduler](kubernetes-scheduler)
     - plugins
 - Networking
     - [traefik](traefik)
