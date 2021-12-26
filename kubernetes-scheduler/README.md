@@ -395,3 +395,7 @@
             kubectl get event | grep Scheduled
             68s         Normal   Scheduled   pod/nginx   pod [default/nginx] is successfully scheduled to node kind-control-plane
             ```
+
+# Reference
+- https://banzaicloud.com/blog/k8s-custom-scheduler/
+- https://github.com/martonsereg/random-scheduler
