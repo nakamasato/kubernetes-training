@@ -1,8 +1,12 @@
 # Strimzi
 
-# Setup
+## Working directory
 
-https://strimzi.io/quickstarts/
+https://github.com/nakamasato/kubernetes-training/tree/master/strimzi
+
+## Setup
+
+[https://strimzi.io/quickstarts/](https://strimzi.io/quickstarts/)
 
 ## Versions
 
