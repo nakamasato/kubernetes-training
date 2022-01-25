@@ -6,21 +6,40 @@
 - [argocd](../argocd): [appcontroller.go](https://github.com/argoproj/argo-cd/blob/9025318adf367ae8f13b1a99e5c19344402b7bb9/controller/appcontroller.go)
 # 2. Understand what is Kubernetes operator.
 
-![](diagram.drawio.svg)
-
-1. Kubernetes Controller components.
-1. How Kubernetes Controlloer works.
-1. Custom Resource.
-
-**Kubernetes Operator**
-
 > A Kubernetes operator is an application-specific controller that extends the functionality of the Kubernetes API to create, configure, and manage instances of complex applications on behalf of a Kubernetes user.
 
 From https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator
 
 > Operators are software extensions to Kubernetes that make use of custom resources to manage applications and their components. Operators follow Kubernetes principles, notably the control loop.
 
-From https://kubernetes.io/docs/concepts/extend-kubernetes/operator/
+From [Operator Pattern in Kubernetes documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+
+**Operator Pattern**
+
+![](https://github.com/cncf/tag-app-delivery/blob/eece8f7307f2970f46f100f51932db106db46968/operator-wg/whitepaper/img/02_1_operator_pattern.png?raw=true)
+
+Three components:
+1. The application or infrastructure that we want to manage.
+1. A domain specific language that enables the users to specify the desired state of the application in a declarative way.
+1. A controller that runs continuously:
+    - reads and is aware of the state.
+    - runs actions againsst the application in an automated way.
+    - report the state of the application in a declarative way.
+
+From [](https://github.com/cncf/tag-app-delivery/blob/main/operator-wg/whitepaper/Operator-WhitePaper_v1-0.md)
+
+**Kubernetes Operator**
+
+![](https://github.com/cncf/tag-app-delivery/blob/main/operator-wg/whitepaper/img/02_2_operator.png?raw=true)
+
+Example:
+
+![](diagram.drawio.svg)
+
+1. Kubernetes Controller components.
+1. How Kubernetes Controlloer works.
+1. Custom Resource.
+
 
 **Operator vs. Controller**
 
@@ -33,35 +52,50 @@ From [実践入門Kubernetesカスタムコントローラーへの道](https://
 > - Operators are controllers that encode some operational knowledge, such as application lifecycle management, along with the custom resources defined in Chapter 4.
 
 From [Programming Kubernetes](https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/ch01.html)
+
+> Technically, there is no difference between a typical controller and an operator. Often the difference referred to is the operational knowledge that is included in the operator. Therefore, a controller is the implementation, and the operator is the pattern of using custom controllers with CRDs and automation is what is looking to be achieved with this. As a result, a controller which spins up a pod when a custom resource is created, and the pod gets destroyed afterwards can be described as a simple controller. If the controller has operational knowledge like how to upgrade or remediate from errors, it is an operator.
+
+From [](https://github.com/cncf/tag-app-delivery/blob/main/operator-wg/whitepaper/Operator-WhitePaper_v1-0.md#kubernetes-controllers)
 # 3. Create a sample operator following a tutorial
 
-There are several ways to create an operator. You can try any of them.
+There are several ways to create an operator. Personally, I would recommend starting from `operator-sdk` or `kubebuilder`. I studied them in the following order.
 
-- [sample-controller](https://github.com/kubernetes/sample-controller): https://github.com/nakamasato/foo-controller-kubebuilder
-- [operator-sdk](https://sdk.operatorframework.io/)
+1. [operator-sdk](https://sdk.operatorframework.io/)
     - [go-based](https://sdk.operatorframework.io/docs/building-operators/golang/quickstart/): https://github.com/nakamasato/memcached-operator
     - [helm-based](https://sdk.operatorframework.io/docs/building-operators/helm/quickstart/): https://github.com/nakamasato/nginx-operator
     - [ansible-based](https://sdk.operatorframework.io/docs/building-operators/ansible/quickstart/): https://github.com/nakamasato/memcached-operator-with-ansible
-- [kubebuilder](https://book.kubebuilder.io/)
+1. [kubebuilder](https://book.kubebuilder.io/)
     - [Tutorial: Building CronJob](https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial.html)
+    - [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+1. [sample-controller](https://github.com/kubernetes/sample-controller): https://github.com/nakamasato/foo-controller-kubebuilder
+
+Other tools:
 - [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
-- [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
 
-# 4. Understand more detail about each compoenent
+# 4. Understand more detail about each component
 
-overview of the flow
+Overview of the event flow:
 
-1. [informer](informer)
-    1. factory
-    1. watch
-    1. lister
-    1. in-memory-cache
-    1. event handler
-1. workqueue
+![](https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg?raw=true)
+
+From https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg
+1. **Reflector** lists and watches kube-apiserver and adds an object to **Delta FIFO queue**.
+1. [Informer](informer) pops objects from the Delta queue one by one. (creted by a factory e.g. **SharedInformerFactory**)
+    1. Informer adds an object to **indexer**
+    1. Indexer stores the object and key to the **thread safe store**. (called in-memory-cache)
+    1. **event handler** handles the object and enqueue object key to **workqueue**
+1. **Reconciler** in the controller gets key and process the item.
+1. Inside the reconciliation loop, **HandleObject** get object using the key from **indexer reference**
+
+If you use `kubebuilder` or `operator-sdk`, you don't really need to worry about these details. However, if you understand them, it would be helpful when debugging or implementing complicated logic.
 
 Reference
 - https://adevjoe.com/post/client-go-informer/
-- https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html
+- https://github.com/kubernetes/sample-controller/blob/master/docs/controller-client-go.md
+- [kube-controller-manager源码分析（三）之 Informer机制](https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html)
+- [A deep dive into Kubernetes controllers](https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html)
+- [Introducing Operators: Putting Operational Knowledge into Software](https://web.archive.org/web/20170129131616/https://coreos.com/blog/introducing-operators.html)
+- [Best practices for building Kubernetes Operators and stateful apps](https://cloud.google.com/blog/products/containers-kubernetes/best-practices-for-building-kubernetes-operators-and-stateful-apps)
 # 4. Create your own operator
 
 After creating a sample operator, you should have deeper understanding of controller. Now you can think about what kind of problem that you want to resolve by utilizing operator pattern.
@@ -76,7 +110,7 @@ To clarify a problem to resolve with a new operator, you can reference existing 
     - [Q: How do I have different logic in my reconciler for different types of events (e.g. create, update, delete)? in controller-runtime](https://github.com/kubernetes-sigs/controller-runtime/blob/master/FAQ.md#q-how-do-i-have-different-logic-in-my-reconciler-for-different-types-of-events-eg-create-update-delete)
 - [Owners and Dependents](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
 
-Considerations:
+Tips:
 - Finalizer
 - Reconciliation Loop
     - [operator-sdk] Based on the return value of Reconcile() the reconcile Request may be requeued and the loop may be triggered again: ([Building a Go-based Memcached Operator using the Operator SDK](https://docs.openshift.com/container-platform/4.1/applications/operator_sdk/osdk-getting-started.html#building-memcached-operator-using-osdk_osdk-getting-started))
