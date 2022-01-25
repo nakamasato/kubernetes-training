@@ -38,6 +38,12 @@ Official:
     kubectl apply -f example-app-with-service-monitor
     ```
 
+    ```
+    kubectl port-forward -n monitoring svc/prometheus-operated 9090:9090
+    ```
+
+    Open http://localhost:9090/targets:
+
     ![](service-monitor-target.png)
 
     We can see `serviceMonitor/default/example-app-with-service-monitor/0` in `scrape_configs`
