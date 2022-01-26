@@ -86,10 +86,10 @@
 
 #### Set up Kubernetes Cluster with kubeadm (local)
 
-[kubeadm-local]()
+[kubeadm-local](kubeadm-local)
 #### Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
 
-[Kubernetes the hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
 
 #### [More Practices of Applications on Kubernetes](PRACTICE.md)
 
