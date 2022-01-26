@@ -23,16 +23,40 @@ Official:
 1. Install Prometheus operator in `default` namespace.
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
     ```
 
+    <details><summary>This command creates the following resources:</summary>
+
+    1. 8 CRDs:
+        1. `AlertmanagerConfig`
+        1. `Alertmanager`
+        1. `PodMonitor`
+        1. `Probe`
+        1. `Prometheus`
+        1. `PrometheusRule`
+        1. `ServiceMonitor`
+        1. `ThanosRuler`
+    1. `ClusterRoleBinding` & `ClusterRole`: `prometheus-operator`
+    1. `Deployment`: `prometheus-operator`
+    1. `ServiceAccount`: `prometheus-operator`
+    1. `Service`: `prometheus-operator`
+
+    </details>
+
 1. Deploy Prometheus in `monitoring` namespace.
+
+    The resources to deploy:
+    1. `Prometheus`
+    1. rbac: `ClusterRole`, `ClusterRoleBinding`, and `ServiceAccount`
+    1. `Service` for Prometheus Pods.
+    1. `ServiceMonitor` for Prometheus itself.
 
     ```
     kubectl apply -k .
     ```
 
-1. Deploy example application with ServiceMonitor.
+1. Deploy example application with `ServiceMonitor`.
 
     ```
     kubectl apply -f example-app-with-service-monitor
@@ -61,7 +85,7 @@ Official:
             - default
         ```
 
-1. Deploy example application with PodMonitor.
+1. Deploy example application with `PodMonitor`.
     ```
     kubectl apply -f example-app-with-pod-monitor
     ```
@@ -83,6 +107,15 @@ Official:
             - default
         ```
 
+1. Clean up.
+
+    ```
+    kubectl delete -f example-app-with-pod-monitor
+    kubectl delete -f example-app-with-service-monitor
+    kubectl delete -k .
+    kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    kubectl delete ns monitoring
+    ```
 ## Important Configurations
 
 [PrometheusSpec](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#prometheusspec)

@@ -8,7 +8,7 @@
 - Traefik: v2.2
 - ArgoCD: [v2.1.1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.1) (released on 2021-08-26)
 - Prometheus-Operator: [v0.53.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.53.1) (released on 2021-12-20)
-- Prometheus: [v2.32.1](https://github.com/prometheus/prometheus/releases/tag/v2.32.1) (released on 2021-12-17)
+- Prometheus: Latest
 - Grafana: Latest
 - Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0) (released on 2021-06-24)
 - Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1) (released on 2021-05-28)
