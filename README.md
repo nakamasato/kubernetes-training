@@ -14,6 +14,7 @@
 - Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1) (released on 2021-05-28)
 - Ingress Nginx Controller: [v0.48.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v0.48.1) (released on 2021-07-15)
 - Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
+- Istio: [1.12.2](https://github.com/istio/istio/releases/tag/1.12.2) (released on 2022-01-19)
 
 # Contents
 
@@ -35,6 +36,8 @@
     - [strimzi](strimzi)
     - [postgres-operator](postgres-operator)
     - [eck](eck)
+- Service Proxy, Discovery, and, Mesh
+    - [istio](istio)
 - Monitoring
     - [Prometheus](prometheus-operator)
     - [Grafana](grafana)
@@ -55,7 +58,6 @@
 
 ![alt text](https://github.com/cncf/trailmap/blob/master/CNCF_TrailMap_latest.png?raw=true)
 
-
 ## 1. CONTAINERIZATION
 
 ## 2. CI/CD
@@ -65,6 +67,22 @@
 
 ### 3.1 Kubernetes
 
+#### Useful Commands
+
+- DNS
+    ```
+    kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+    kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+    ```
+- [Debug with ephemeral containers](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/#ephemeral-container-example) (alpha in 1.22, beta in 1.23)
+    ```
+    kubectl run ephemeral-demo --image=k8s.gcr.io/pause:3.1 --restart=Never
+    kubectl debug -it ephemeral-demo --image=busybox --target=ephemeral-demo
+    ```
+- Create pod with busyboxy-curl
+    ```
+    kubectl run -it --rm=true busybox --image=yauritux/busybox-curl --restart=Never
+    ```
 #### Practice 1: Install Elasticsearch, Kibana & Filebeat with Helm
 
 1. Create namespace
