@@ -50,6 +50,8 @@
 1. CI/CD
     1. [conftest](open-policy-agent/conftest)
     1. [argocd](argocd)
+1. Machine Learning
+    1. [kubeflow](https://github.com/nakamasato/kubeflow-training)
 
 # Cloud Native Trail Map
 
