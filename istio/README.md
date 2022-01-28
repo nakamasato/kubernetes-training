@@ -3,9 +3,13 @@
 
 *A service mesh is a dedicated infrastructure layer that you can add to your applications. It allows you to transparently add capabilities like observability, traffic management, and security, without adding them to your own code. The term “service mesh” describes both the type of software you use to implement this pattern, and the security or network domain that is created when you use that software.*
 
+
+Istio uses [Envoy](https://www.envoyproxy.io/), *AN OPEN SOURCE EDGE AND SERVICE PROXY, DESIGNED FOR CLOUD-NATIVE APPLICATIONS*, proxy as its data plane.
 ## [Getting Started](https://istio.io/latest/docs/setup/getting-started/)
 
-### Installation
+**If you test on your local cluster, pleasee use docker-desktop (or minikube).** (Not confirmed on a kind cluster)
+
+### [Install Istio](https://istio.io/latest/docs/setup/getting-started/#bookinfo)
 
 ```
 curl -L https://istio.io/downloadIstio | sh -
@@ -34,7 +38,7 @@ Add a namespace label to instruct Istio to automatically inject Envoy sidecar pr
 kubectl label namespace default istio-injection=enabled
 ```
 
-### Deploy the Sample app
+### [Deploy the sample application](https://istio.io/latest/docs/setup/getting-started/#bookinfo)
 
 Deploy sample app.
 
@@ -63,7 +67,7 @@ kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.
 <title>Simple Bookstore App</title>
 ```
 
-### Open the app to outside traffic
+### [Open the app to outside traffic](https://istio.io/latest/docs/setup/getting-started/#ip)
 
 Istio Gateway
 
@@ -77,23 +81,58 @@ istioctl analyze
 ✔ No validation issues found when analyzing namespace: default.
 ```
 
-Not confirmed on a kind cluster
+Check ingress gateway
 
-### Dashboard
+```
+kubectl get svc istio-ingressgateway -n istio-system
+NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                                      AGE
+istio-ingressgateway   LoadBalancer   10.103.34.38   localhost     15021:31476/TCP,80:31411/TCP,443:32714/TCP,31400:30467/TCP,15443:30550/TCP   44m
+```
+
+Set ingress ip and ports:
+
+```
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+```
+
+Docker for Desktop:
+
+```
+export INGRESS_HOST=127.0.0.1
+```
+
+Check
+
+```
+echo "$GATEWAY_URL"
+127.0.0.1:80
+```
+
+```
+echo "http://$GATEWAY_URL/productpage"
+http://127.0.0.1:80/productpage
+```
+
+Open http://127.0.0.1:80/productpage on your browser:
+
+![](docs/sample-app.png)
+
+### [View the dashboard](https://istio.io/latest/docs/setup/getting-started/#dashboard)
 
 Install [kiali](https://istio.io/latest/docs/ops/integrations/kiali/) dashboard
 
+```
 kubectl apply -f samples/addons
+kubectl rollout status deployment/kiali -n istio-system
+```
 
 Open dashboard
 
 ```
 istioctl dashboard kiali
 ```
-
-kubectl port-forward svc/productpage 9080:9080
-
-![](docs/sample-app.png)
 
 The traffic is visualized in the graph.
 
@@ -105,4 +144,9 @@ The traffic is visualized in the graph.
 kubectl delete -f samples/addons
 istioctl manifest generate --set profile=demo | kubectl delete --ignore-not-found=true -f -
 istioctl tag remove default
+```
+
+```
+kubectl delete namespace istio-system
+kubectl label namespace default istio-injection-
 ```
