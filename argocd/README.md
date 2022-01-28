@@ -6,13 +6,13 @@
 
 ## Version
 
-- [v2.1.1](https://github.com/argoproj/argo-cd/releases/tag/v2.1.1)
+- [v2.2.3](https://github.com/argoproj/argo-cd/releases/tag/v2.2.3)
 ## Install
 
 ```bash
 kubectl create namespace argocd
-kubectl kustomize argocd/setup | kubectl apply -f - # before v1.21
 kubectl apply -k argocd/setup # v1.21 or later
+# kubectl kustomize argocd/setup | kubectl apply -f - # before v1.21
 ```
 
 Check all the pods are running
