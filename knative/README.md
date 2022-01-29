@@ -208,3 +208,9 @@ Kubernetes-based platform to deploy and manage modern serverless workloads.
     ```
     kn service delete hello
     ```
+
+1. Clean up cluster
+
+    ```
+    kind delete clusters knative
+    ```
