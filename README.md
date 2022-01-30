@@ -29,6 +29,9 @@
     1. [kubernetes-operator](kubernetes-operator)
     1. [kubernetes-scheduler](kubernetes-scheduler)
     1. plugins
+1. Deloyment Managemet
+    1. [Knative](knative)
+    1. Skaffold
 1. Networking
     1. [traefik](traefik)
     1. [ingress-nginx-controller](ingress-nginx-controller)
