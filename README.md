@@ -145,7 +145,7 @@
 
 ### 4.1. [Prometheus](prometheus-operator)
 
-![](prometheus-operator/prometheus.drawio.svg)
+![](prometheus-operator/docs/prometheus.drawio.svg)
 
 ### TBD
 - fluentd
