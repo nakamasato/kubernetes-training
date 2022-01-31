@@ -33,6 +33,10 @@ From [実践入門Kubernetesカスタムコントローラーへの道](https://
 > - Operators are controllers that encode some operational knowledge, such as application lifecycle management, along with the custom resources defined in Chapter 4.
 
 From [Programming Kubernetes](https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/ch01.html)
+
+
+- [What is a Kubernetes operator?](https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator)
+- [Kubernetes Operators ~ Automating the Container Orchestration Platform ~](https://www.redhat.com/rhdc/managed-files/cl-oreilly-kubernetes-operators-ebook-f21452-202001-en_2.pdf)
 # 3. Create a sample operator following a tutorial
 
 There are several ways to create an operator. You can try any of them.

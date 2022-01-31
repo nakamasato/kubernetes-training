@@ -7,10 +7,10 @@ Official:
 ## Overview
 
 ### Prometheus Operator
-![](prometheus-operator.drawio.svg)
+![](docs/prometheus-operator.drawio.svg)
 
 ### Prometheus
-![](prometheus.drawio.svg)
+![](docs/prometheus.drawio.svg)
 
 ## Basic Usage
 
@@ -68,7 +68,7 @@ Official:
 
     Open http://localhost:9090/targets:
 
-    ![](service-monitor-target.png)
+    ![](docs/service-monitor-target.png)
 
     We can see `serviceMonitor/default/example-app-with-service-monitor/0` in `scrape_configs`
 
@@ -90,7 +90,7 @@ Official:
     kubectl apply -f example-app-with-pod-monitor
     ```
 
-    ![](pod-monitor-target.png)
+    ![](docs/pod-monitor-target.png)
 
     We can see `podMonitor/default/example-app-with-pod-monitor/0` in `scrape_configs`
 
