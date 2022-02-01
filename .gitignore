@@ -1,2 +1,3 @@
 .DS_Store
 istio-1.*
+kubeconfig

@@ -5,10 +5,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/e2e.yml
-      - config/crd/**
-      - tests/e2e/**
-      - '**.go'
-      - 'go.*'
+      - test/**
       - kuttl-test.yaml
 
 jobs:
