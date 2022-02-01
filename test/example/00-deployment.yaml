@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: mysql
   name: mysql
@@ -10,10 +9,8 @@ spec:
   selector:
     matchLabels:
       app: mysql
-  strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: mysql
     spec:
@@ -24,5 +21,3 @@ spec:
         env:
           - name: MYSQL_ROOT_PASSWORD
             value: password
-        resources: {}
-status: {}
