@@ -1,0 +1,48 @@
+
+
+name: e2e
+on:
+  pull_request:
+    paths:
+      - .github/workflows/e2e.yml
+      - config/crd/**
+      - tests/e2e/**
+      - '**.go'
+      - 'go.*'
+      - kuttl-test.yaml
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: set up
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+
+      - uses: actions/checkout@master
+
+      # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+      - name: krew - install
+        run: |
+          (
+            set -x; cd "$(mktemp -d)" &&
+            OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+            ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+            KREW="krew-${OS}_${ARCH}" &&
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+            tar zxvf "${KREW}.tar.gz" &&
+            ./"${KREW}" install krew
+          )
+      # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#adding-a-system-path
+      - name: krew - set PATH
+        run: echo "${KREW_ROOT:-$HOME/.krew}/bin:$PATH" >> $GITHUB_PATH
+
+      # https://kuttl.dev/docs/cli.html#setup-the-kuttl-kubectl-plugin
+      - name: kuttl - install
+        run: |
+          kubectl krew install kuttl
+          kubectl kuttl -v
+
+      - name: kuttl - run
+        run: kubectl kuttl test
