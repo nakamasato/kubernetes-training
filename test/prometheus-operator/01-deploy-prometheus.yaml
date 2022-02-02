@@ -1,0 +1,7 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+delete:
+commands:
+  - command: kubectl delete -k ../../prometheus-operator
+    ignoreFailure: true
+  - command: kubectl create -k ../../prometheus-operator
