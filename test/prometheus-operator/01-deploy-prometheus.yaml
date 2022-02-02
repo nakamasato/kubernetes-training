@@ -3,6 +3,7 @@ kind: TestStep
 delete:
 commands:
   - command: kubectl create ns monitoring
+    ignoreFailure: true
   - command: kubectl delete -k ../../prometheus-operator
     ignoreFailure: true
   - command: kubectl create -k ../../prometheus-operator
