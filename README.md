@@ -42,7 +42,8 @@
 1. Service Proxy, Discovery, and, Mesh
     1. [istio](istio)
 1. Monitoring
-    1. [Prometheus](prometheus-operator)
+    1. [Prometheus](prometheus)
+    1. [Prometheus Operator](prometheus-operator)
     1. [Grafana](grafana)
     1. [Loki](loki)
 1. Security
@@ -143,9 +144,10 @@
 
 ## 4. OBSERVABILITY & ANALYTICS
 
-### 4.1. [Prometheus](prometheus-operator)
+### 4.1. [Prometheus](prometheus)
 
-![](prometheus-operator/docs/prometheus.drawio.svg)
+![](prometheus/prometheus.drawio.svg)
+### 4.2. [Prometheus Operator](prometheus-operator)
 
 ### TBD
 - fluentd

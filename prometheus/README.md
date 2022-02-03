@@ -99,3 +99,6 @@
     ```
 
     -> Only pods behind endpoints in monitoring namespace are scraped.
+
+## References
+- [prometheus](https://github.com/prometheus/prometheus)

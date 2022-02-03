@@ -1,18 +1,10 @@
 # Prometheus Operator
-
-Official:
-- [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator/)
-- [prometheus](https://github.com/prometheus/prometheus)
-
 ## Overview
 
-### Prometheus Operator
 How Prometheus Operator interacts with Prometheus:
 ![](docs/prometheus-operator.drawio.svg)
 
-### Prometheus
-![](docs/prometheus.drawio.svg)
-
+About [Prometheus](../prometheus)
 ## Basic Usage
 
 ### 1. Deploy Prometheus Operator and Prometheus
@@ -176,7 +168,6 @@ kubectl delete ns monitoring
 
 ## References
 
-- Prometheus Operator
-    - [getting-started](https://github.com/prometheus-operator/prometheus-operator/tree/master/example/user-guides/getting-started): The examples above are from here.
-- Prometheus
-    - [prometheus/discovery/kubernetes](https://github.com/prometheus/prometheus/tree/main/discovery/kubernetes): Implementation of Kubernetes Discovery in Prometheus.
+- [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator/)
+- [getting-started](https://github.com/prometheus-operator/prometheus-operator/tree/master/example/user-guides/getting-started): The examples above are from here.
+- [prometheus/discovery/kubernetes](https://github.com/prometheus/prometheus/tree/main/discovery/kubernetes): Implementation of Kubernetes Discovery in Prometheus.
