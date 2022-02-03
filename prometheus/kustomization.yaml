@@ -1,0 +1,11 @@
+namespace: monitoring
+configMapGenerator:
+  - name: prometheus-config
+    files:
+      - prometheus.yml
+resources:
+  - serviceaccount.yaml
+  - clusterrole.yaml
+  - clusterrolebinding.yaml
+  - statefulset.yaml
+  - service.yaml
