@@ -2,7 +2,9 @@ namespace: monitoring
 configMapGenerator:
   - name: prometheus-config
     files:
-      - prometheus.yml
+      - prometheus.yml=prometheus-with-endpoints-role.yml
+generatorOptions:
+  disableNameSuffixHash: true
 resources:
   - serviceaccount.yaml
   - clusterrole.yaml

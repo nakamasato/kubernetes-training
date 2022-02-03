@@ -40,6 +40,7 @@ spec:
               mountPath: /prometheus
       restartPolicy: Always
       securityContext: {}
+      serviceAccountName: prometheus
       terminationGracePeriodSeconds: 30
       volumes:
         - name: config-volume
