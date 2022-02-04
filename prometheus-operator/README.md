@@ -69,10 +69,37 @@ Open http://localhost:9090/targets:
 
 We can see `serviceMonitor/default/example-app-with-service-monitor/0` in `scrape_configs`
 
+**ServiceMonitor**
+
+```yaml
+spec:
+  selector:
+    matchLabels:
+      app: example-app-with-service-monitor
+  endpoints:
+  - port: web
+```
+
+**Prometheus scrape_config**
+The above `ServiceMonitor` is converted into a job `serviceMonitor/default/example-app-with-service-monitor/0` in scrape_config
 - `relabel_configs`: relabel based on the available Kubernetes metadata for [endpoints](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#endpoints)
+    ```yaml
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_labelpresent_app]
+        separator: ;
+        regex: (example-app-with-service-monitor);true
+        replacement: $1
+        action: keep
+      - source_labels: [__meta_kubernetes_endpoint_port_name]
+        separator: ;
+        regex: web
+        replacement: $1
+        action: keep
+    ...
+    ```
 - `kubernetes_sd_configs`: Kubernetes service discovery config. ServiceMonitor uses `endpoints` role.
 
-    ```
+    ```yaml
     kubernetes_sd_configs:
     - role: endpoints
         kubeconfig_file: ""
@@ -99,7 +126,7 @@ We can see `podMonitor/default/example-app-with-pod-monitor/0` in `scrape_config
 - `relabel_configs`: relabel based on the available Kubernetes metadata for [pod](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#pod)
 - `kubernetes_sd_configs`: Kubernetes service discovery config. ServiceMonitor uses `endpoints` role.
 
-    ```
+    ```yaml
     kubernetes_sd_configs:
     - role: pod
         kubeconfig_file: ""
@@ -156,6 +183,8 @@ kubectl delete ns monitoring
     1. `conf` is compressed.
     1. Initialize `Secret` and set the compressed configData as `s.Data[configFilename] = buf.Bytes()`.
     1. Create or update the `Secret`.
+
+    ![](docs/service-monitor-to-configuration.drawio.svg)
 
 ## History
 
