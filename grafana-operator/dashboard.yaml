@@ -1,0 +1,10 @@
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDashboard
+metadata:
+  name: prometheus
+  labels:
+    app: grafana
+spec:
+  grafanaCom:
+    id: 6417
+  json: ""

@@ -45,6 +45,7 @@
     1. [Prometheus](prometheus)
     1. [Prometheus Operator](prometheus-operator)
     1. [Grafana](grafana)
+    1. [Grafana Operator](grafana-operator)
     1. [Loki](loki)
 1. Security
     1. [open-policy-agent](open-policy-agent)
