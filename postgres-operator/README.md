@@ -2,46 +2,52 @@
 
 https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md
 
-## Install Postgres Operator
+Version: [v1.7.1](https://github.com/zalando/postgres-operator/releases/tag/v1.7.1)
 
-Manual
+## 1. Install Postgres Operator
 
-Namespace: `database`
+Namespace: `default`
 
 ```
-kubectl apply -k operator/overlays/database
-
-Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
-namespace/database configured
-serviceaccount/postgres-operator created
-clusterrole.rbac.authorization.k8s.io/postgres-operator created
-clusterrole.rbac.authorization.k8s.io/postgres-pod created
-clusterrolebinding.rbac.authorization.k8s.io/postgres-operator created
-configmap/postgres-operator created
-service/postgres-operator created
-deployment.apps/postgres-operator created
+kubectl apply -k github.com/zalando/postgres-operator/manifests
 ```
 
-## Create a Postgres Cluster
+or
+
+```
+helm install postgres-operator ./charts/postgres-operator
+```
+
+## 2. Deploy the Operator UI
+
+1. Deploy
+
+    ```
+    kubectl apply -k github.com/zalando/postgres-operator/ui/manifests
+    ```
+
+    or
+
+    ```
+    helm install postgres-operator-ui ./charts/postgres-operator-ui
+    ```
+
+1. Check
+
+    ```
+    kubectl port-forward svc/postgres-operator-ui 8081:80
+    ```
+
+1. Open http://localhost:8081/
+
+    ![](postgres-operator-ui.png)
+## 3. Create a Postgres Cluster
 
 
 1. Apply
 
-    Use official yaml
-
     ```
-    git clone https://github.com/zalando/postgres-operator.git
-    sed -i.bak 's/namespace: default/namespace: database/' manifests/*yaml
-    cd postgres-operator
-    kubectl create -f manifests/minimal-postgres-manifest.yaml
-    ```
-
-    Use copied
-
-    ```
-    kubectl apply -f resources/minimal-postgres-manifest.yaml
-
-    postgresql.acid.zalan.do/acid-minimal-cluster created
+    kubectl create -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
     ```
 
 1. Check
@@ -61,19 +67,26 @@ deployment.apps/postgres-operator created
 
     ```
     kubectl exec -it acid-minimal-cluster-0 -- psql -Upostgres
-    psql (12.2 (Ubuntu 12.2-2.pgdg18.04+1))
+    psql (14.0 (Ubuntu 14.0-1.pgdg18.04+1))
     Type "help" for help.
 
     postgres=#
     ```
 
-## Delete cluster
+1. Check on UI
+
+    http://localhost:8081/#/status/default/acid-minimal-cluster
+
+
+    ![](postgres-operator-ui-cluster.png)
+
+## 4. Delete cluster
 
 ```
 kubectl delete -f resources/minimal-postgres-manifest.yaml
 ```
 
-## Remove operator
+## 5. Remove operator
 
 ```
 kubectl delete -k operator/overlays/database/
