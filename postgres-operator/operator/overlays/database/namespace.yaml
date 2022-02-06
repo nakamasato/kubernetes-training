@@ -1,5 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  creationTimestamp: "2020-08-04T00:23:55Z"
-  name: database
