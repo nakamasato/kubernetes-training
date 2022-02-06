@@ -1,8 +1,8 @@
 # Kubernetes Features
 
-## Namespaces
+## [Namespaces]([Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/))
 
-*Kubernetes supports multiple virtual clusters backed by the same physical cluster. These virtual clusters are called namespaces.* [Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
+*Kubernetes supports multiple virtual clusters backed by the same physical cluster. These virtual clusters are called namespaces.*
 
 When to use multiple namespaces seems to be arguable.
 - [Kubernetes - Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
