@@ -1,10 +1,14 @@
 # Kubernetes Operator Study Journey
-# 1. Use existing operators
-- [prometheus-operator](../prometheus-operator)
-- [postgres-operator](../postgres-operator)
-- [strimzi](../strimzi)
-- [argocd](../argocd): [appcontroller.go](https://github.com/argoproj/argo-cd/blob/9025318adf367ae8f13b1a99e5c19344402b7bb9/controller/appcontroller.go)
-# 2. Understand what is Kubernetes operator.
+## 1. Try using existing operators
+
+1. [prometheus-operator](../prometheus-operator)
+1. [postgres-operator](../postgres-operator)
+1. [strimzi](../strimzi)
+1. [argocd](../argocd): [appcontroller.go](https://github.com/argoproj/argo-cd/blob/9025318adf367ae8f13b1a99e5c19344402b7bb9/controller/appcontroller.go)
+1. [grafana-operator](../grafana-operator)
+1. [mysql-operator](../mysql-operator)
+
+## 2. Understand what is Kubernetes operator.
 
 ![](diagram.drawio.svg)
 
@@ -37,23 +41,27 @@ From [Programming Kubernetes](https://www.oreilly.com/library/view/programming-k
 
 - [What is a Kubernetes operator?](https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator)
 - [Kubernetes Operators ~ Automating the Container Orchestration Platform ~](https://www.redhat.com/rhdc/managed-files/cl-oreilly-kubernetes-operators-ebook-f21452-202001-en_2.pdf)
-# 3. Create a sample operator following a tutorial
+## 3. Create a sample operator following a tutorial
 
-There are several ways to create an operator. You can try any of them.
+There are several ways to create an operator. You can try any of them:
 
-- [sample-controller](https://github.com/kubernetes/sample-controller): https://github.com/nakamasato/foo-controller-kubebuilder
-- [operator-sdk](https://sdk.operatorframework.io/)
+1. [sample-controller](https://github.com/kubernetes/sample-controller): https://github.com/nakamasato/foo-controller-kubebuilder
+1. [operator-sdk](https://sdk.operatorframework.io/)
     - [go-based](https://sdk.operatorframework.io/docs/building-operators/golang/quickstart/): https://github.com/nakamasato/memcached-operator
     - [helm-based](https://sdk.operatorframework.io/docs/building-operators/helm/quickstart/): https://github.com/nakamasato/nginx-operator
     - [ansible-based](https://sdk.operatorframework.io/docs/building-operators/ansible/quickstart/): https://github.com/nakamasato/memcached-operator-with-ansible
-- [kubebuilder](https://book.kubebuilder.io/)
+1. [kubebuilder](https://book.kubebuilder.io/)
     - [Tutorial: Building CronJob](https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial.html)
-- [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
-- [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+1. [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
+1. [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
 
-# 4. Understand more detail about each compoenent
+## 4. Understand more detail about each compoenent
 
-overview of the flow
+Overview
+
+![](https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg?raw=true)
+
+*from https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg*
 
 1. [informer](informer)
     1. factory
@@ -66,22 +74,24 @@ overview of the flow
 Reference
 - https://adevjoe.com/post/client-go-informer/
 - https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html
-# 4. Create your own operator
+## 5. Create your own operator
 
-After creating a sample operator, you should have deeper understanding of controller. Now you can think about what kind of problem that you want to resolve by utilizing operator pattern.
+After creating a sample operator, you should have deeper understanding of Kubernetes operator. Now you can think about what kind of problem that you want to resolve by utilizing operator pattern.
 
 To clarify a problem to resolve with a new operator, you can reference existing operators:
 
-|operator|role|
-|---|---|
-|prometheus-operator|Manage Prometheus and configuration|
+|operator|role|language|
+|---|---|---|
+|prometheus-operator|Manage Prometheus, Alertmanager and their configuration|Golang|
+|mysql-operator|Manage MySQL cluster|Python|
+|postgres-operator|Manage PostgreSQL cluster (version upgrade, live volume resize, ...)|Golang|
+|strimzi-kafka-operator|Manage Kafka cluster, user, and topic|Java|
+|...|...|...|
 
-- [How can I have separate logic for Create, Update, and Delete events? When reconciling an object can I access its previous state?](https://sdk.operatorframework.io/docs/faqs/#how-can-i-have-separate-logic-for-create-update-and-delete-events-when-reconciling-an-object-can-i-access-its-previous-state) -> You should not have separate logic. Instead design your reconciler to be idempotent.
-    - [Q: How do I have different logic in my reconciler for different types of events (e.g. create, update, delete)? in controller-runtime](https://github.com/kubernetes-sigs/controller-runtime/blob/master/FAQ.md#q-how-do-i-have-different-logic-in-my-reconciler-for-different-types-of-events-eg-create-update-delete)
-- [Owners and Dependents](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
 
 Considerations:
 - Finalizer
+- [Owners and Dependents](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
 - Reconciliation Loop
     - [operator-sdk] Based on the return value of Reconcile() the reconcile Request may be requeued and the loop may be triggered again: ([Building a Go-based Memcached Operator using the Operator SDK](https://docs.openshift.com/container-platform/4.1/applications/operator_sdk/osdk-getting-started.html#building-memcached-operator-using-osdk_osdk-getting-started))
         ```go
@@ -93,6 +103,8 @@ Considerations:
         return reconcile.Result{Requeue: true}, nil
         ```
     - https://github.com/operator-framework/operator-sdk/issues/4209#issuecomment-729916367
+    - [How can I have separate logic for Create, Update, and Delete events? When reconciling an object can I access its previous state?](https://sdk.operatorframework.io/docs/faqs/#how-can-i-have-separate-logic-for-create-update-and-delete-events-when-reconciling-an-object-can-i-access-its-previous-state) -> You should not have separate logic. Instead design your reconciler to be idempotent.
+        - [Q: How do I have different logic in my reconciler for different types of events (e.g. create, update, delete)? in controller-runtime](https://github.com/kubernetes-sigs/controller-runtime/blob/master/FAQ.md#q-how-do-i-have-different-logic-in-my-reconciler-for-different-types-of-events-eg-create-update-delete)
 - Testing
     - **KUbernetes Testing TooL (kuttl)**: https://kuttl.dev/ KUTTL is built to support some kubernetes integration test scenarios and is most valuable as an end-to-end (e2e) test harness.
     - **Ginkgo** (A Golang BDD Testing Framework): https://onsi.github.io/ginkgo/
@@ -102,15 +114,21 @@ Considerations:
     - https://cloud.redhat.com/blog/kubernetes-operators-best-practices
     1. Return the error in the status of the object.
     1. Generate an event describing the error.
-# 5. Tools
+## 6. Tools
 - https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil
 - https://github.com/spf13/cobra: a library for creating powerful modern CLI applications & a program to generate applications and command files.
     - Cobra is used in many Go projects such as Kubernetes, Hugo, and Github CLI to name a few. This list contains a more extensive list of projects using Cobra.
 
-# 6. Study Golang for better codes
+## 7. Study Golang for better code quality
 
 - [golang-standanrds/project-layout](https://github.com/golang-standards/project-layout)
 - [Learn Go with tests](https://quii.gitbook.io/learn-go-with-tests/)
 - [GoとDependency Injectionの現在](https://note.com/timakin/n/nc95d66a75b3d)
 - [Go Blog](https://go.dev/blog)
 - [Gopher Reading List](https://github.com/enocom/gopher-reading-list)
+
+## 8. Other Topics
+
+1. Write Kubernetes Operator in other languages
+    - [kopf](https://kopf.readthedocs.io/en/stable/) for Python
+    - [fabric8io/kubernetes-client](https://github.com/fabric8io/kubernetes-client) for Java
