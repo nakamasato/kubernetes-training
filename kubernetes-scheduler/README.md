@@ -1,4 +1,4 @@
-# kubernetes scheduler
+# Kubernetes scheduler
 
 ## Components:
 - `podQueue` channel

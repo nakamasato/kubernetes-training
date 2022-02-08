@@ -19,21 +19,20 @@
 
 # Contents
 
-1. Cluster Setup
+1. Kubernetes Cluster
     1. [kubernetes-the-hard-way](kubernetes-the-hard-way)
     1. [Kubeadm in local](kubeadm-local)
     1. [kind](local-cluster/kind)
-1. Kubernetes Features
+1. [Kubernetes Features](kubernetes-features)
     1. [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
     1. [amazon-eks-workshop](eksworkshop)
-    1. [Kubernetes Features](kubernetes-features)
 1. Kubernetes Extentions
     1. [kubernetes-operator](kubernetes-operator)
     1. [kubernetes-scheduler](kubernetes-scheduler)
-    1. plugins
+    1. [plugins (todo)](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/)
 1. Deloyment Managemet
     1. [Knative](knative)
-    1. Skaffold
+    1. [Skaffold (todo)](https://skaffold.dev/)
 1. Networking
     1. [traefik](traefik)
     1. [ingress-nginx-controller](ingress-nginx-controller)
@@ -41,14 +40,18 @@
     1. [strimzi](strimzi)
     1. [postgres-operator](postgres-operator)
     1. [eck](eck)
+    1. [mysql-operator](mysql-operator)
 1. Service Proxy, Discovery, and, Mesh
     1. [istio](istio)
 1. Monitoring
     1. [Prometheus](prometheus)
     1. [Prometheus Operator](prometheus-operator)
+    1. [Thanos (todo)](https://thanos.io/)
     1. [Grafana](grafana)
     1. [Grafana Operator](grafana-operator)
-    1. [Loki](loki)
+    1. [Grafana Loki](loki)
+    1. [Grafana Tempo (todo)](https://grafana.com/docs/tempo/latest/)
+    1. [Jaeger (todo)](https://www.jaegertracing.io/)
 1. Security
     1. [open-policy-agent](open-policy-agent)
 1. Yaml Management
