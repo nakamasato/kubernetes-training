@@ -169,7 +169,12 @@ mysqlsh version: `mysqlsh   Ver 8.0.28 for macos11 on x86_64 - for MySQL 8.0.28 
     }
     ```
 
+1. Clean up.
 
+    ```
+    kubectl delete -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/deploy/deploy-crds.yaml
+    kubectl delete -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/deploy/deploy-operator.yaml
+    ```
 
 ## References
 

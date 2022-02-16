@@ -193,3 +193,12 @@ kubectl delete -f resources/minimal-postgres-manifest.yaml
 ```
 kubectl delete -k operator/overlays/database/
 ```
+
+## References
+- https://postgres-operator.readthedocs.io/en/latest/
+- https://recruit.gmo.jp/engineer/jisedai/blog/postgresql12-patroni-cluster/
+- https://postgresconf.org/conferences/2021_Postgres_Conference_Webinars/program/proposals/creating-a-resilient-postgresql-cluster-with-kubegres
+- https://www.youtube.com/watch?v=CftcVhFMGSY
+- https://github.com/zalando/patroni
+- https://github.com/zalando/postgres-operator
+- https://github.com/zalando/spilo
