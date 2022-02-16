@@ -7,6 +7,7 @@
 1. [argocd](../argocd): [appcontroller.go](https://github.com/argoproj/argo-cd/blob/9025318adf367ae8f13b1a99e5c19344402b7bb9/controller/appcontroller.go)
 1. [grafana-operator](../grafana-operator)
 1. [mysql-operator](../mysql-operator)
+1. [terraform-k8s](../terraform-k8s)
 
 ## 2. Understand what is Kubernetes operator.
 
