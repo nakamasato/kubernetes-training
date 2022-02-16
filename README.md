@@ -105,11 +105,12 @@
 
 #### Kubernetes Components
 
-1. [kubernetes-scheduler](kubernetes-scheduler)
-1. kube-proxy
-1. kubelet
+1. [kubernetes-scheduler](kubernetes-components/kubernetes-scheduler)
+1. [etcd](kubernetes-components/etcd)
 1. kube-apiserver
 1. kube-controller-manager
+1. kube-proxy
+1. kubelet
 
 #### [More Practices of Applications on Kubernetes](PRACTICE.md)
 
