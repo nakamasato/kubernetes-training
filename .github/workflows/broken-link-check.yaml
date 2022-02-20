@@ -1,0 +1,14 @@
+name: broken-link-check
+on:
+  schedule:
+    - cron: 0 0 1 * * # run monthly
+  repository_dispatch: # run manually
+    types: [check-link]
+  pull_request: # temporary
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Broken Link Check
+        uses: technote-space/broken-link-checker-action@v2
