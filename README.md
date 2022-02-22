@@ -62,6 +62,10 @@
     1. [argocd](argocd)
 1. Machine Learning
     1. [kubeflow](https://github.com/nakamasato/kubeflow-training)
+1. Database
+    1. [Vitess](https://github.com/vitessio/vitess)
+    1. [TiDB](https://github.com/pingcap/tidb)
+    1. [TimescaleDB](https://github.com/timescale/timescaledb-kubernetes)
 
 # Cloud Native Trail Map
 
@@ -238,12 +242,12 @@
 
 ## 7. DISTRIBUTED DATABASE & STORAGE
 
-
+### 7.1. [etcd](kubernetes-components/etcd)
 ### TBD
-- Vitess
+- [Vitess](https://github.com/vitessio/vitess)
 - Rook
-- etcd
-- TiKV
+- [TiDB](https://github.com/pingcap/tidb)
+- [TimescaleDB](https://github.com/timescale/timescaledb-kubernetes)
 
 ## 8. STREAMING & MESSAGING
 
