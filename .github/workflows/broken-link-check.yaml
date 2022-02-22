@@ -4,7 +4,6 @@ on:
     - cron: 0 0 1 * * # run monthly
   repository_dispatch: # run manually
     types: [check-link]
-  pull_request: # temporary
 
 jobs:
   check:
