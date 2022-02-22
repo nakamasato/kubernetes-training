@@ -26,9 +26,16 @@
 1. [Kubernetes Features](kubernetes-features)
     1. [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
     1. [amazon-eks-workshop](eksworkshop)
-1. Kubernetes Extentions
+1. Kubernetes Components
+    1. [kubernetes-scheduler](kubernetes-components/kubernetes-scheduler)
+    1. [etcd](kubernetes-components/etcd)
+    1. kube-apiserver
+    1. kube-controller-manager
+    1. kube-proxy
+    1. kubelet
+1. Kubernetes Extensions
     1. [kubernetes-operator](kubernetes-operator)
-    1. [kubernetes-scheduler](kubernetes-scheduler)
+    1. [kubernetes-scheduler](kubernetes-extensions/kubernetes-scheduler)
     1. [plugins (todo)](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/)
 1. Deloyment Managemet
     1. [Knative](knative)
@@ -76,6 +83,7 @@
 
 ## 1. CONTAINERIZATION
 
+1. [Containers 101: attach vs. exec - what's the difference?](https://iximiuz.com/en/posts/containers-101-attach-vs-exec/)
 ## 2. CI/CD
 
 ### 2.1 [ArgoCD](argocd)
