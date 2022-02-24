@@ -1,7 +1,7 @@
 name: broken-link-check
 on:
   schedule:
-    - cron: 0 0 1 * * # run monthly
+    - cron: 0 0 * * SUN # run on Sunday
   repository_dispatch: # run manually
     types: [check-link]
 
