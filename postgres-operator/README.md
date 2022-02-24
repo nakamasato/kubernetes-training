@@ -191,7 +191,8 @@ kubectl delete -f resources/minimal-postgres-manifest.yaml
 ### 5. Remove operator
 
 ```
-kubectl delete -k operator/overlays/database/
+kubectl apply -k github.com/zalando/postgres-operator/manifests
+kubectl delete -k github.com/zalando/postgres-operator/ui/manifests # ui
 ```
 
 ## References
