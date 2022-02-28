@@ -45,9 +45,7 @@
     1. [ingress-nginx-controller](ingress-nginx-controller)
 1. Middleware (Operator)
     1. [strimzi](strimzi)
-    1. [postgres-operator](postgres-operator)
     1. [eck](eck)
-    1. [mysql-operator](mysql-operator)
 1. Service Proxy, Discovery, and, Mesh
     1. [istio](istio)
 1. Monitoring
@@ -69,11 +67,12 @@
     1. [argocd](argocd)
 1. Machine Learning
     1. [kubeflow](https://github.com/nakamasato/kubeflow-training)
-1. Database
-    1. [Vitess](https://github.com/vitessio/vitess)
+1. [Databases](databases)
+    1. [Vitess](https://github.com/vitessio/vitess) + []()
     1. [TiDB](https://github.com/pingcap/tidb)
     1. [TimescaleDB](https://github.com/timescale/timescaledb-kubernetes)
-
+    1. [mysql-operator](databases/mysql-operator)
+    1. [postgres-operator](databases/postgres-operator)
 # Cloud Native Trail Map
 
 - https://github.com/cncf/trailmap

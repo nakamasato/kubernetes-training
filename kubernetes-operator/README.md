@@ -2,11 +2,11 @@
 ## 1. Try using existing operators
 
 1. [prometheus-operator](../prometheus-operator)
-1. [postgres-operator](../postgres-operator)
+1. [postgres-operator](../databases/postgres-operator)
 1. [strimzi](../strimzi)
 1. [argocd](../argocd): [appcontroller.go](https://github.com/argoproj/argo-cd/blob/9025318adf367ae8f13b1a99e5c19344402b7bb9/controller/appcontroller.go)
 1. [grafana-operator](../grafana-operator)
-1. [mysql-operator](../mysql-operator)
+1. [mysql-operator](../databases/mysql-operator)
 1. [terraform-k8s](../terraform-k8s)
 
 ## 2. Understand what is Kubernetes operator.
