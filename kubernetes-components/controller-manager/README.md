@@ -1,8 +1,8 @@
-# Controller
+# kube-controller-manager
+
+## Controller
 
 ![](controller.drawio.svg)
-
-## kube-controller-manager
 
 ## EndpointsController
 
