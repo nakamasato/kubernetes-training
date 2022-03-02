@@ -19,7 +19,7 @@
     ```
     etcd
     ```
-1. Create certificates for `service-account`.
+1. Create certificates for `service-account`. (You can skip this step by running `./generate_certificate.sh`)
     ```
     openssl version
     LibreSSL 2.8.3
@@ -27,45 +27,10 @@
 
     ```
     openssl genrsa -out service-account-key.pem 4096
+    openssl req -new -x509 -days 365 -key service-account-key.pem -subj "/CN=test" -sha256 -out service-account.pem
     ```
 
-    <details>
-
-    ```
-    Generating RSA private key, 4096 bit long modulus
-    .....................................................................++
-    ................................................++
-    e is 65537 (0x10001)
-    ```
-
-    </details>
-
-    ```
-    openssl req -new -x509 -days 365 -key service-account-key.pem -sha256 -out service-account.pem
-    ```
-
-    <details>
-
-    ```
-    You are about to be asked to enter information that will be incorporated
-    into your certificate request.
-    What you are about to enter is what is called a Distinguished Name or a DN.
-    There are quite a few fields but you can leave some blank
-    For some fields there will be a default value,
-    If you enter '.', the field will be left blank.
-    -----
-    Country Name (2 letter code) []:JP
-    State or Province Name (full name) []:Tokyo
-    Locality Name (eg, city) []:Kita
-    Organization Name (eg, company) []:Test
-    Organizational Unit Name (eg, section) []:Test
-    Common Name (eg, fully qualified host name) []:Test
-    Email Address []:masatonaka1989@gmail.com
-    ```
-
-    </details>
-
-1. Create certificate for tls.
+1. Create certificate for `apiserver`. (You can skip this step by running `./generate_certificate.sh`)
 
     1. Generate a `ca.key` with 2048bit:
         ```
@@ -91,7 +56,6 @@
         -extensions v3_ext -extfile csr.conf
         ```
 
-
 1. Run the built binary.
 
     ```
@@ -113,7 +77,7 @@
     --client-ca-file=ca.crt
     ```
 
-1. Configure `admin.kubeconfig`.
+1. Configure `admin.kubeconfig`. (You can skip this step by running `./generate_certificate.sh`)
 
     (I'm too lazy to generate crt and key for kubectl. So used the same one as server here.)
 
@@ -137,6 +101,7 @@
 
     kubectl config use-context default --kubeconfig=admin.kubeconfig
     ```
+
 1. Check component status. (only `etcd` is healthy.)
     ```
     kubectl get componentstatuses --kubeconfig admin.kubeconfig
@@ -170,8 +135,9 @@ E0302 07:14:46.234431   79468 run.go:74] "command failed" err="[service-account-
 `BoundServiceAccountTokenVolume` is now GA from 1.22. Need to pass `--service-account-signing-key-file` and `--service-account-issuer`.
 
 ## References
-- https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
-- https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626
-- https://headtonirvana.hatenablog.com/entry/2021/10/11/Kubernetes_The_Hard_Way_On_VirtualBox_6%E6%97%A5%E7%9B%AE
-- https://kubernetes.io/docs/tasks/administer-cluster/certificates/
-- https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/ca96371e4d2d2176e8b2c3f5b656b5d92973479e/docs/05-kubernetes-configuration-files.md
+- [Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
+- [kube-apiserver fails init. receive "--service-account-signing-key-file and --service-account-issuer are required flag" #626](https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626)
+- [Kubernetes The Hard Way On VirtualBox 6日目](https://headtonirvana.hatenablog.com/entry/2021/10/11/Kubernetes_The_Hard_Way_On_VirtualBox_6%E6%97%A5%E7%9B%AE)
+- [Certificates](https://kubernetes.io/docs/tasks/administer-cluster/certificates/)
+- [Generating Kubernetes Configuration Files for Authentication](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/ca96371e4d2d2176e8b2c3f5b656b5d92973479e/docs/05-kubernetes-configuration-files.md)
+- [OpenSSLコマンドの備忘録](https://qiita.com/takech9203/items/5206f8e2572e95209bbc)
