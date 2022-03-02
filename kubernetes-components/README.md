@@ -8,7 +8,19 @@
 - [kubernetes-scheduler](kubernetes-scheduler)
 - [kube-apiserver](kube-apiserver)
 - [cloud-controller-manager](cloud-controller-manager)
-- [controller-manager](controller-manager)
+- [kube-controller-manager](kube-controller-manager)
 - [kube-proxy](kube-proxy)
 - [kubelet](kubelet)
 - [kubectl](kubectl)
+
+## Build Kubernetes
+
+```
+git clone https://github.com/kubernetes/kubernetes
+cd kubernetes
+```
+
+With `Golang`:
+```
+make
+```
