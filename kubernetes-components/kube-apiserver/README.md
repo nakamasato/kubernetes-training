@@ -149,7 +149,7 @@
 
 ## Errors
 
-###  mkdir /var/run/kubernetes: permission denied
+### Error1: mkdir /var/run/kubernetes: permission denied
 
 ```
 E0302 06:40:09.767084   37385 run.go:74] "command failed" err="error creating self-signed certificates: mkdir /var/run/kubernetes: permission denied"
@@ -161,13 +161,13 @@ sudo mkdir /var/run/kubernetes
 chown -R `whoami` /var/run/kubernetes
 ```
 
-### service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags
+### Error2: service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags
 
 ```
 E0302 07:14:46.234431   79468 run.go:74] "command failed" err="[service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags]"
 ```
 
-`BoundServiceAccountTokenVolume` is now GA from 1.22.
+`BoundServiceAccountTokenVolume` is now GA from 1.22. Need to pass `--service-account-signing-key-file` and `--service-account-issuer`.
 
 ## References
 - https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
