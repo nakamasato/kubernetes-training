@@ -29,8 +29,8 @@
 1. Kubernetes Components
     1. [kubernetes-scheduler](kubernetes-components/kubernetes-scheduler)
     1. [etcd](kubernetes-components/etcd)
-    1. kube-apiserver
-    1. kube-controller-manager
+    1. [kube-apiserver](kubernetes-components/kube-apiserver)
+    1. [kube-controller-manager](kubernetes-components/kube-controller-manager)
     1. kube-proxy
     1. kubelet
 1. Kubernetes Extensions
@@ -51,26 +51,28 @@
 1. Monitoring
     1. [Prometheus](prometheus)
     1. [Prometheus Operator](prometheus-operator)
-    1. [Thanos (todo)](https://thanos.io/)
+    1. [Thanos (todo)] https://thanos.io/
     1. [Grafana](grafana)
     1. [Grafana Operator](grafana-operator)
     1. [Grafana Loki](loki)
-    1. [Grafana Tempo (todo)](https://grafana.com/docs/tempo/latest/)
-    1. [Jaeger (todo)](https://www.jaegertracing.io/)
+    1. [Grafana Tempo (todo)] https://grafana.com/docs/tempo/latest/
+    1. [Jaeger (todo)] https://www.jaegertracing.io/
 1. Security
     1. [open-policy-agent](open-policy-agent)
 1. Yaml Management
     1. [Helm](helm)
     1. [Helm vs Kustomize](helm-vs-kustomize)
 1. CI/CD
-    1. [conftest](open-policy-agent/conftest)
-    1. [argocd](argocd)
+    1. [Conftest](open-policy-agent/conftest)
+    1. [ArgoCD](argocd)
+    1. Kyverno https://kyverno.io/
+    1. Polaris https://www.fairwinds.com/polaris
 1. Machine Learning
     1. [kubeflow](https://github.com/nakamasato/kubeflow-training)
 1. [Databases](databases)
-    1. [Vitess](https://github.com/vitessio/vitess) + []()
-    1. [TiDB](https://github.com/pingcap/tidb)
-    1. [TimescaleDB](https://github.com/timescale/timescaledb-kubernetes)
+    1. [Vitess] https://github.com/vitessio/vitess
+    1. [TiDB] https://github.com/pingcap/tidb
+    1. [TimescaleDB] https://github.com/timescale/timescaledb-kubernetes
     1. [mysql-operator](databases/mysql-operator)
     1. [postgres-operator](databases/postgres-operator)
 # Cloud Native Trail Map
