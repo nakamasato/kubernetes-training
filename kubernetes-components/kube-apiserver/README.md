@@ -2,6 +2,7 @@
 
 ## Run kube-apiserver in local
 
+### Steps
 1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
 1. Run `etcd`. (ref: [etcd](../etcd/))
 
@@ -77,7 +78,7 @@
     --client-ca-file=ca.crt
     ```
 
-1. Configure `admin.kubeconfig`. (You can skip this step by running `./generate_certificate.sh`)
+1. Configure `kubeconfig`. (You can skip this step by running `./generate_certificate.sh`)
 
     (I'm too lazy to generate crt and key for kubectl. So used the same one as server here.)
 
@@ -86,25 +87,25 @@
     --certificate-authority=ca.crt \
     --embed-certs=true \
     --server=https://127.0.0.1:6443 \
-    --kubeconfig=admin.kubeconfig
+    --kubeconfig=kubeconfig
 
     kubectl config set-credentials admin \
     --client-certificate=server.crt \
     --client-key=server.key \
     --embed-certs=true \
-    --kubeconfig=admin.kubeconfig
+    --kubeconfig=kubeconfig
 
     kubectl config set-context default \
     --cluster=local-apiserver \
     --user=admin \
-    --kubeconfig=admin.kubeconfig
+    --kubeconfig=kubeconfig
 
-    kubectl config use-context default --kubeconfig=admin.kubeconfig
+    kubectl config use-context default --kubeconfig=kubeconfig
     ```
 
 1. Check component status. (only `etcd` is healthy.)
     ```
-    kubectl get componentstatuses --kubeconfig admin.kubeconfig
+    kubectl get componentstatuses --kubeconfig kubeconfig
     Warning: v1 ComponentStatus is deprecated in v1.19+
     NAME                 STATUS      MESSAGE                                                                                        ERROR
     controller-manager   Unhealthy   Get "https://127.0.0.1:10257/healthz": dial tcp 127.0.0.1:10257: connect: connection refused
@@ -112,27 +113,31 @@
     etcd-0               Healthy     {"health":"true","reason":""}
     ```
 
-## Errors
+### Errors
 
-### Error1: mkdir /var/run/kubernetes: permission denied
+1. Error1: mkdir /var/run/kubernetes: permission denied
 
-```
-E0302 06:40:09.767084   37385 run.go:74] "command failed" err="error creating self-signed certificates: mkdir /var/run/kubernetes: permission denied"
-```
+    ```
+    E0302 06:40:09.767084   37385 run.go:74] "command failed" err="error creating self-signed certificates: mkdir /var/run/kubernetes: permission denied"
+    ```
 
-Run
-```
-sudo mkdir /var/run/kubernetes
-chown -R `whoami` /var/run/kubernetes
-```
+    Run
+    ```
+    sudo mkdir /var/run/kubernetes
+    chown -R `whoami` /var/run/kubernetes
+    ```
 
-### Error2: service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags
+1. Error2: service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags
 
-```
-E0302 07:14:46.234431   79468 run.go:74] "command failed" err="[service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags]"
-```
+    ```
+    E0302 07:14:46.234431   79468 run.go:74] "command failed" err="[service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags]"
+    ```
 
-`BoundServiceAccountTokenVolume` is now GA from 1.22. Need to pass `--service-account-signing-key-file` and `--service-account-issuer`.
+    `BoundServiceAccountTokenVolume` is now GA from 1.22. Need to pass `--service-account-signing-key-file` and `--service-account-issuer`.
+
+## [apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver)
+
+*It provides an API for registering `CustomResourceDefinitions`.*
 
 ## References
 - [Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
