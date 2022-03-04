@@ -1,7 +1,17 @@
 # kube-apiserver
 
+## Overview
+
+![](overview.drawio.svg)
+
+Components:
+1. **API Extensions Server**: Create HTTP handlers for CRD.
+1. **API Server**: Manage core API and core Kubernetes components.
+1. **Aggregator Layer**: Proxy the requests sent to the registered extended resource to the *extension API server* that runs in a Pod in the same cluster.
+
 ## Run kube-apiserver in local
 
+### Steps
 1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
 1. Run `etcd`. (ref: [etcd](../etcd/))
 
@@ -19,7 +29,7 @@
     ```
     etcd
     ```
-1. Create certificates for `service-account`.
+1. Create certificates for `service-account`. (You can skip this step by running `./generate_certificate.sh`)
     ```
     openssl version
     LibreSSL 2.8.3
@@ -27,45 +37,10 @@
 
     ```
     openssl genrsa -out service-account-key.pem 4096
+    openssl req -new -x509 -days 365 -key service-account-key.pem -subj "/CN=test" -sha256 -out service-account.pem
     ```
 
-    <details>
-
-    ```
-    Generating RSA private key, 4096 bit long modulus
-    .....................................................................++
-    ................................................++
-    e is 65537 (0x10001)
-    ```
-
-    </details>
-
-    ```
-    openssl req -new -x509 -days 365 -key service-account-key.pem -sha256 -out service-account.pem
-    ```
-
-    <details>
-
-    ```
-    You are about to be asked to enter information that will be incorporated
-    into your certificate request.
-    What you are about to enter is what is called a Distinguished Name or a DN.
-    There are quite a few fields but you can leave some blank
-    For some fields there will be a default value,
-    If you enter '.', the field will be left blank.
-    -----
-    Country Name (2 letter code) []:JP
-    State or Province Name (full name) []:Tokyo
-    Locality Name (eg, city) []:Kita
-    Organization Name (eg, company) []:Test
-    Organizational Unit Name (eg, section) []:Test
-    Common Name (eg, fully qualified host name) []:Test
-    Email Address []:masatonaka1989@gmail.com
-    ```
-
-    </details>
-
-1. Create certificate for tls.
+1. Create certificate for `apiserver`. (You can skip this step by running `./generate_certificate.sh`)
 
     1. Generate a `ca.key` with 2048bit:
         ```
@@ -91,7 +66,6 @@
         -extensions v3_ext -extfile csr.conf
         ```
 
-
 1. Run the built binary.
 
     ```
@@ -113,7 +87,7 @@
     --client-ca-file=ca.crt
     ```
 
-1. Configure `admin.kubeconfig`.
+1. Configure `kubeconfig`. (You can skip this step by running `./generate_certificate.sh`)
 
     (I'm too lazy to generate crt and key for kubectl. So used the same one as server here.)
 
@@ -122,24 +96,25 @@
     --certificate-authority=ca.crt \
     --embed-certs=true \
     --server=https://127.0.0.1:6443 \
-    --kubeconfig=admin.kubeconfig
+    --kubeconfig=kubeconfig
 
     kubectl config set-credentials admin \
     --client-certificate=server.crt \
     --client-key=server.key \
     --embed-certs=true \
-    --kubeconfig=admin.kubeconfig
+    --kubeconfig=kubeconfig
 
     kubectl config set-context default \
     --cluster=local-apiserver \
     --user=admin \
-    --kubeconfig=admin.kubeconfig
+    --kubeconfig=kubeconfig
 
-    kubectl config use-context default --kubeconfig=admin.kubeconfig
+    kubectl config use-context default --kubeconfig=kubeconfig
     ```
+
 1. Check component status. (only `etcd` is healthy.)
     ```
-    kubectl get componentstatuses --kubeconfig admin.kubeconfig
+    kubectl get componentstatuses --kubeconfig kubeconfig
     Warning: v1 ComponentStatus is deprecated in v1.19+
     NAME                 STATUS      MESSAGE                                                                                        ERROR
     controller-manager   Unhealthy   Get "https://127.0.0.1:10257/healthz": dial tcp 127.0.0.1:10257: connect: connection refused
@@ -147,31 +122,76 @@
     etcd-0               Healthy     {"health":"true","reason":""}
     ```
 
-## Errors
+### Errors
 
-### Error1: mkdir /var/run/kubernetes: permission denied
+1. Error1: mkdir /var/run/kubernetes: permission denied
 
-```
-E0302 06:40:09.767084   37385 run.go:74] "command failed" err="error creating self-signed certificates: mkdir /var/run/kubernetes: permission denied"
-```
+    ```
+    E0302 06:40:09.767084   37385 run.go:74] "command failed" err="error creating self-signed certificates: mkdir /var/run/kubernetes: permission denied"
+    ```
 
-Run
-```
-sudo mkdir /var/run/kubernetes
-chown -R `whoami` /var/run/kubernetes
-```
+    Run
+    ```
+    sudo mkdir /var/run/kubernetes
+    chown -R `whoami` /var/run/kubernetes
+    ```
 
-### Error2: service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags
+1. Error2: service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags
 
-```
-E0302 07:14:46.234431   79468 run.go:74] "command failed" err="[service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags]"
-```
+    ```
+    E0302 07:14:46.234431   79468 run.go:74] "command failed" err="[service-account-issuer is a required flag, --service-account-signing-key-file and --service-account-issuer are required flags]"
+    ```
 
-`BoundServiceAccountTokenVolume` is now GA from 1.22. Need to pass `--service-account-signing-key-file` and `--service-account-issuer`.
+    `BoundServiceAccountTokenVolume` is now GA from 1.22. Need to pass `--service-account-signing-key-file` and `--service-account-issuer`.
+
+## [apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver)
+
+![](api-extensions-server.drawio.svg)
+
+*It provides an API for registering `CustomResourceDefinitions`.*
+
+When creating CRD:
+1. Store CRD resource.
+1. Validate the CRD with several controllers.
+1. CRD handler automatically creates HTTP handler for the CRD.
+
+When deleting CRD:
+1. Wait until `finalizingController` deletes all the custom resources.
+
+- [NewCustomResourceDefinitionHandler](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiextensions-apiserver/pkg/apiserver/customresource_handler.go) is called in [CompletedConfig.New](https://github.com/kubernetes/kubernetes/blob/16c9d59d2d646a77fa5de0532fa7c583c013b8d6/staging/src/k8s.io/apiextensions-apiserver/pkg/apiserver/apiserver.go#L133)
+- [CompletedConfig.New](https://github.com/kubernetes/kubernetes/blob/16c9d59d2d646a77fa5de0532fa7c583c013b8d6/staging/src/k8s.io/apiextensions-apiserver/pkg/apiserver/apiserver.go#L133)
+    1. Prepare genericServer with [completedConfig.New](https://github.com/kubernetes/kubernetes/blob/16c9d59d2d646a77fa5de0532fa7c583c013b8d6/staging/src/k8s.io/apiserver/pkg/server/config.go#L567).
+    1. Initialize `CustomResourceDefinitions` with `GenericAPIServer`.
+    1. Initialize `apiGroupInfo` with [genericapiserver.NewDefaultAPIGroupInfo](https://github.com/kubernetes/kubernetes/blob/16c9d59d2d646a77fa5de0532fa7c583c013b8d6/staging/src/k8s.io/apiserver/pkg/server/genericapiserver.go#L697).
+    1. Install API group with `s.GenericAPIServer.InstallAPIGroup`.
+    1. Initialize clientset for CRD with `crdClient, err := clientset.NewForConfig(s.GenericAPIServer.LoopbackClientConfig)`
+    1. Initialize and set informer with `s.Informers = externalinformers.NewSharedInformerFactory(crdClient, 5*time.Minute)`
+    1. Prepare handlers
+        1. delegateHandler
+        1. versionDiscoveryHandler
+        1. groupDiscoveryHandler
+    1. Initialize `EstablishingController`.
+    1. Initialize `crdHandler` by `NewCustomResourceDefinitionHandler` with `versionDiscoveryHandler`, `groupDiscoveryHandler`, informer, `delegateHandler`, `establishingController`, etc.
+    1. Set HTTP handler for GenericAPIServer with `crdHandler`.
+        ```go
+        s.GenericAPIServer.Handler.NonGoRestfulMux.Handle("/apis", crdHandler)
+        s.GenericAPIServer.Handler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
+        ```
+    1. Initialize controllers.
+        - discoveryController
+        - namingController
+        - nonStructuralSchemaController
+        - apiApprovalController
+        - finalizingController
+        - [openapicontroller](https://github.com/kubernetes/kubernetes/blob/ea0764452222146c47ec826977f49d7001b0ea8c/staging/src/k8s.io/apiextensions-apiserver/pkg/controller/openapi/controller.go#L62)
+    1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start informer.
+    1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start controllers.
+    1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to wait until CRD informer is synced.
 
 ## References
-- https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
-- https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626
-- https://headtonirvana.hatenablog.com/entry/2021/10/11/Kubernetes_The_Hard_Way_On_VirtualBox_6%E6%97%A5%E7%9B%AE
-- https://kubernetes.io/docs/tasks/administer-cluster/certificates/
-- https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/ca96371e4d2d2176e8b2c3f5b656b5d92973479e/docs/05-kubernetes-configuration-files.md
+- [Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
+- [kube-apiserver fails init. receive "--service-account-signing-key-file and --service-account-issuer are required flag" #626](https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626)
+- [Kubernetes The Hard Way On VirtualBox 6日目](https://headtonirvana.hatenablog.com/entry/2021/10/11/Kubernetes_The_Hard_Way_On_VirtualBox_6%E6%97%A5%E7%9B%AE)
+- [Certificates](https://kubernetes.io/docs/tasks/administer-cluster/certificates/)
+- [Generating Kubernetes Configuration Files for Authentication](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/ca96371e4d2d2176e8b2c3f5b656b5d92973479e/docs/05-kubernetes-configuration-files.md)
+- [OpenSSLコマンドの備忘録](https://qiita.com/takech9203/items/5206f8e2572e95209bbc)

@@ -8,7 +8,7 @@
     ```go
     informerFactory := informers.NewSharedInformerFactory(kubeClient, time.Second*30)
     ```
-    The second argument specifies ***ResyncPeriod***, which defines the interval of resync (*The resync operation consists of delivering to the handler an update notification for every object in the informer's local cache*). For more detail, please read [NewSharedIndexInformer](https://pkg.go.dev/k8s.io/client-go@v0.23.1/tools/cache#NewSharedIndexInformer)
+    The second argument specifies ***ResyncPeriod***, which defines the interval of resync (*The resync operation consists of delivering to the handler an update notification for every object in the informer's local cache*). For more detail, please read [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.23.1/tools/cache#NewSharedInformer)
 1. Create an informer for Pods, which watches Pod's changes.
     ```go
     podInformer := informerFactory.Core().V1().Pods()

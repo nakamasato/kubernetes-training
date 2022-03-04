@@ -53,6 +53,7 @@ There are several ways to create an operator. You can try any of them:
     - [ansible-based](https://sdk.operatorframework.io/docs/building-operators/ansible/quickstart/): https://github.com/nakamasato/memcached-operator-with-ansible
 1. [kubebuilder](https://book.kubebuilder.io/)
     - [Tutorial: Building CronJob](https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial.html)
+1. [metacontroller](https://github.com/metacontroller/metacontroller)
 1. [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
 1. [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
 
@@ -133,3 +134,4 @@ Considerations:
 1. Write Kubernetes Operator in other languages
     - [kopf](https://kopf.readthedocs.io/en/stable/) for Python
     - [fabric8io/kubernetes-client](https://github.com/fabric8io/kubernetes-client) for Java
+1. [Optimistic Concurrency Control](https://en.wikipedia.org/wiki/Optimistic_concurrency_control)

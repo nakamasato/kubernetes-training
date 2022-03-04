@@ -1,3 +1,9 @@
 .DS_Store
 istio-1.*
 kubeconfig
+*.crt
+*.key
+*.srl
+*.csr
+service-account-key.pem
+service-account.pem
