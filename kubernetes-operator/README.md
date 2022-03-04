@@ -134,3 +134,4 @@ Considerations:
 1. Write Kubernetes Operator in other languages
     - [kopf](https://kopf.readthedocs.io/en/stable/) for Python
     - [fabric8io/kubernetes-client](https://github.com/fabric8io/kubernetes-client) for Java
+1. [Optimistic Concurrency Control](https://en.wikipedia.org/wiki/Optimistic_concurrency_control)
