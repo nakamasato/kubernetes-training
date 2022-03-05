@@ -1,7 +1,7 @@
 # Kubernetes Training
 
 - Read on Website: https://www.nakamasato.com/kubernetes-training
-- Read on GitHub: [contents/README.md](contents/README.md) (All files were moved to `contents` in [#105](https://github.com/nakamasato/kubernetes-training/pull/105))
+- Read on GitHub: [contents](contents) (All files were moved to `contents` in [#105](https://github.com/nakamasato/kubernetes-training/pull/105))
 # Versions
 
 1. Kubernetes: [v1.21.2](https://github.com/kubernetes/kubernetes/releases/tag/v1.21.2) (released on 2021-06-18)
