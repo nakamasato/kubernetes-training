@@ -42,4 +42,5 @@ jobs:
           kubectl kuttl -v
 
       - name: kuttl - run
+        working-directory: contents
         run: kubectl kuttl test
