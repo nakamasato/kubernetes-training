@@ -1,0 +1,26 @@
+site_name: Kubernetes Traning
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: blue grey
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: blue grey
+  features:
+    - header.autohide
+    - navigation.indexes
+    - toc.follow
+repo_url: https://github.com/nakamasato/kubernetes-training
+markdown_extensions:
+  - pymdownx.superfences
+extra:
+  analytics:
+    provider: google
+    property: G-9NTB93RVPJ
+docs_dir: contents
