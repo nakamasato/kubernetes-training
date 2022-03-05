@@ -4,3 +4,6 @@
 [submodule "kubeadm-local/certified-kubernetes-administrator-course"]
 	path = kubeadm-local/certified-kubernetes-administrator-course
 	url = git@github.com:kodekloudhub/certified-kubernetes-administrator-course.git
+[submodule "themes/doks"]
+	path = themes/doks
+	url = https://github.com/h-enk/doks.git
