@@ -7,3 +7,4 @@ kubeconfig
 *.csr
 service-account-key.pem
 service-account.pem
+default.etcd

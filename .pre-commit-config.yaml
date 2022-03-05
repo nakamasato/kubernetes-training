@@ -10,9 +10,9 @@ repos:
         args: [--allow-multiple-documents]
         exclude: |
           (?x)(
-            ^strimzi/base-0.18.0/|
-            ^helm-vs-kustomize/helm-example/|
-            ^helm/hello-world/|
-            README.md$
+            ^contents/strimzi/base-0.18.0/|
+            ^contents/helm-vs-kustomize/helm-example/|
+            ^contents/helm/hello-world/|
+            contents/README.md$
           )
       # - id: check-added-large-files
