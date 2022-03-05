@@ -1,4 +1,4 @@
-module github.com/nakamasato/kubernetes-training/kubernetes-operator
+module github.com/nakamasato/kubernetes-training/contents/kubernetes-operator
 
 go 1.17
 
