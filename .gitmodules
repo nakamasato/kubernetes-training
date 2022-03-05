@@ -1,6 +1,6 @@
-[submodule "autoscaler/hpa/custom-metrics/k8s-prom-hpa"]
-	path = autoscaler/hpa/custom-metrics/k8s-prom-hpa
+[submodule "contents/autoscaler/hpa/custom-metrics/k8s-prom-hpa"]
+	path = contents/autoscaler/hpa/custom-metrics/k8s-prom-hpa
 	url = https://github.com/stefanprodan/k8s-prom-hpa.git
-[submodule "kubeadm-local/certified-kubernetes-administrator-course"]
-	path = kubeadm-local/certified-kubernetes-administrator-course
+[submodule "contents/kubeadm-local/certified-kubernetes-administrator-course"]
+	path = contents/kubeadm-local/certified-kubernetes-administrator-course
 	url = git@github.com:kodekloudhub/certified-kubernetes-administrator-course.git

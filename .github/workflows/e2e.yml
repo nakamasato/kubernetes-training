@@ -5,8 +5,8 @@ on:
   pull_request:
     paths:
       - .github/workflows/e2e.yml
-      - test/**
-      - kuttl-test.yaml
+      - contents/test/**
+      - contents/kuttl-test.yaml
 
 jobs:
   e2e:
@@ -42,4 +42,5 @@ jobs:
           kubectl kuttl -v
 
       - name: kuttl - run
+        working-directory: contents
         run: kubectl kuttl test
