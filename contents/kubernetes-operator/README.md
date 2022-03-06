@@ -21,27 +21,35 @@
 
 > A Kubernetes operator is an application-specific controller that extends the functionality of the Kubernetes API to create, configure, and manage instances of complex applications on behalf of a Kubernetes user.
 
-From https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator
+From [What is a Kubernetes operator?](https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator)
 
 > Operators are software extensions to Kubernetes that make use of custom resources to manage applications and their components. Operators follow Kubernetes principles, notably the control loop.
 
 From https://kubernetes.io/docs/concepts/extend-kubernetes/operator/
+
+> An Operator is like an automated Site Reliability Engineer for its application.
+
+From [Kubernetes Operators ~ Automating the Container Orchestration Platform ~](https://www.redhat.com/rhdc/managed-files/cl-oreilly-kubernetes-operators-ebook-f21452-202001-en_2.pdf)
 
 **Operator vs. Controller**
 
 > - Controller（Custom Controller）:Custom Resourceの管理を行うController。Control Loop（Reconciliation Loop）を実行するコンポーネント
 > - Operator: CRDとCustom Controllerのセット。etcd operatorやmysql operatorなどのように、特定のソフトウェアの管理を自動化するためのソフトウェア
 
-From [実践入門Kubernetesカスタムコントローラーへの道](https://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5%E5%85%A5%E9%96%80-Kubernetes%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC%E3%81%B8%E3%81%AE%E9%81%93-%E6%8A%80%E8%A1%93%E3%81%AE%E6%B3%89%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA%EF%BC%88NextPublishing%EF%BC%89-%E7%A3%AF-%E8%B3%A2%E5%A4%A7-ebook/dp/B0851QCR81/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&keywords=custom+controller&qid=1636178868&sr=8-1)
+From [実践入門Kubernetesカスタムコントローラーへの道](https://www.amazon.co.jp/dp/B0851QCR81)
 
 > - Controllers can act on core resources such as deployments or services, which are typically part of the Kubernetes controller manager in the control plane, or can watch and manipulate user-defined custom resources.
 > - Operators are controllers that encode some operational knowledge, such as application lifecycle management, along with the custom resources defined in Chapter 4.
 
 From [Programming Kubernetes](https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/ch01.html)
 
+> - A **controller** is a loop that reads desired state ("spec), observed cluster state (others' "status"), and external state, and the reconciles cluster state and external state with the desired state, writing any observations down (to our own "status").
+> - All of Kubernetes functions on this model.
+> - An **operator** is a controller that encodes human operational knowledge: how do I run and manage a specific piece of complex software.
+> - All operators are controllers, but not all controllers are operators.
 
-- [What is a Kubernetes operator?](https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator)
-- [Kubernetes Operators ~ Automating the Container Orchestration Platform ~](https://www.redhat.com/rhdc/managed-files/cl-oreilly-kubernetes-operators-ebook-f21452-202001-en_2.pdf)
+From [Tutorial: Zero to Operator in 90 Minutes! - Solly Ross, Google (YouTube)](https://www.youtube.com/watch?v=KBTXBUVNF2I)
+
 ## 3. Create a sample operator following a tutorial
 
 There are several ways to create an operator. You can try any of them:
