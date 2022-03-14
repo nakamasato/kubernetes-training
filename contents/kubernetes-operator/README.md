@@ -124,6 +124,14 @@ Considerations:
     - https://cloud.redhat.com/blog/kubernetes-operators-best-practices
     1. Return the error in the status of the object.
     1. Generate an event describing the error.
+- Webhook
+    - admission webhook
+        - mutating webhook
+        - validating webhook
+    - conversion webhook
+        - hub & spoke
+        - isConvertible: need to have Hub & all non-Hub types must be able to convert to/from Hub
+        - request & response: ConversionReview
 ## 6. Tools
 - https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil
 - https://github.com/spf13/cobra: a library for creating powerful modern CLI applications & a program to generate applications and command files.
@@ -144,3 +152,7 @@ Considerations:
     - [fabric8io/kubernetes-client](https://github.com/fabric8io/kubernetes-client) for Java
     - [java-operator-sdk/java-operator-sdk](https://github.com/java-operator-sdk/java-operator-sdk) Build Kubernetes Operators in Java Without Hassle
 1. [Optimistic Concurrency Control](https://en.wikipedia.org/wiki/Optimistic_concurrency_control)
+
+## 9. Keep learning
+
+- https://ymmt2005.hatenablog.com/entry/k8s-things
