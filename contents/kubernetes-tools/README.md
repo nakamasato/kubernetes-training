@@ -27,6 +27,8 @@ The Kubernetes controller-runtime Project is a set of go libraries for building 
 - EventHandler
 - Predicate
 
+https://github.com/kubernetes-sigs/kubebuilder/blob/master/DESIGN.md#controller-runtime
+
 ## 5. https://pkg.go.dev/sigs.k8s.io/controller-tools/cmd/controller-gen
 
 Generate Kubernetes controller stubs that sync configurable resource types
