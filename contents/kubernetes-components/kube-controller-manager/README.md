@@ -46,6 +46,13 @@
 
 [[Kubernetes] EndpointsがよくわかってないのでEndpointsControllerを読んでみた](https://qiita.com/gymnstcs/items/13698c24af0a60f71bcd)
 
+## GarbageCollector (WIP)
+
+![](garbagecollector.drawio.svg)
+
+- https://github.com/kubernetes/kubernetes/blob/bd8e8507093095bbe411fd501ea5971f5b077b3b/pkg/controller/garbagecollector/garbagecollector.go
+- https://github.com/kubernetes/kubernetes/blob/bd8e8507093095bbe411fd501ea5971f5b077b3b/pkg/controller/garbagecollector/graph_builder.go#L132
+
 ## DeploymentController
 
 
