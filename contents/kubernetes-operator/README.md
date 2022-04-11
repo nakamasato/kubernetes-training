@@ -50,6 +50,10 @@ From [Programming Kubernetes](https://www.oreilly.com/library/view/programming-k
 
 From [Tutorial: Zero to Operator in 90 Minutes! - Solly Ross, Google (YouTube)](https://www.youtube.com/watch?v=KBTXBUVNF2I)
 
+For more detail:
+- [CNCF Operator White Paper - Final Version](https://github.com/cncf/tag-app-delivery/blob/main/operator-wg/whitepaper/Operator-WhitePaper_v1-0.md)
+- [CNCF White Paper](https://www.cncf.io/wp-content/uploads/2021/07/CNCF_Operator_WhitePaper.pdf)
+
 ## 3. Create a sample operator following a tutorial
 
 There are several ways to create an operator. You can try any of them:
