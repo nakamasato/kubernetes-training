@@ -1,0 +1,121 @@
+versions:
+  - name: Kubernetes
+    version: v1.21.2
+    repoUrl: https://github.com/kubernetes/kubernetes
+  - name: Kustomize
+    version: v4.2.0
+    repoUrl: https://github.com/kubernetes-sigs/kustomize
+    category: Yaml Management
+  - name: Helm
+    version: 3.6.3
+    repoUrl: https://github.com/helm/helm
+    category: Yaml Management
+  - name: Traefik
+    version: v2.2.0
+    repoUrl: https://github.com/traefik/traefik
+    category: Networking
+  - name: ArgoCD
+    version: v2.2.3
+    repoUrl: https://github.com/argoproj/argo-cd
+    category: CI/CD
+  - name: Prometheus-Operator
+    version: v0.43.1
+    repoUrl: https://github.com/prometheus-operator/prometheus-operator
+    category: Monitoring
+  - name: Prometheus
+    version: "latest"
+    repoUrl: https://github.com/prometheus/prometheus
+    category: Monitoring
+  - name: Grafana
+    version: "latest"
+    repoUrl: https://github.com/grafana/grafana
+    category: Monitoring
+  - name: Grafana Operator
+    version: null
+    repoUrl: https://github.com/grafana-operator/grafana-operator
+    category: Monitoring
+  - name: Grafana Loki
+    version: null
+    repoUrl: https://github.com/grafana/loki
+    category: Monitoring
+  - name: Grafana Tempo
+    version: null
+    repoUrl: https://github.com/grafana/tempo
+    category: Monitoring
+    todo: true
+  - name: Jaegar
+    version: null
+    repoUrl: https://github.com/jaegertracing/jaeger
+    category: Monitoring
+    todo: true
+  - name: Strimzi
+    version: 0.24.0
+    repoUrl: https://github.com/strimzi/strimzi-kafka-operator
+    category: Middleware (Operator)
+  - name: Kind
+    version: v0.11.1
+    repoUrl: https://github.com/kubernetes-sigs/kind
+  - name: Ingress Nginx Controller
+    version: v0.48.0
+    repoUrl: https://github.com/kubernetes/ingress-nginx
+    category: Networking
+  - name: Conftest
+    version: 0.25.0
+    repoUrl: https://github.com/open-policy-agent/conftest
+    category: CI/CD
+  - name: Istio
+    version: 1.12.2
+    repoUrl: https://github.com/istio/istio
+    category: Service Proxy, Discovery, and, Mesh
+  - name: Postgres Operator
+    version: v1.7.1
+    repoUrl: https://github.com/zalando/postgres-operator
+  - name: KNative
+    version: null
+    repoUrl: https://github.com/knative/serving
+    category: Deployment Management
+  - name: Skaffold
+    version: null
+    repoUrl: https://github.com/GoogleContainerTools/skaffold
+    category: Deployment Management
+    todo: true
+  - name: eck
+    version: null
+    repoUrl: https://github.com/elastic/cloud-on-k8s
+    category: Middleware (Operator)
+  - name: Kyverno
+    version: null
+    repoUrl: https://github.com/kyverno/kyverno
+    category: CI/CD
+    todo: true
+  - name: Polaris
+    version: null
+    repoUrl: https://github.com/FairwindsOps/polaris
+    category: CI/CD
+  - name: Kubeflow
+    version: null
+    repoUrl: https://github.com/kubeflow/kubeflow
+    category: Machine Learning
+  - name: Vitess
+    version: null
+    repoUrl: https://github.com/vitessio/vitess
+    category: Database
+    todo: true
+  - name: TiDB
+    version: null
+    repoUrl: https://github.com/pingcap/tidb
+    category: Database
+    todo: true
+  - name: TimescaleDB
+    version: null
+    repoUrl: https://github.com/timescale/timescaledb-kubernetes
+    category: Database
+    todo: true
+  - name: MySQL Operator
+    version: null
+    repoUrl: https://github.com/mysql/mysql-operator
+    category: Database
+  - name: Postgres Operator
+    version: null
+    repoUrl: https://github.com/zalando/postgres-operator
+    category: Database

@@ -24,3 +24,6 @@ With `Golang`:
 ```
 make
 ```
+
+## References
+- https://medium.com/pinterest-engineering/99-to-99-9-slo-high-performance-kubernetes-control-plane-at-pinterest-894bc8a964f9
