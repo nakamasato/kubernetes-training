@@ -160,3 +160,4 @@ Considerations:
 ## 9. Keep learning
 
 - https://ymmt2005.hatenablog.com/entry/k8s-things
+- https://iximiuz.com/en/posts/kubernetes-api-go-types-and-common-machinery/
