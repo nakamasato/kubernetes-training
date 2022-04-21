@@ -136,6 +136,7 @@ Considerations:
         - hub & spoke
         - isConvertible: need to have Hub & all non-Hub types must be able to convert to/from Hub
         - request & response: ConversionReview
+- [Indexing](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.10.0/pkg/client#hdr-Indexing)
 ## 6. Tools
 - https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil
 - https://github.com/spf13/cobra: a library for creating powerful modern CLI applications & a program to generate applications and command files.
