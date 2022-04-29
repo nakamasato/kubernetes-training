@@ -11,8 +11,39 @@ Components:
 
 ## Run kube-apiserver in local
 
+### Prerequisite
+
+- Bash version 4 or later
+    Mac:
+    ```
+    brew install bash
+    ```
+
+    <details><summary>check</summary>
+
+    ```
+    bash --version
+
+    GNU bash, version 5.1.16(1)-release (x86_64-apple-darwin21.1.0)
+    Copyright (C) 2020 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+    This is free software; you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+    ```
+
+    </details>
+
 ### Steps
 1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
+    1. Clone Kubernetes repo.
+        ```
+        git clone https://github.com/kubernetes/kubernetes
+        ```
+    1. Build
+        ```
+        make
+        ```
 1. Run `etcd`. (ref: [etcd](../etcd/))
 
     version:
