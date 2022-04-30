@@ -16,17 +16,17 @@ kubectl config set-cluster local-apiserver \
 --certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://127.0.0.1:6443 \
---kubeconfig=admin.kubeconfig
+--kubeconfig=kubeconfig
 
 kubectl config set-credentials admin \
 --client-certificate=server.crt \
 --client-key=server.key \
 --embed-certs=true \
---kubeconfig=admin.kubeconfig
+--kubeconfig=kubeconfig
 
 kubectl config set-context default \
 --cluster=local-apiserver \
 --user=admin \
---kubeconfig=admin.kubeconfig
+--kubeconfig=kubeconfig
 
-kubectl config use-context default --kubeconfig=admin.kubeconfig
+kubectl config use-context default --kubeconfig=kubeconfig
