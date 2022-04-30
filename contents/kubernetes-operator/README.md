@@ -77,13 +77,18 @@ Overview
 
 *from https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg*
 
-1. [informer](informer)
-    1. factory
-    1. watch
-    1. lister
+1. client-go:
+    1. clientset is a client for the built-in API resources.
+1. [informer](informer): watch the changes of objects and reflect the changes to the in-memory-cache.
+    1. factory: `informers.NewSharedInformerFactory`
+    1. Watch
+    1. lister: Get data from in-memory-cache.
     1. in-memory-cache
     1. event handler
-1. workqueue
+1. workqueue: A queue to store items that the controller will process.
+1. code-generator:
+    1. Generate codes for clientset for a custom resource.
+1. Scheme: connects Kubernetes API and Go Types
 
 Reference
 - https://adevjoe.com/post/client-go-informer/
@@ -166,3 +171,4 @@ Considerations:
 - [How To Call Kubernetes API using Go - Types and Common Machinery](https://iximiuz.com/en/posts/kubernetes-api-go-types-and-common-machinery/)
 - [How To Extend Kubernetes API - Kubernetes vs. Django](https://iximiuz.com/en/posts/kubernetes-api-how-to-extend/)
 - [在不生成 crd client 代码的情况下通过 client-go 增删改查 k8s crd 资源](https://mozillazg.com/2020/07/k8s-kubernetes-client-go-list-get-create-update-patch-delete-crd-resource-without-generate-client-code-update-or-create-via-yaml.html)
+- [kubebuilder vs operator-sdk (2019-04-10)](https://tiewei.github.io/posts/kubebuilder-vs-operator-sdk)
