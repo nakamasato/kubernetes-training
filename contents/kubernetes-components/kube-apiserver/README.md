@@ -11,12 +11,45 @@ Components:
 
 ## Run kube-apiserver in local
 
-### Steps
-1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
-1. Run `etcd`. (ref: [etcd](../etcd/))
+### Prerequisite
 
-    version:
+- Bash version 4 or later
+    Mac:
     ```
+    brew install bash
+    ```
+
+    <details><summary>version</summary>
+
+    ```
+    bash --version
+
+    GNU bash, version 5.1.16(1)-release (x86_64-apple-darwin21.1.0)
+    Copyright (C) 2020 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+    This is free software; you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+    ```
+
+    </details>
+
+- Openssl: `LibreSSL` is also ok. (`brew install openssl` <- this should also work.)
+
+    <details><summary>version</summary>
+
+    ```sh
+    openssl version
+    LibreSSL 2.8.3
+    ```
+
+    </details>
+
+- etcd: `brew install etcd`
+
+    <details><summary>version</summary>
+
+    ```sh
     etcd --version
     etcd Version: 3.5.2
     Git SHA: 99018a77b
@@ -24,23 +57,35 @@ Components:
     Go OS/Arch: darwin/amd64
     ```
 
+    </details>
+### Steps
+1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
+    1. Clone Kubernetes repo.
+        ```sh
+        git clone https://github.com/kubernetes/kubernetes
+        ```
+    1. Build the version you want to use.
+        ```sh
+        git checkout release-1.23 # you can choose any
+        make
+        ```
+1. Run `etcd`. (ref: [etcd](../etcd/))
+
     start:
 
-    ```
+    ```sh
     etcd
     ```
 1. Create certificates for `service-account`. (You can skip this step by running `./generate_certificate.sh`)
-    ```
-    openssl version
-    LibreSSL 2.8.3
-    ```
 
-    ```
+    ```sh
     openssl genrsa -out service-account-key.pem 4096
     openssl req -new -x509 -days 365 -key service-account-key.pem -subj "/CN=test" -sha256 -out service-account.pem
     ```
 
 1. Create certificate for `apiserver`. (You can skip this step by running `./generate_certificate.sh`)
+
+    <details><summary>Steps</summary>
 
     1. Generate a `ca.key` with 2048bit:
         ```
@@ -66,6 +111,8 @@ Components:
         -extensions v3_ext -extfile csr.conf
         ```
 
+    <details>
+
 1. Run the built binary.
 
     ```
@@ -74,7 +121,7 @@ Components:
 
     ```
     ${PATH_TO_KUBERNETES_DIR}/_output/bin/kube-apiserver --version
-    Kubernetes v1.23.4-dirty
+    Kubernetes v1.23.7-rc.0.21+dcce2357ffda4b
     ```
 
     ```
