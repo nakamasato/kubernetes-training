@@ -134,10 +134,14 @@ Considerations:
     1. Return the error in the status of the object.
     1. Generate an event describing the error.
 - Webhook
-    - Admission Webhook
-        - Mutating Webhook
-        - Validating Webhook
-    - Conversion Webhook
+    - **Admission Webhook**
+        - two types:
+            - **Mutating Webhook**: Make some modifications for a request. e.g. set default value. (Defined with `MutatingAdmissionConfiguration`)
+            - **Validating Webhook**: Validate a request. (Defined by `ValidatingAdmissionConfiguration`)
+        - Request: `AdmissionReview`
+        - Response: `AdmissionReview` with `response.allowed` boolean field.
+        ![](admission-webhook.drawio.svg)
+    - **Conversion Webhook**
         - hub & spoke
         - isConvertible: need to have Hub & all non-Hub types must be able to convert to/from Hub
         - request & response: ConversionReview
