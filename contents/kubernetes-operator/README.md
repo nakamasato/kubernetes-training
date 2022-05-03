@@ -134,13 +134,15 @@ Considerations:
     1. Return the error in the status of the object.
     1. Generate an event describing the error.
 - Webhook
-    - admission webhook
-        - mutating webhook
-        - validating webhook
-    - conversion webhook
+    - Admission Webhook
+        - Mutating Webhook
+        - Validating Webhook
+    - Conversion Webhook
         - hub & spoke
         - isConvertible: need to have Hub & all non-Hub types must be able to convert to/from Hub
         - request & response: ConversionReview
+        ![](conversion-webhook.drawio.svg)
+
 - [Indexing](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.10.0/pkg/client#hdr-Indexing)
 ## 6. Tools
 - https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil
