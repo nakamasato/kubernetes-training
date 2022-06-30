@@ -5,11 +5,11 @@ on:
     - cron:  '0 0 * * MON'
   push:
     branches:
-      - update-readme-by-github-actions
+      - main
 
 env:
   BRANCH_NAME: update-date-in-readme
-  BASE_BRANCH_NAME: update-readme-by-github-actions
+  BASE_BRANCH_NAME: main
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
