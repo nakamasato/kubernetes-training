@@ -10,6 +10,7 @@ on:
 env:
   BRANCH_NAME: update-date-in-readme
   BASE_BRANCH_NAME: update-readme-by-github-actions
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   create-pr-if-outdated:
