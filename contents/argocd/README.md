@@ -6,25 +6,28 @@
 
 ## Version
 
-- [v2.2.3](https://github.com/argoproj/argo-cd/releases/tag/v2.2.3)
+- [v2.4.3](https://github.com/argoproj/argo-cd/releases/tag/v2.4.3)
+
 ## Install
 
 ```bash
 kubectl create namespace argocd
-kubectl apply -k argocd/setup # v1.21 or later
-# kubectl kustomize argocd/setup | kubectl apply -f - # before v1.21
+kubectl apply -k setup # v1.21 or later
+# kubectl kustomize setup | kubectl apply -f - # before v1.21
 ```
 
 Check all the pods are running
 
 ```bash
 kubectl get pod -n argocd
-NAME                                             READY   STATUS    RESTARTS   AGE
-argocd-application-controller-74b8d7b888-5pcd6   1/1     Running   0          45s
-argocd-dex-server-5654f7fc98-2gx7g               1/1     Running   0          45s
-argocd-redis-6d7f9df848-97h7v                    1/1     Running   0          45s
-argocd-repo-server-857d8d8b7b-xbqrc              1/1     Running   0          45s
-argocd-server-78ffb87fd8-5rtb7                   1/1     Running   0          45s
+NAME                                                READY   STATUS    RESTARTS   AGE
+argocd-application-controller-0                     1/1     Running   0          90s
+argocd-applicationset-controller-547665bdfd-rjgvm   1/1     Running   0          94s
+argocd-dex-server-865966bc45-s6fgf                  1/1     Running   0          94s
+argocd-notifications-controller-c47c9f869-2smdk     1/1     Running   0          93s
+argocd-redis-896595fb7-h9pmr                        1/1     Running   0          93s
+argocd-repo-server-678c6cc99c-kkzmd                 1/1     Running   0          93s
+argocd-server-96cdb4df5-mxsq2                       1/1     Running   0          92s
 ```
 
 ## Login
@@ -41,12 +44,12 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 ## Add ArgoCD AppProject & Application
 
 - AppProject: `dev`
-- Application: `guestbook-kustomize-dev`gstEN13.
+- Application: `guestbook-kustomize-dev`.
 
 1. Deploy application with ArgoCD
 
     ```bash
-    kubectl apply -f argocd/project/dev
+    kubectl apply -f project/dev
     ```
 
 1. Check in console
@@ -64,7 +67,7 @@ kubectl -n argocd port-forward service/argocd-server 8080:80
 ## Manage argocd by argocd
 
 ```bash
-kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-argocd.yaml
+kubectl apply -f project/argocd/project.yaml,project/argocd/app-argocd.yaml
 ```
 
 ![](img/argocd-by-argocd.png)
@@ -72,8 +75,8 @@ kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-ar
 ## Clean up
 
 ```bash
-kubectl delete -f argocd/project/dev
-kubectl delete -k argocd/setup
+kubectl delete -f project/dev
+kubectl delete -k setup
 kubectl delete ns argocd
 ```
 
@@ -98,20 +101,20 @@ ArgoCD is installed.
 1. Install
 
     ```bash
-    kubectl apply -k argocd/setup-notifications/base
+    kubectl apply -k setup-notifications/base
     ```
 
 1. Clean up
 
     ```
-    kubectl delete -k argocd/setup-notifications/base
+    kubectl delete -k setup-notifications/base
     ```
 
 ### Manage by ArgoCD
 
 
 ```bash
-kubectl apply -f argocd/project/argocd/project.yaml,argocd/project/argocd/app-argocd-notifications.yaml
+kubectl apply -f project/argocd/project.yaml,project/argocd/app-argocd-notifications.yaml
 ```
 
 ## Manage by Helm
@@ -164,10 +167,10 @@ https://argocd-notifications.readthedocs.io/en/stable/services/slack/
                 ```
         1. Apply
             ```base
-            kubectl apply -k argocd/setup-notifications/overlays/slack
+            kubectl apply -k setup-notifications/overlays/slack
             ```
     - Helm:
 
         ```
-        helm install argo/argocd-notifications --generate-name -n argocd -f argocd/setup-notification-with-helm/value.yaml --set secret.items.slack-token=<SLACK BOT TOKEN>
+        helm install argo/argocd-notifications --generate-name -n argocd -f setup-notification-with-helm/value.yaml --set secret.items.slack-token=<SLACK BOT TOKEN>
         ```
