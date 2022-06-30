@@ -1,0 +1,55 @@
+name: update-readme
+
+on:
+  schedule:
+    - cron:  '0 0 * * MON'
+  push:
+    branches:
+      - update-readme-by-github-actions
+
+env:
+  BRANCH_NAME: update-date-in-readme
+  BASE_BRANCH_NAME: update-readme-by-github-actions
+
+jobs:
+  create-pr-if-outdated:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BASE_BRANCH_NAME }}
+
+      - name: check version in readme.yml
+        id: check
+        run: |
+          argocd_version=$(yq '.bases[0]' contents/argocd/setup/kustomization.yaml | sed 's/.*?ref=\(.*\)/\1/')
+          yq -i "(.versions[] | select(.name == \"ArgoCD\").version) = \"$argocd_version\"" readme.yml
+
+      - name: set up
+        uses: actions/setup-go@v3
+        with:
+          go-version: ^1.16
+
+      - name: update readme
+        run: go run readme.go
+
+      - name: update date in readme and commit
+        id: commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -b ${{ env.BRANCH_NAME }}
+          git add .
+          git commit -m 'update readme'
+          git push -u origin HEAD -f
+
+      - name: check if pr exists
+        id: check_pr
+        run: |
+          echo "::set-output name=count::$(gh pr list -S head:${{ env.BRANCH_NAME }} -B ${{ env.BASE_BRANCH_NAME }} | wc -l)"
+
+      - name: create pr
+        if: ${{ steps.check_pr.outputs.count == 0 }}
+        run: |
+          gh pr create -B "${{ env.BASE_BRANCH_NAME }}" -t "Update version in README" -b ""
