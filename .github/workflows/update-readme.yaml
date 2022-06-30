@@ -5,11 +5,11 @@ on:
     - cron:  '0 0 * * MON'
   push:
     branches:
-      - main
+      - update-readme-by-github-actions
 
 env:
   BRANCH_NAME: update-date-in-readme
-  BASE_BRANCH_NAME: main
+  BASE_BRANCH_NAME: update-readme-by-github-actions
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -35,7 +35,17 @@ jobs:
       - name: update readme
         run: go run readme.go
 
+      - name: check if need to commit
+        id: need_commit
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "::set-output name=need_commit::true
+          else
+            echo "::set-output name=need_commit::false
+          fi
+
       - name: update date in readme and commit
+        if: steps.need_commit.outputs.need_commit == 'true'
         id: commit
         run: |
           git config user.name github-actions
@@ -43,14 +53,15 @@ jobs:
           git checkout -b ${{ env.BRANCH_NAME }}
           git add .
           git commit -m 'update readme'
-          git push -u origin HEAD -f
+          git push -u origin HEAD -f # nothing to commit
 
       - name: check if pr exists
+        if: steps.need_commit.outputs.need_commit == 'true'
         id: check_pr
         run: |
           echo "::set-output name=count::$(gh pr list -S head:${{ env.BRANCH_NAME }} -B ${{ env.BASE_BRANCH_NAME }} | wc -l)"
 
       - name: create pr
-        if: ${{ steps.check_pr.outputs.count == 0 }}
+        if: ${{ steps.need_commit.outputs.need_commit == 'true' && steps.check_pr.outputs.count == 0 }}
         run: |
           gh pr create -B "${{ env.BASE_BRANCH_NAME }}" -t "Update version in README" -b ""
