@@ -3,11 +3,11 @@ versions:
     version: v1.21.2
     repoUrl: https://github.com/kubernetes/kubernetes
   - name: Kustomize
-    version: v4.2.0
+    version: kustomize/v4.2.0
     repoUrl: https://github.com/kubernetes-sigs/kustomize
     category: Yaml Management
   - name: Helm
-    version: 3.6.3
+    version: v3.6.3
     repoUrl: https://github.com/helm/helm
     category: Yaml Management
   - name: Traefik
@@ -56,11 +56,11 @@ versions:
     version: v0.11.1
     repoUrl: https://github.com/kubernetes-sigs/kind
   - name: Ingress Nginx Controller
-    version: v0.48.0
+    version: controller-v0.48.1
     repoUrl: https://github.com/kubernetes/ingress-nginx
     category: Networking
   - name: Conftest
-    version: 0.25.0
+    version: v0.25.0
     repoUrl: https://github.com/open-policy-agent/conftest
     category: CI/CD
   - name: Istio
