@@ -384,7 +384,7 @@
 1. Update image.
 
     1. `helm`
-        - `helm upgrade --set nginx.image.tag=1.15.2 helm-example nakamasato/helm-example -n helm-dev`
+        - `helm upgrade --set nginx.image.tag=1.23.0 helm-example nakamasato/helm-example -n helm-dev`
 
         or
 
@@ -402,7 +402,7 @@
             images:
               - name: nginx
                 newName: nginx
-                newTag: 1.15.2
+                newTag: 1.23.0
             ```
         - Apply
 
