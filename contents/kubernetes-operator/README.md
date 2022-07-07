@@ -86,7 +86,7 @@ Overview
     1. in-memory-cache
     1. event handler
 1. workqueue: A queue to store items that the controller will process.
-1. code-generator:
+1. [code-generator](https://github.com/kubernetes/code-generator):
     1. Generate codes for clientset for a custom resource.
 1. Scheme: connects Kubernetes API and Go Types
 
@@ -173,6 +173,7 @@ Considerations:
 
 - [47 Things To Become a Kubernetes Expert](https://ymmt2005.hatenablog.com/entry/k8s-things)
 - [Kubernetes API Basics - Resources, Kinds, and Objects](https://iximiuz.com/en/posts/kubernetes-api-structure-and-terminology/)
+- [Kubernetes API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
 - [How To Call Kubernetes API using Simple HTTP Client](https://iximiuz.com/en/posts/kubernetes-api-call-simple-http-client/)
 - [How To Call Kubernetes API using Go - Types and Common Machinery](https://iximiuz.com/en/posts/kubernetes-api-go-types-and-common-machinery/)
 - [How To Extend Kubernetes API - Kubernetes vs. Django](https://iximiuz.com/en/posts/kubernetes-api-how-to-extend/)
