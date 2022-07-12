@@ -113,3 +113,4 @@
 # reference
 - https://adevjoe.com/post/client-go-informer/
 - https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html
+- https://yangxikun.com/kubernetes/2020/03/05/informer-lister.html
