@@ -1,3 +1,4 @@
+---
 versions:
   - name: Kubernetes
     version: v1.21.2
@@ -119,3 +120,14 @@ versions:
     version: null
     repoUrl: https://github.com/zalando/postgres-operator
     category: Database
+---
+contents:
+  - name: kubernetes-the-hard-way
+    path: kubernetes-the-hard-way
+    category: Kubernetes Cluster
+  - name: Kubeadm in local
+    path: Kubeadm-local
+    category: Kubernetes Cluster
+  - name: Kind
+    path: local-cluster/kind
+    category: Kubernetes Cluster
