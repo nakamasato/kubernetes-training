@@ -1,0 +1,23 @@
+name: go
+
+on:
+  pull_request:
+    paths:
+      - 'contents/kubernetes-operator/**.go'
+      - .github/workflows/go.yml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.17', '1.18' ]
+    name: ${{ matrix.go }}
+    steps:
+      - name: set up
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+      - uses: actions/checkout@v3
+      - run: go test ./...
+        working-directory: contents/kubernetes-operator

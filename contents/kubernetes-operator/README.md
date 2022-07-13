@@ -77,14 +77,16 @@ Overview
 
 *from https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg*
 
-1. client-go:
-    1. clientset is a client for the built-in API resources.
-1. [informer](informer): watch the changes of objects and reflect the changes to the in-memory-cache.
-    1. factory: `informers.NewSharedInformerFactory`
-    1. Watch
-    1. lister: Get data from in-memory-cache.
-    1. in-memory-cache
-    1. event handler
+1. [client-go](client-go):
+    1. [clientset](client-go/clientset) is a client for the built-in API resources.
+    1. [informer](client-go/informer): watch the changes of objects and reflect the changes to the in-memory-cache.
+        1. factory: `informers.NewSharedInformerFactory`
+        1. Watch
+        1. lister
+        1. in-memory-cache
+        1. event handler
+    1. [lister](client-go/lister): Get data from in-memory cache.
+    1. [indexer](client-go/indexer): in-memory cache
 1. workqueue: A queue to store items that the controller will process.
 1. [code-generator](https://github.com/kubernetes/code-generator):
     1. Generate codes for clientset for a custom resource.
