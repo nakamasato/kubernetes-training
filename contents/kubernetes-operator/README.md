@@ -181,3 +181,4 @@ Considerations:
 - [How To Extend Kubernetes API - Kubernetes vs. Django](https://iximiuz.com/en/posts/kubernetes-api-how-to-extend/)
 - [在不生成 crd client 代码的情况下通过 client-go 增删改查 k8s crd 资源](https://mozillazg.com/2020/07/k8s-kubernetes-client-go-list-get-create-update-patch-delete-crd-resource-without-generate-client-code-update-or-create-via-yaml.html)
 - [kubebuilder vs operator-sdk (2019-04-10)](https://tiewei.github.io/posts/kubebuilder-vs-operator-sdk)
+- [client-go 中的 informer 源码分析](https://jimmysong.io/kubernetes-handbook/develop/client-go-informer-sourcecode-analyse.html)
