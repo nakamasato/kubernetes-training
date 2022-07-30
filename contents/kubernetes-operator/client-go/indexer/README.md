@@ -2,6 +2,8 @@
 
 ## Overview
 
+![](indexer.drawio.svg)
+
 The `Indexer` interface:
 
 ```go
