@@ -87,10 +87,11 @@ Overview
         1. event handler
     1. [lister](client-go/lister): Get data from in-memory cache.
     1. [indexer](client-go/indexer): in-memory cache
-1. workqueue: A queue to store items that the controller will process.
+    1. workqueue: A queue to store items that the controller will process.
 1. [code-generator](https://github.com/kubernetes/code-generator):
     1. Generate codes for clientset for a custom resource.
-1. Scheme: connects Kubernetes API and Go Types
+1. [apimachinery](apimachinery):
+    1. Scheme: connects Kubernetes API and Go Types, API version conversion
 
 Reference
 - https://adevjoe.com/post/client-go-informer/

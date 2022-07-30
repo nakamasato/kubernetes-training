@@ -1,10 +1,78 @@
 # informer
 
-***Informer*** monitors the changes of target resource. An informer is created for each of the target resources if you need to handle multiple resources (e.g. podInformer, deploymentInformer). Informer stores the
+## Overview
+
+***Informer*** monitors the changes of target resource. An informer is created for each of the target resources if you need to handle multiple resources (e.g. podInformer, deploymentInformer).
+
+
+- Interface:
+    SharedInformer
+    ```go
+    type SharedInformer interface {
+        AddEventHandler(handler ResourceEventHandler)
+        AddEventHandlerWithResyncPeriod(handler ResourceEventHandler, resyncPeriod time.Duration)
+        GetStore() Store
+        GetController() Controller
+        Run(stopCh <-chan struct{})
+        HasSynced() bool
+        LastSyncResourceVersion() string
+        SetWatchErrorHandler(handler WatchErrorHandler) error
+        SetTransform(handler TransformFunc) error
+    }
+    ```
+    SharedIndexInformer
+    ```go
+    type SharedIndexInformer interface {
+        SharedInformer
+        // AddIndexers add indexers to the informer before it starts.
+        AddIndexers(indexers Indexers) error
+        GetIndexer() Indexer
+    }
+    ```
+- Implementation:
+    ```go
+    type sharedIndexInformer struct {
+        indexer    Indexer
+        controller Controller
+        processor             *sharedProcessor
+        cacheMutationDetector MutationDetector
+        listerWatcher ListerWatcher
+        objectType runtime.Object
+        resyncCheckPeriod time.Duration
+        defaultEventHandlerResyncPeriod time.Duration
+        clock clock.Clock
+        started, stopped bool
+        startedLock      sync.Mutex
+        blockDeltas sync.Mutex
+        watchErrorHandler WatchErrorHandler
+        transform TransformFunc
+    }
+    ```
+- [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.24.3/tools/cache#NewSharedInformer): call NewSharedIndexInformer with `Indexers{}`.
+    ```go
+    NewSharedIndexInformer(lw, exampleObject, defaultEventHandlerResyncPeriod, Indexers{})
+    ```
+- [NewSharedIndexInformer](https://pkg.go.dev/k8s.io/client-go@v0.24.3/tools/cache#NewSharedIndexInformer)
+    ```go
+    func NewSharedIndexInformer(lw ListerWatcher, exampleObject runtime.Object, defaultEventHandlerResyncPeriod time.Duration, indexers Indexers) SharedIndexInformer {
+        realClock := &clock.RealClock{}
+        sharedIndexInformer := &sharedIndexInformer{
+            processor:                       &sharedProcessor{clock: realClock},
+            indexer:                         NewIndexer(DeletionHandlingMetaNamespaceKeyFunc, indexers),
+            listerWatcher:                   lw,
+            objectType:                      exampleObject,
+            resyncCheckPeriod:               defaultEventHandlerResyncPeriod,
+            defaultEventHandlerResyncPeriod: defaultEventHandlerResyncPeriod,
+            cacheMutationDetector:           NewCacheMutationDetector(fmt.Sprintf("%T", exampleObject)),
+            clock:                           realClock,
+        }
+        return sharedIndexInformer
+    }
+    ```
 
 ## Overview
 1. Initialize clientset with `.kube/config`
-1. Create an informer factory with the following line.
+1. Create an informer **factory** with the following line.
     ```go
     informerFactory := informers.NewSharedInformerFactory(kubeClient, time.Second*30)
     ```
@@ -13,6 +81,29 @@
     ```go
     podInformer := informerFactory.Core().V1().Pods()
     ```
+
+    factory -> group -> version -> kind
+
+    ```go
+    type PodInformer interface {
+        Informer() cache.SharedIndexInformer
+        Lister() v1.PodLister
+    }
+    ```
+
+    1. `Informer()` returns `SharedIndexInformer`
+        1. call `f.factory.InformerFor(&corev1.Pod{}, f.defaultInformer)`
+        1. create new informer with [NewFilteredPodInformer](https://github.com/kubernetes/client-go/blob/ee1a5aaf793a9ace9c433f5fb26a19058ed5f37c/informers/core/v1/pod.go#L58) if not exist
+        1. return the informer
+    1. `Lister()` returns PodLister
+        1. call `v1.NewPodLister(f.Informer().GetIndexer())`
+        1. NewPodLister returns podLister with the given indexer.
+            ```go
+            type podLister struct {
+                indexer cache.Indexer
+            }
+            ```
+
 1. Add event handlers (`AddFunc`, `UpdateFunc`, and `DeleteFunc`) to the pod informer.
     ```go
     podInformer.Informer().AddEventHandler(

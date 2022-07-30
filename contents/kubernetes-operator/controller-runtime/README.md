@@ -11,7 +11,7 @@
     1. Predicate
 1. Client
 1. Cache
-1. Scheme
+1. Scheme https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/scheme Wraps apimachinery/Scheme.
 1. Webhook
 1. Envtest
 
