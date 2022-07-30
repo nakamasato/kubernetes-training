@@ -1,30 +1,17 @@
 # [Indexer](https://pkg.go.dev/k8s.io/client-go/tools/cache#Indexer)
 
-## Interface
+## Overview
 
 The `Indexer` interface:
 
 ```go
 type Indexer interface {
 	Store
-	// Index returns the stored objects whose set of indexed values
-	// intersects the set of indexed values of the given object, for
-	// the named index
 	Index(indexName string, obj interface{}) ([]interface{}, error)
-	// IndexKeys returns the storage keys of the stored objects whose
-	// set of indexed values for the named index includes the given
-	// indexed value
 	IndexKeys(indexName, indexedValue string) ([]string, error)
-	// ListIndexFuncValues returns all the indexed values of the given index
 	ListIndexFuncValues(indexName string) []string
-	// ByIndex returns the stored objects whose set of indexed values
-	// for the named index includes the given indexed value
 	ByIndex(indexName, indexedValue string) ([]interface{}, error)
-	// GetIndexer return the indexers
 	GetIndexers() Indexers
-
-	// AddIndexers adds more indexers to this store.  If you call this after you already have data
-	// in the store, the results are undefined.
 	AddIndexers(newIndexers Indexers) error
 }
 ```
@@ -35,37 +22,69 @@ The `Store` interface:
 
 ```go
 type Store interface {
-
-	// Add adds the given object to the accumulator associated with the given object's key
 	Add(obj interface{}) error
-
-	// Update updates the given object in the accumulator associated with the given object's key
 	Update(obj interface{}) error
-
-	// Delete deletes the given object from the accumulator associated with the given object's key
 	Delete(obj interface{}) error
-
-	// List returns a list of all the currently non-empty accumulators
 	List() []interface{}
-
-	// ListKeys returns a list of all the keys currently associated with non-empty accumulators
 	ListKeys() []string
-
-	// Get returns the accumulator associated with the given object's key
 	Get(obj interface{}) (item interface{}, exists bool, err error)
-
-	// GetByKey returns the accumulator associated with the given key
 	GetByKey(key string) (item interface{}, exists bool, err error)
-
-	// Replace will delete the contents of the store, using instead the
-	// given list. Store takes ownership of the list, you should not reference
-	// it after calling this function.
 	Replace([]interface{}, string) error
-
-	// Resync is meaningless in the terms appearing here but has
-	// meaning in some implementations that have non-trivial
-	// additional behavior (e.g., DeltaFIFO).
 	Resync() error
+}
+```
+
+Implementation:
+
+```go
+type cache struct {
+	// cacheStorage bears the burden of thread safety for the cache
+	cacheStorage ThreadSafeStore
+	// keyFunc is used to make the key for objects stored in and retrieved from items, and
+	// should be deterministic.
+	keyFunc KeyFunc
+}
+```
+
+[ThreadSafeStore](https://pkg.go.dev/k8s.io/client-go@v0.24.3/tools/cache#ThreadSafeStore)
+
+```go
+type ThreadSafeStore interface {
+	Add(key string, obj interface{})
+	Update(key string, obj interface{})
+	Delete(key string)
+	Get(key string) (item interface{}, exists bool)
+	List() []interface{}
+	ListKeys() []string
+	Replace(map[string]interface{}, string)
+	Index(indexName string, obj interface{}) ([]interface{}, error)
+	IndexKeys(indexName, indexKey string) ([]string, error)
+	ListIndexFuncValues(name string) []string
+	ByIndex(indexName, indexKey string) ([]interface{}, error)
+	GetIndexers() Indexers
+	AddIndexers(newIndexers Indexers) error
+	Resync() error
+}
+```
+
+Implementation
+```go
+type threadSafeMap struct {
+	lock  sync.RWMutex
+	items map[string]interface{}
+	indexers Indexers // indexers maps a name to an IndexFunc
+	indices Indices // indices maps a name to an Index
+}
+```
+
+NewIndexer:
+
+```go
+func NewIndexer(keyFunc KeyFunc, indexers Indexers) Indexer {
+	return &cache{
+		cacheStorage: NewThreadSafeStore(indexers, Indices{}),
+		keyFunc:      keyFunc,
+	}
 }
 ```
 
