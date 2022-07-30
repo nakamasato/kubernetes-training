@@ -49,10 +49,6 @@ jobs:
         working-directory: contents/kubernetes-operator/client-go/clientset
         run: go run podlist.go
 
-      - name: client-go/informer
-        working-directory: contents/kubernetes-operator/client-go/informer
-        run: go run informer.go
-
       - name: client-go/indexer
         working-directory: contents/kubernetes-operator/client-go/indexer
         run: go run main.go
