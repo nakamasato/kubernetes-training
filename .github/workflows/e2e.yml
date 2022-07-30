@@ -44,3 +44,15 @@ jobs:
       - name: kuttl - run
         working-directory: contents
         run: kubectl kuttl test
+
+      # - name: client-go/clientset
+      #   working-directory: contents/kubernetes-operator/client-go/clientset
+      #   run: go run podlist.go
+
+      - name: client-go/indexer
+        working-directory: contents/kubernetes-operator/client-go/indexer
+        run: go run main.go
+
+      - name: client-go/lister
+        working-directory: contents/kubernetes-operator/client-go/lister
+        run: go run main.go
