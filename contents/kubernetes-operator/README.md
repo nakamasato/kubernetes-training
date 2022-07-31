@@ -121,6 +121,7 @@ To clarify a problem to resolve with a new operator, you can reference existing 
 
 
 Considerations:
+
 - Finalizer
 - [Owners and Dependents](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
 - Reconciliation Loop
