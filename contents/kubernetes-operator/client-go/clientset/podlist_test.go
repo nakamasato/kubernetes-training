@@ -27,8 +27,10 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 
 	// retrieve kubeconfig
-	config, _ := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		log.Printf("Building config from flags, %s", err.Error())
+	}
 	// get clientset for kubernetes resources
 	clientset, _ = kubernetes.NewForConfig(config)
 
