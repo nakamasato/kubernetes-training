@@ -2,6 +2,8 @@
 
 ## Overview
 
+![](informer.drawio.svg)
+
 ***Informer*** monitors the changes of target resource. An informer is created for each of the target resources if you need to handle multiple resources (e.g. podInformer, deploymentInformer).
 
 
@@ -69,8 +71,8 @@
         return sharedIndexInformer
     }
     ```
+## Example
 
-## Overview
 1. Initialize clientset with `.kube/config`
 1. Create an informer **factory** with the following line.
     ```go

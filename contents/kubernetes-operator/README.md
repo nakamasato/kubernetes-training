@@ -71,7 +71,15 @@ There are several ways to create an operator. You can try any of them:
 
 ## 4. Understand more detail about each compoenent
 
-Overview
+Simplified:
+
+![](controller.drawio.svg)
+
+Detailed:
+
+![](controller-detailed.drawio.svg)
+
+More Detailed:
 
 ![](https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg?raw=true)
 
@@ -81,10 +89,11 @@ Overview
     1. [clientset](client-go/clientset) is a client for the built-in API resources.
     1. [informer](client-go/informer): watch the changes of objects and reflect the changes to the in-memory-cache.
         1. factory: `informers.NewSharedInformerFactory`
-        1. Watch
+        1. watcher
         1. lister
-        1. in-memory-cache
+        1. indexer
         1. event handler
+        1. reflector
     1. [lister](client-go/lister): Get data from in-memory cache.
     1. [indexer](client-go/indexer): in-memory cache
     1. workqueue: A queue to store items that the controller will process.
