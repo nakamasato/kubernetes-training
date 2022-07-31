@@ -31,6 +31,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Printf("Building config from flags, %s", err.Error())
 	}
+
 	// get clientset for kubernetes resources
 	clientset, _ = kubernetes.NewForConfig(config)
 
