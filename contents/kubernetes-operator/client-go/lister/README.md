@@ -1,6 +1,10 @@
 # [Lister](https://pkg.go.dev/k8s.io/client-go/tools/cache#Lister)
 
-## Interface
+## Overview
+
+***Lister*** is any object that knows how to perform an initial list.
+
+Interface:
 
 ```go
 type Lister interface {
