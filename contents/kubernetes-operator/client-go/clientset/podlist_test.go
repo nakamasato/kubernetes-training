@@ -3,9 +3,9 @@ package main_test
 import (
 	"context"
 	"flag"
+	"os"
 	"path/filepath"
 	"testing"
-	"os"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
