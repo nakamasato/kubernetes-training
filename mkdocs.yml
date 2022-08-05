@@ -16,6 +16,7 @@ theme:
     - header.autohide
     - navigation.indexes
     - toc.follow
+    - navigation.tracking # the URL in the address bar is automatically updated with the active anchor as highlighted in the table of contents
 repo_url: https://github.com/nakamasato/kubernetes-training
 markdown_extensions:
   - pymdownx.superfences
