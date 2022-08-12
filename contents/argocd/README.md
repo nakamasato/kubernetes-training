@@ -6,7 +6,7 @@
 
 ## Version
 
-- [v2.4.3](https://github.com/argoproj/argo-cd/releases/tag/v2.4.3)
+- [v2.4.9](https://github.com/argoproj/argo-cd/releases/tag/v2.4.9)
 
 ## Install
 
