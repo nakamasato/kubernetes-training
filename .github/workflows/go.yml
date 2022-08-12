@@ -5,6 +5,7 @@ on:
     paths:
       - 'contents/kubernetes-operator/**.go'
       - .github/workflows/go.yml
+      - '**go**'
 
 jobs:
   test:

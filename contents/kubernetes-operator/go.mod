@@ -3,9 +3,9 @@ module github.com/nakamasato/kubernetes-training/kubernetes-operator
 go 1.18
 
 require (
-	k8s.io/api v0.24.2
-	k8s.io/apimachinery v0.24.2
-	k8s.io/client-go v0.24.2
+	k8s.io/api v0.24.3
+	k8s.io/apimachinery v0.24.3
+	k8s.io/client-go v0.24.3
 	sigs.k8s.io/controller-runtime v0.12.3
 )
 
