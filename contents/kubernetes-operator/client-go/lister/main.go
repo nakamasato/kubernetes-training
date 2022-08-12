@@ -5,6 +5,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	appsv1lister "k8s.io/client-go/listers/apps/v1"
@@ -17,7 +18,10 @@ func main() {
 	fmt.Println("-------------- Indexer ----------------")
 	indexer := cache.NewIndexer(
 		cache.MetaNamespaceKeyFunc,
-		cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc},
+		cache.Indexers{
+			cache.NamespaceIndex: cache.MetaNamespaceIndexFunc,
+			"labels":             indexFuncByLabels,
+		},
 	)
 	// Add deployment with label
 	err := indexer.Add(getDeployment("deployment-with-label", map[string]string{"watch": "true"}))
@@ -63,4 +67,16 @@ func getDeployment(name string, labels map[string]string) *appsv1.Deployment {
 			},
 		},
 	}
+}
+
+func indexFuncByLabels(obj interface{}) ([]string, error) {
+	meta, err := meta.Accessor(obj)
+	if err != nil {
+		return []string{""}, fmt.Errorf("object has no meta: %v", err)
+	}
+	keys := []string{}
+	for key := range meta.GetLabels() {
+		keys = append(keys, key)
+	}
+	return keys, nil
 }

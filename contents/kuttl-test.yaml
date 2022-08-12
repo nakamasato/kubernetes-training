@@ -3,3 +3,4 @@ kind: TestSuite
 startKIND: true
 testDirs:
   - ./test/
+timeout: 120

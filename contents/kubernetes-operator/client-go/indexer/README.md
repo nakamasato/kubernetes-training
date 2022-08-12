@@ -90,6 +90,24 @@ func NewIndexer(keyFunc KeyFunc, indexers Indexers) Indexer {
 }
 ```
 
+NewThreadSafeStore:
+
+```go
+func NewThreadSafeStore(indexers Indexers, indices Indices) ThreadSafeStore {
+	return &threadSafeMap{
+		items:    map[string]interface{}{},
+		indexers: indexers,
+		indices:  indices,
+	}
+}
+```
+
+**Index-related** terms:
+1. `Indexer` is an interface (embeds `Store`)
+1. `Indexers` is a type `map[string]IndexFunc`
+1. `Index` is a type `Index map[string]sets.String`
+1. `Indices` is a type `type Indices map[string]Index`
+
 ## Usage
 
 1. Create a indexer with `KeyFunc` and `Indexers`.

@@ -14,6 +14,31 @@
         1. bindNode
         1. emitEvent
 
+
+## Getting Started
+
+1. Run scheduler.
+    ```
+    go run main.go
+    2022/08/12 20:19:51 Start a scheduler
+    2022/08/12 20:19:51 Run is called
+    2022/08/12 20:19:51 New node is added. docker-desktop
+    ```
+1. Create a Pod.
+
+    ```
+    kubectl apply -f pod.yaml
+    ```
+
+1. Check if the pod is scheduled.
+
+    ```
+    2022/08/12 20:20:28 found a pod to schedule: [default/nginx]
+    2022/08/12 20:20:28 calculated priorities: map[docker-desktop:47]
+    2022/08/12 20:20:28 node docker-desktop is chosen for Pod [default/nginx]
+    2022/08/12 20:20:28 pod [default/nginx] is successfully scheduled to node docker-desktop
+    ```
+
 ## Steps:
 
 1. Create `main`, `NewScheduler` and `Scheduler` struct with `Run` method.
