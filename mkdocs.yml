@@ -15,7 +15,9 @@ theme:
   features:
     - header.autohide
     - navigation.indexes
-    - toc.follow
+    - navigation.instant # clicks on all internal links will be intercepted and dispatched via XHR without fully reloading the page.
+    - toc.follow # the sidebar is automatically scrolled so that the active anchor is always visible.
+    - navigation.tracking # the URL in the address bar is automatically updated with the active anchor as highlighted in the table of contents
 repo_url: https://github.com/nakamasato/kubernetes-training
 markdown_extensions:
   - pymdownx.superfences
