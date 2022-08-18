@@ -7,6 +7,8 @@ on:
       - .github/workflows/e2e.yml
       - contents/test/**
       - contents/kuttl-test.yaml
+      - '**.go'
+      - 'go.*'
 
 jobs:
   e2e:
