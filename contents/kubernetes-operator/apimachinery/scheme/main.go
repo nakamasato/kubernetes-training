@@ -1,7 +1,9 @@
 package main
+
 import (
 	"fmt"
-	scheme "github.com/nakamasato/kubernetes-training/kubernetes-operator/apimachinery/scheme/scheme"
+
+	scheme "github.com/nakamasato/kubernetes-training/contents/kubernetes-operator/apimachinery/scheme/scheme"
 )
 
 func main() {
