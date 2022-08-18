@@ -2,39 +2,20 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"os"
-	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/errors"
+
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 func main() {
-	// set logger
-	opts := zap.Options{
-		Development: true,
-	}
-	opts.BindFlags(flag.CommandLine)
-	flag.Parse()
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
-
 	var log = ctrl.Log.WithName("builder-examples")
-	leaseDuration := 100 * time.Second
-	renewDeadline := 80 * time.Second
-	retryPeriod := 20 * time.Second
-	manager, err := ctrl.NewManager(
-		ctrl.GetConfigOrDie(),
-		ctrl.Options{
-			LeaseDuration: &leaseDuration,
-			RenewDeadline: &renewDeadline,
-			RetryPeriod:   &retryPeriod,
-		})
+
+	manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
 	if err != nil {
 		log.Error(err, "could not create manager")
 		os.Exit(1)
@@ -54,7 +35,6 @@ func main() {
 		log.Error(err, "could not start manager")
 		os.Exit(1)
 	}
-	log.Info("Manager started")
 }
 
 // ReplicaSetReconciler is a simple Controller example implementation.
@@ -74,9 +54,6 @@ func (a *ReplicaSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	rs := &appsv1.ReplicaSet{}
 	err := a.Get(ctx, req.NamespacedName, rs)
 	if err != nil {
-		if errors.IsNotFound(err) {
-			return ctrl.Result{}, nil
-		}
 		return ctrl.Result{}, err
 	}
 

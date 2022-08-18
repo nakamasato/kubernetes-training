@@ -2,7 +2,7 @@ package main
 
 import (
 	"testing"
-	scheme "github.com/nakamasato/kubernetes-training/kubernetes-operator/apimachinery/scheme/scheme"
+	scheme "github.com/nakamasato/kubernetes-training/contents/kubernetes-operator/apimachinery/scheme/scheme"
 )
 
 func TestScheme(t *testing.T) {
