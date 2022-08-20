@@ -1,5 +1,3 @@
-
-
 name: e2e
 on:
   pull_request:
@@ -7,6 +5,8 @@ on:
       - .github/workflows/e2e.yml
       - contents/test/**
       - contents/kuttl-test.yaml
+      - '**.go'
+      - 'go.*'
 
 jobs:
   e2e:
