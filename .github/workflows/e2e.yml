@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/e2e.yml
+      - contents/argocd/setup/kustomization.yaml
       - contents/test/**
       - contents/kuttl-test.yaml
       - '**.go'
