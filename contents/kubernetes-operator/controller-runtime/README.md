@@ -6,6 +6,11 @@
 
 ![](diagram.drawio.svg)
 
+1. Create a Manager.
+1. Create one or multiple Reconcilers.
+1. Build one or multiple Controllers with the manager and reconciler(s) using Builder.
+1. Start the manager, which trigger to start all the runnables in the manager.
+
 For more details, you can check the [architecture in book.kubebuilder.io](https://book.kubebuilder.io/architecture.html):
 ![](https://raw.githubusercontent.com/kubernetes-sigs/kubebuilder/master/docs/book/src/kb_concept_diagram.svg)
 
@@ -24,10 +29,16 @@ List of components:
 1. [Webhook](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/webhook)
 1. [Envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
 
+## Components
+
+1. [manager](manager)
+1. [reconciler](reconciler)
+1. [log](log)
+1. [controller](controller)
+
 ## Examples
 1. [example-controller](example-controller)
 1. envtest
-
 
 ## Memo
 - [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
