@@ -1,5 +1,6 @@
 # Example Controller
 
+First example in [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime)
 ## Example
 
 1. Run example controller.
