@@ -78,12 +78,23 @@ type runnableGroup struct {
 ## How Manager is used
 
 1. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66) with NewManager
-1. Bind a controller using `NewControllerManagedBy` with controller builder.
-1. Internally, calls the functions:
-    1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L191) to register the controler to the buidler
-        1. Create a new controller and add it by `Manager.Add(Runnable)`
-    1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L196) to start watching the target resources configured by `For`, `Owns`, and `Watches`.
-        1. The actual implementation of `Watch` function is in the controller. You can also check [controller](../controller)
+1. Bind a controller using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L66)) with controller [builder](../builder).
+    1. Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L175) create a new controller and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`
+1. `controllerManager.Start()` calls `runnables.xxx.Start()` to start all runnables.
+    ```go
+	err := cm.runnables.Webhooks.Start(cm.internalCtx);
+    ...
+
+	err := cm.runnables.Caches.Start(cm.internalCtx);
+    ...
+
+	err := cm.runnables.Others.Start(cm.internalCtx);
+    ...
+    ```
+    1. Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
+
+## How a controller is added to a manager
+
 1. `Manager.Add(Runnable)`: gets lock and calls `add(runnable)`.
     1. `cm.SetFields(r)`
         ```go
@@ -139,29 +150,6 @@ type runnableGroup struct {
         }
         ```
 
-1. `controllerManager`'s `Start()` calls `runnables.xxx.Start()` to start all runnables.
-    ```go
-	if err := cm.runnables.Webhooks.Start(cm.internalCtx); err != nil {
-		if !errors.Is(err, wait.ErrWaitTimeout) {
-			return err
-		}
-	}
-
-	// Start and wait for caches.
-	if err := cm.runnables.Caches.Start(cm.internalCtx); err != nil {
-		if !errors.Is(err, wait.ErrWaitTimeout) {
-			return err
-		}
-	}
-
-	// Start the non-leaderelection Runnables after the cache has synced.
-	if err := cm.runnables.Others.Start(cm.internalCtx); err != nil {
-		if !errors.Is(err, wait.ErrWaitTimeout) {
-			return err
-		}
-	}
-    ```
-    1. Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
 
 ## Example
 
