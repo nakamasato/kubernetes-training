@@ -70,10 +70,10 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 }
 ```
 
-## Watch
+## `Watch` func
 
 1. Where is `Watch` called?
-    1. `Watch` is called in `doWatch` in [controllerManager](../manager) for `For`, `Owns`, and `Watches` configured with a controller builder.
+    1. `Watch` is called in [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L196) in [builder](../builder) for `For`, `Owns`, and `Watches` configured with a controller builder.
 1. `Watch` calls `SetFields` for `Source`, `EventHandler`, and `Predicate`s.
     ```go
 	if err := c.SetFields(src); err != nil {
@@ -88,11 +88,12 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 		}
 	}
     ```
-    1. `SetFields` is one of the Controller's field `SetFields func(i interface{}) error`, which is set when initializing in [NewUnmanaged](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L100) from `mgr.SetFields`
+    1. `SetFields` is one of the Controller's field `SetFields func(i interface{}) error`, which is set when initializing in [NewUnmanaged](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L100) from `mgr.SetFields`.
+	1. For more details, you can check [inject](../inject/) and [manager](../manager/)
 
-## Start
+## `Start` func
 
-1. calls `processNextWorkItem` until it returns false [here](https://github.com/kubernetes-sigs/controller-runtime/blob/cd0058ad295c268da1e7233e609a9a18dd60b5f6/pkg/internal/controller/controller.go#L234-L235).
-1.
+1. calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/cd0058ad295c268da1e7233e609a9a18dd60b5f6/pkg/internal/controller/controller.go#L234-L235).
 
 Where is `Start` called?
+1. Called from [manager](../manager/).

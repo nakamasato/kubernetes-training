@@ -16,18 +16,16 @@ type Reconciler interface {
 
 ## Implement
 
-`Func` implements Reconciler interface:
-
-```go
-type Func func(context.Context, Request) (Result, error)
-```
-
 You can use either implementation of the `Reconciler` interface:
 1. a reconciler type with `Reconcile` function.
-1. a `Func`.
+1. a `reconcile.Func`, which implements Reconciler interface:
+	```go
+	type Func func(context.Context, Request) (Result, error)
+	```
 
+([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L42) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
 ## How reconciler is used
-Reconciler is passed to Controller builder when initializing controller (you can also check it in [Manager](../manager/)):
+Reconciler is passed to Controller [builder](../builder) when initializing controller (you can also check it in [Manager](../manager/)):
 
 ```go
 ctrl.NewControllerManagedBy(mgr). // returns controller Builder
