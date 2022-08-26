@@ -1,8 +1,8 @@
 # [Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager)
 
-## [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go)
+## types
 
-## Interface
+### 1. Manager Interface
 
 ```go
 type Manager interface {
@@ -19,7 +19,7 @@ type Manager interface {
 }
 ```
 
-## [controllerManager type](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66-L173)
+### 2. [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66-L173)
 
 ```go
 type controllerManager struct {
@@ -37,7 +37,7 @@ type controllerManager struct {
 }
 ```
 
-[Runnable](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/manager.go#L293-L298) interface:
+### 3. [Runnable](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/manager.go#L293-L298) interface
 
 ```go
 type Runnable interface {
@@ -45,7 +45,7 @@ type Runnable interface {
 }
 ```
 
-[runnables](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/runnable_group.go#L37-L45)
+### 4. [runnables](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/runnable_group.go#L37-L45)
 
 ```go
 type runnables struct {
@@ -75,25 +75,71 @@ type runnableGroup struct {
 }
 ```
 
-## How Manager is used
+## How to use `Manager`
 
-1. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66) with NewManager
-1. Bind a controller using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L66)) with controller [builder](../builder).
-    1. Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L175) create a new controller and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`
-1. `controllerManager.Start()` calls `runnables.xxx.Start()` to start all runnables.
+### 1. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66) with `NewManager`
+```go
+manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
+```
+1. Initialize **Cluster**, which provides methods to interact with Kubernetes cluster
     ```go
-	err := cm.runnables.Webhooks.Start(cm.internalCtx);
-    ...
-
-	err := cm.runnables.Caches.Start(cm.internalCtx);
-    ...
-
-	err := cm.runnables.Others.Start(cm.internalCtx);
-    ...
+    cluster, err := cluster.New(config, func(clusterOptions *cluster.Options) {
+        clusterOptions.Scheme = options.Scheme
+        clusterOptions.MapperProvider = options.MapperProvider
+        clusterOptions.Logger = options.Logger
+        clusterOptions.SyncPeriod = options.SyncPeriod
+        clusterOptions.Namespace = options.Namespace
+        clusterOptions.NewCache = options.NewCache
+        clusterOptions.NewClient = options.NewClient
+        clusterOptions.ClientDisableCacheFor = options.ClientDisableCacheFor
+        clusterOptions.DryRunClient = options.DryRunClient
+        clusterOptions.EventBroadcaster = options.EventBroadcaster //nolint:staticcheck
+    })
     ```
-    1. Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
+    For more details, please check [cluster](../cluster).
+1. Initialize other necessary things like `recordProvider`, `runnables`, etc.
 
-## How a controller is added to a manager
+1. Initialize `controllerManager`
+
+    ```go
+    &controllerManager{
+        ...
+		cluster:                       cluster,
+		runnables:                     runnables,
+        ...
+		recorderProvider:              recorderProvider,
+	}
+    ```
+### 2. Bind a Controller to the Manager
+
+Bind a Controller to the Manager using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L66)).
+
+```go
+err = ctrl.
+    NewControllerManagedBy(manager). // Create the Controller
+    For(&appsv1.ReplicaSet{}).       // ReplicaSet is the Application API
+    Owns(&corev1.Pod{}).             // ReplicaSet owns Pods created by it
+    Complete(&ReplicaSetReconciler{Client: manager.GetClient()})
+```
+
+Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L175) create a new controller and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`.
+
+You can also check [Builder](../builder) and [Internal process of adding a Controller to a Manager](#internal-process-of-adding-a-controller-to-a-manager)
+
+### 3. `controllerManager.Start()` calls `runnables.xxx.Start()` to start all runnables.
+```go
+err := cm.runnables.Webhooks.Start(cm.internalCtx);
+...
+
+err := cm.runnables.Caches.Start(cm.internalCtx);
+...
+
+err := cm.runnables.Others.Start(cm.internalCtx);
+...
+```
+1. Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
+
+## Internal process of adding a `Controller` to a `Manager`
 
 1. `Manager.Add(Runnable)`: gets lock and calls `add(runnable)`.
     1. `cm.SetFields(r)`
