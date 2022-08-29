@@ -40,19 +40,49 @@ type cluster struct {
 ```
 
 
-Default:
-1. Scheme: Use the Kubernetes client-go scheme if none is specified
-1. MapperProvider: apiutil.NewDynamicRESTMapper(c)
-1. NewClient: DefaultNewClient -> [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44) ->
+## Set fields
+
+1. scheme: Use the Kubernetes client-go scheme if none is specified
+1. mapper: Created with `MapperProvider`
+    The following function is used if `MapperProvider` is not specified:
     ```go
-    // A delegating client forms a Client by composing separate reader, writer and
-    // statusclient interfaces.  This way, you can have an Client that reads from a
-    // cache and writes to the API server.
-    client.NewDelegatingClient(client.NewDelegatingClientInput{
-		CacheReader:     cache,
-		Client:          c,
-		UncachedObjects: uncachedObjects,
-	})
+    apiutil.NewDynamicRESTMapper(c)
+    ```
+1. cache: Created with `NewCache` (cache.New)
+    ```go
+    cache, err := options.NewCache(config, cache.Options{Scheme: options.Scheme, Mapper: mapper, Resync: options.SyncPeriod, Namespace: options.Namespace})
+    ```
+1. apiReader: Created with `client.New`
+    ```go
+    apiReader, err := client.New(config, clientOptions)
+    ```
+1. writeObj: Created with `NewClient` ([DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L259) -> [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44))
+    ```go
+    writeObj, err := options.NewClient(cache, config, clientOptions, options.ClientDisableCacheFor...)
+    ```
+
+    <details>
+
+    ```go
+	if options.NewClient == nil {
+		options.NewClient = DefaultNewClient
+	}
+    ```
+
+    ```go
+    // DefaultNewClient creates the default caching client.
+    func DefaultNewClient(cache cache.Cache, config *rest.Config, options client.Options, uncachedObjects ...client.Object) (client.Client, error) {
+        c, err := client.New(config, options)
+        if err != nil {
+            return nil, err
+        }
+
+        return client.NewDelegatingClient(client.NewDelegatingClientInput{
+            CacheReader:     cache,
+            Client:          c,
+            UncachedObjects: uncachedObjects,
+        })
+    }
     ```
 
     ```go
@@ -71,5 +101,25 @@ Default:
 	}
     ```
 
-1. NewCache: cache.New
-1. newRecorderProvider: intrec.NewProvider
+    </details>
+1. recorderProvider: Created with `newRecorderProvider` (intrec.NewProvider)
+    ```go
+    recorderProvider, err := options.newRecorderProvider(config, options.Scheme, options.Logger.WithName("events"), options.makeBroadcaster)
+    ```
+
+
+```go
+return &cluster{
+    config:           config,
+    scheme:           options.Scheme,
+    cache:            cache,
+    fieldIndexes:     cache,
+    client:           writeObj, // client is a delegatingClient.
+    apiReader:        apiReader,
+    recorderProvider: recorderProvider,
+    mapper:           mapper,
+    logger:           options.Logger,
+}, nil
+```
+
+`GetClient()` returns `cluster.client`, a delegatingCLient by default. For more details about `delegatingClient` you can check [client](../client)

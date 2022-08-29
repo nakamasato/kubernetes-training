@@ -70,10 +70,10 @@ What's the difference between `Informer` and `Kind`?
 
 ## How `Source` is used
 
-1. `Source` is passed to [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125).
+1. `Source` is passed to [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125) function.
 1. `controller.Watch` is called in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L246) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L54)
 1. `controller.Watch` is called three times for:
-    1. [For]():
+    1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L222-L225):
         ```go
         // Reconcile type
         typeForSrc, err := blder.project(blder.forInput.object, blder.forInput.objectProjection)

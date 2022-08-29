@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"os"
 
+	"go.uber.org/zap/zapcore"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
@@ -21,27 +23,35 @@ var (
 )
 
 func main() {
+	opts := zap.Options{
+		Development: true,
+		TimeEncoder: zapcore.ISO8601TimeEncoder,
+	}
+	opts.BindFlags(flag.CommandLine)
+	flag.Parse()
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+
 	ctx := context.Background()
 
 	cfg, err := config.GetConfig()
 	if err != nil {
-		fmt.Errorf("unable to get kubeconfig %v\n", err)
+		log.Error(err, "unable to get kubeconfig")
 		os.Exit(1)
 	}
 
 	mgr, err = manager.New(cfg, manager.Options{})
 	if err != nil {
-		fmt.Errorf("unable to set up manager %v\n", err)
+		log.Error(err, "unable to set up manager")
 		os.Exit(1)
 	}
 
 	podReconciler := reconcile.Func(func(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-		fmt.Printf("podReconciler is called for %v\n", req)
+		log.Info("podReconciler is called", "req", req)
 		return reconcile.Result{}, nil
 	})
 
 	deploymentReconciler := reconcile.Func(func(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-		fmt.Printf("deploymentReconciler is called for %v\n", req)
+		log.Info("deploymentReconciler is called", "req", req)
 		return reconcile.Result{}, nil
 	})
 
