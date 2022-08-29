@@ -97,6 +97,7 @@ manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
     })
     ```
     For more details, please check [cluster](../cluster).
+    `Cluster` is also a runnable.
 1. Initialize other necessary things like `recordProvider`, `runnables`, etc.
 
 1. Initialize `controllerManager`
@@ -195,6 +196,10 @@ err := cm.runnables.Others.Start(cm.internalCtx);
             }
         }
         ```
+
+## Manager.GetClient() and GetScheme()
+
+client, scheme and more are directly got from `cm.cluster.GetXXX()`
 
 
 ## Example
