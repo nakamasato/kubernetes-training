@@ -70,9 +70,7 @@ What's the difference between `Informer` and `Kind`?
 
 ## How `Source` is used
 
-1. `Source` is passed to [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125) function.
-1. `controller.Watch` is called in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L246) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L54)
-1. `controller.Watch` is called three times for:
+1. `Source` is initialized in `builder.doWatch` for each of `For`, `Owns`, and `Watches`:
     1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L222-L225):
         ```go
         // Reconcile type
@@ -100,3 +98,36 @@ What's the difference between `Informer` and `Kind`?
 			srckind.Type = typeForSrc
 		}
         ```
+1. The initialized source is passed to `controller.Watch` in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L246) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L54)
+
+    ```go
+    if err := blder.ctrl.Watch(w.src, w.eventhandler, allPredicates...); err != nil {
+        return err
+    }
+    ```
+1. In [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L151)
+    1. `Cache` is injected from controller.
+        ```go
+        // Inject Cache into arguments
+        if err := c.SetFields(src); err != nil {
+            return err
+        }
+        ```
+    1. `source.Start` is called with `EventHandler` and `Queue`
+        ```go
+        return src.Start(c.ctx, evthdler, c.Queue, prct...)
+        ```
+1. [Source.Start](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L108)
+    1. Get `informer` from the injected `cache`.
+        ```go
+        i, lastErr = ks.cache.GetInformer(ctx, ks.Type)
+        ```
+    1. Add the event handler with `AddEventHandler`
+        ```go
+        i.AddEventHandler(internal.EventHandler{Queue: queue, EventHandler: handler, Predicates: prct})
+        ```
+1. informer is started by `manager.Start()`.
+    ```go
+    manager.runnables.Cache.Start()
+    ```
+    1. cache is initialized in [cluster](../cluster/README.md#set-fields) when a [Manager](../manager/README.md#1-initialize-a-controllermanagerhttpsgithubcomkubernetes-sigscontroller-runtimeblobv0123pkgmanagerinternalgol66-with-newmanager) is created.

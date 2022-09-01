@@ -96,7 +96,7 @@ manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
         clusterOptions.EventBroadcaster = options.EventBroadcaster //nolint:staticcheck
     })
     ```
-    For more details, please check [cluster](../cluster).
+    For more details, please check [cluster](../cluster/README.md).
     `Cluster` is also a runnable.
 1. Initialize other necessary things like `recordProvider`, `runnables`, etc.
 
@@ -197,9 +197,11 @@ err := cm.runnables.Others.Start(cm.internalCtx);
         }
         ```
 
-## Manager.GetClient() and GetScheme()
+## `Manager.GetClient()` and `GetScheme()`
 
-client, scheme and more are directly got from `cm.cluster.GetXXX()`
+1. The client, scheme and more are initialized and stored in the [cluster](../cluster) when a Manager is created.
+1. The client, scheme and more are directly got from `cm.cluster.GetXXX()`
+1. The client got by `GetClient()` is passed to `Reconciler` so you can manipulate objects in the Reconcile function.
 
 
 ## Example
