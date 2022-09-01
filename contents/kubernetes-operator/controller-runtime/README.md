@@ -6,10 +6,17 @@
 
 ![](diagram.drawio.svg)
 
-1. Create a Manager.
-1. Create one or multiple Reconcilers.
-1. Build one or multiple Controllers with the manager and reconciler(s) using Builder.
-1. Start the manager, which trigger to start all the runnables in the manager.
+1. Create a **Manager**.
+    1. **Cluster**, which has `Cache`, `Client`, `Scheme`, etc, is created internally. Read [cluster](cluster/README.md) for more details.
+1. Create one or multiple **Reconciler**s. For more details, read [reconciler](reconciler/README.md).
+1. Build the `Reconciler`(s) with the `Manager` using `Builder`.
+    1. Internally, `builder.doWatch` and `builder.doController` are called.
+    1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L279) calls [newController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L88) to create a new **Controller** and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`. ([controller](controller/README.md#how-controller-is-used))
+        1. Inject dependencies to Reconciler and Controller. e.g. Cache.
+    1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L220) creates [Kind (Source)](source/README.md#how-source-is-used) and call [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125) for `For`, `Owns`, and `Watches`.
+        1. [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125) calls `source.Start()`, which gets informer from the injected cache and add the event handler.
+1. Start the `Manager`, which trigger to start all the `mgr.runnables` (`Caches`, `Webhooks`, `Others`) in the `Manager`.
+    1. `Informer.Run` is called in `cm.runnables.Caches.Start(cm.internalCtx)`
 
 For more details, you can check the [architecture in book.kubebuilder.io](https://book.kubebuilder.io/architecture.html):
 ![](https://raw.githubusercontent.com/kubernetes-sigs/kubebuilder/master/docs/book/src/kb_concept_diagram.svg)

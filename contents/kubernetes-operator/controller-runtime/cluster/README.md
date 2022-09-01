@@ -4,7 +4,7 @@
 
 Most of the fields in a cluster (scheme, cache, client, apiReader, recorderProvider, etc.) are used to injected to related components (Controller, EventHandlers, Sources, Predicates)
 
-## types
+## Types
 
 ### 1. [Cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L39) interface
 
@@ -39,24 +39,25 @@ type cluster struct {
 }
 ```
 
+## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L146)
 
-## Set fields
-
-1. scheme: Use the Kubernetes client-go scheme if none is specified
-1. mapper: Created with `MapperProvider`
-    The following function is used if `MapperProvider` is not specified:
+1. `SetOptionDefaults`
+1. Create a `mapper`
     ```go
-    apiutil.NewDynamicRESTMapper(c)
+    mapper, err := options.MapperProvider(config)
     ```
-1. cache: Created with `NewCache` (cache.New)
+1. Create a `cache` with `NewCache` ([cache.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L148))
     ```go
     cache, err := options.NewCache(config, cache.Options{Scheme: options.Scheme, Mapper: mapper, Resync: options.SyncPeriod, Namespace: options.Namespace})
     ```
-1. apiReader: Created with `client.New`
+
+    For more details, read [cache](../cache/README.md)
+
+1. Create `apiReader`
     ```go
     apiReader, err := client.New(config, clientOptions)
     ```
-1. writeObj: Created with `NewClient` ([DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L259) -> [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44))
+1. Create a `writeObj` with `NewClient` ([DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L259) -> [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44))
     ```go
     writeObj, err := options.NewClient(cache, config, clientOptions, options.ClientDisableCacheFor...)
     ```
@@ -102,24 +103,113 @@ type cluster struct {
     ```
 
     </details>
-1. recorderProvider: Created with `newRecorderProvider` (intrec.NewProvider)
+
+
+1. Create a `recorderProvider`
     ```go
     recorderProvider, err := options.newRecorderProvider(config, options.Scheme, options.Logger.WithName("events"), options.makeBroadcaster)
     ```
+1. Create cluster
+    ```go
+    &cluster{
+		config:           config,
+		scheme:           options.Scheme,
+		cache:            cache,
+		fieldIndexes:     cache,
+		client:           writeObj,
+		apiReader:        apiReader,
+		recorderProvider: recorderProvider,
+		mapper:           mapper,
+		logger:           options.Logger,
+	}
+    ```
+
+## [SetOptionDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L208)
+
+1. `options.Scheme = scheme.Scheme`(Use the Kubernetes client-go scheme if none is specified)
+1. MapperProvider
+    ```go
+    options.MapperProvider = func(c *rest.Config) (meta.RESTMapper, error) {
+		return apiutil.NewDynamicRESTMapper(c)
+	}
+    ```
+1. `options.NewClient = DefaultNewClient`
+    ```go
+    func DefaultNewClient(cache cache.Cache, config *rest.Config, options client.Options, uncachedObjects ...client.Object) (client.Client, error) {
+    	c, err := client.New(config, options)
+    	if err != nil {
+    		return nil, err
+    	}
+
+    	return client.NewDelegatingClient(client.NewDelegatingClientInput{
+    		CacheReader:     cache,
+    		Client:          c,
+    		UncachedObjects: uncachedObjects,
+    	})
+    }
+    ```
+
+    `GetClient()` returns `cluster.client`, a delegatingClient by default. For more details about `delegatingClient` you can check [client](../client/README.md)
+
+1. `options.NewCache = cache.New`
+1. `options.newRecorderProvider = intrec.NewProvider`
+1. `record.NewBroadcaster()`
+1. `options.Logger = logf.RuntimeLog.WithName("cluster")`
+
+## [SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/internal.go#L67)
+
 
 
 ```go
-return &cluster{
-    config:           config,
-    scheme:           options.Scheme,
-    cache:            cache,
-    fieldIndexes:     cache,
-    client:           writeObj, // client is a delegatingClient.
-    apiReader:        apiReader,
-    recorderProvider: recorderProvider,
-    mapper:           mapper,
-    logger:           options.Logger,
-}, nil
+func (c *cluster) SetFields(i interface{}) error {
+	if _, err := inject.ConfigInto(c.config, i); err != nil {
+		return err
+	}
+	if _, err := inject.ClientInto(c.client, i); err != nil {
+		return err
+	}
+	if _, err := inject.APIReaderInto(c.apiReader, i); err != nil {
+		return err
+	}
+	if _, err := inject.SchemeInto(c.scheme, i); err != nil {
+		return err
+	}
+	if _, err := inject.CacheInto(c.cache, i); err != nil {
+		return err
+	}
+	if _, err := inject.MapperInto(c.mapper, i); err != nil {
+		return err
+	}
+	return nil
+}
 ```
 
-`GetClient()` returns `cluster.client`, a delegatingCLient by default. For more details about `delegatingClient` you can check [client](../client)
+1. `cluster.SetFields` is called in [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L196-L211)
+1. `cluster.SetFields` injects `Config`, `Client`, `APIReader`, `Scheme`, `Cache` and `Mapper` into the specified `i`.
+1. [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L196-L211)'s usage:
+    1. used for reconciler passed via builder in [controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L138)
+        ```go
+        // Inject dependencies into Reconciler
+        if err := mgr.SetFields(options.Reconciler); err != nil {
+            return nil, err
+        }
+        ```
+
+    1. used for runnables added to the Manager with [add function](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L187)
+        ```go
+        // Add sets dependencies on i, and adds it to the list of Runnables to start.
+        func (cm *controllerManager) Add(r Runnable) error {
+            cm.Lock()
+            defer cm.Unlock()
+            return cm.add(r)
+        }
+
+        func (cm *controllerManager) add(r Runnable) error {
+            // Set dependencies on the object
+            if err := cm.SetFields(r); err != nil {
+                return err
+            }
+            return cm.runnables.Add(r)
+        }
+        ```
+        1. Controller is passed in [controller.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L95)
