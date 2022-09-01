@@ -26,5 +26,3 @@ type EventHandler interface {
 ```
 
 ## [EnqueueRequestForObject](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/handler/enqueue.go#L36)
-
-
