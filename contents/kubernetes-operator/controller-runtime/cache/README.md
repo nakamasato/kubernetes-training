@@ -2,6 +2,84 @@
 
 ![](diagram.drawio.svg)
 
+1. So-called "Cache" in stored in [cluster](../cluster/README.md) is **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)**.
+1. **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)** implements [Cache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L41), [Informers](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L52), and [client.Reader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/interfaces.go#L48) interfaces.
+1. **informerCache** has a **specificInformersMap** for structured, unstructured, and metadata.
+    1. What is structured, unstructured. and metadata? ref: [Unstructured](https://github.com/kubernetes/apimachinery/blob/master/pkg/apis/meta/v1/unstructured/unstructured.go#L31), [Caching unstrctured objects using controller-runtime](https://ymmt2005.hatenablog.com/entry/2021/07/25/Caching_Unstructured_Objects_using_controller-runtime)
+1. **specificInformersMap** has several fields but the most important field is **informersByGVK**.
+1. **informersByGVK**, as the variable name indicates, is a map from GroupVersionKind to **MapEntry**
+1. **MapEntry** is a pair of `cache.SharedIndexInformer` and `CacheReader`
+
+
+## Types
+
+### [Cache interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L41)
+
+```go
+// Cache knows how to load Kubernetes objects, fetch informers to request
+// to receive events for Kubernetes objects (at a low-level),
+// and add indices to fields on the objects stored in the cache.
+type Cache interface {
+	// Cache acts as a client to objects stored in the cache.
+	client.Reader
+
+	// Cache loads informers and adds field indices.
+	Informers
+}
+```
+
+### [Informers interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L52)
+
+```go
+// Informers knows how to create or fetch informers for different
+// group-version-kinds, and add indices to those informers.  It's safe to call
+// GetInformer from multiple threads.
+type Informers interface {
+	// GetInformer fetches or constructs an informer for the given object that corresponds to a single
+	// API kind and resource.
+	GetInformer(ctx context.Context, obj client.Object) (Informer, error)
+
+	// GetInformerForKind is similar to GetInformer, except that it takes a group-version-kind, instead
+	// of the underlying object.
+	GetInformerForKind(ctx context.Context, gvk schema.GroupVersionKind) (Informer, error)
+
+	// Start runs all the informers known to this cache until the context is closed.
+	// It blocks.
+	Start(ctx context.Context) error
+
+	// WaitForCacheSync waits for all the caches to sync.  Returns false if it could not sync a cache.
+	WaitForCacheSync(ctx context.Context) bool
+
+	// Informers knows how to add indices to the caches (informers) that it manages.
+	client.FieldIndexer
+}
+```
+
+### Informer interface
+
+```go
+// Informer - informer allows you interact with the underlying informer.
+type Informer interface {
+	// AddEventHandler adds an event handler to the shared informer using the shared informer's resync
+	// period.  Events to a single handler are delivered sequentially, but there is no coordination
+	// between different handlers.
+	AddEventHandler(handler toolscache.ResourceEventHandler)
+	// AddEventHandlerWithResyncPeriod adds an event handler to the shared informer using the
+	// specified resync period.  Events to a single handler are delivered sequentially, but there is
+	// no coordination between different handlers.
+	AddEventHandlerWithResyncPeriod(handler toolscache.ResourceEventHandler, resyncPeriod time.Duration)
+	// AddIndexers adds more indexers to this store.  If you call this after you already have data
+	// in the store, the results are undefined.
+	AddIndexers(indexers toolscache.Indexers) error
+	// HasSynced return true if the informers underlying store has synced.
+	HasSynced() bool
+}
+```
+
+### [informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)
+
+
+
 ## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L148)
 
 1. [Cache.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L148) initializes and returns informerCache.
