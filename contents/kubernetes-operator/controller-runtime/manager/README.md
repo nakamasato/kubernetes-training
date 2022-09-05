@@ -127,7 +127,7 @@ Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtim
 
 You can also check [Builder](../builder) and [Internal process of adding a Controller to a Manager](#internal-process-of-adding-a-controller-to-a-manager)
 
-### 3. `controllerManager.Start()` calls `runnables.xxx.Start()` to start all runnables.
+### 3. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
 ```go
 err := cm.runnables.Webhooks.Start(cm.internalCtx);
 ...
@@ -261,16 +261,26 @@ err := cm.runnables.Others.Start(cm.internalCtx);
 
     ```
     go run main.go
-    deploymentReconciler is called for kube-system/coredns
-    podReconciler is called for kube-system/storage-provisioner
-    podReconciler is called for kube-system/vpnkit-controller
-    podReconciler is called for kube-system/coredns-6d4b75cb6d-l82x2
-    podReconciler is called for kube-system/etcd-docker-desktop
-    podReconciler is called for kube-system/kube-controller-manager-docker-desktop
-    podReconciler is called for kube-system/kube-scheduler-docker-desktop
-    podReconciler is called for kube-system/coredns-6d4b75cb6d-t8tp4
-    podReconciler is called for kube-system/kube-apiserver-docker-desktop
-    podReconciler is called for kube-system/kube-proxy-q4rp5
+    2022-09-06T06:27:08.255+0900    INFO    controller-runtime.metrics      Metrics server is starting to listen    {"addr": ":8080"}
+    2022-09-06T06:27:08.255+0900    INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
+    2022-09-06T06:27:08.255+0900    INFO    Starting EventSource    {"controller": "pod", "controllerGroup": "", "controllerKind": "Pod", "source": "kind source: *v1.Pod"}
+    2022-09-06T06:27:08.255+0900    INFO    Starting Controller     {"controller": "pod", "controllerGroup": "", "controllerKind": "Pod"}
+    2022-09-06T06:27:08.255+0900    INFO    manager-examples        RunnableFunc is called
+    2022-09-06T06:27:08.255+0900    INFO    Starting EventSource    {"controller": "deployment", "controllerGroup": "apps", "controllerKind": "Deployment", "source": "kind source: *v1.Deployment"}
+    2022-09-06T06:27:08.255+0900    INFO    Starting Controller     {"controller": "deployment", "controllerGroup": "apps", "controllerKind": "Deployment"}
+    2022-09-06T06:27:08.356+0900    INFO    Starting workers        {"controller": "pod", "controllerGroup": "", "controllerKind": "Pod", "worker count": 1}
+    2022-09-06T06:27:08.357+0900    INFO    Starting workers        {"controller": "deployment", "controllerGroup": "apps", "controllerKind": "Deployment", "worker count": 1}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/coredns-6d4b75cb6d-jtg59"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "local-path-storage/local-path-provisioner-9cd9bd544-g89rs"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-scheduler-kind-control-plane"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-controller-manager-kind-control-plane"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-proxy-7jsn6"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/coredns-6d4b75cb6d-k68r5"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/etcd-kind-control-plane"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-apiserver-kind-control-plane"}
+    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kindnet-6dj6q"}
+    2022-09-06T06:27:08.358+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "kube-system/coredns"}
+    2022-09-06T06:27:08.358+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "local-path-storage/local-path-provisioner"}
     ```
 
     The reconcile functions are called when cache is synced.
@@ -283,9 +293,10 @@ err := cm.runnables.Others.Start(cm.internalCtx);
     You'll see the following logs:
 
     ```
-    podReconciler is called for default/nginx
-    podReconciler is called for default/nginx
-    podReconciler is called for default/nginx
+    2022-09-06T07:16:26.400+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
+    2022-09-06T07:16:26.519+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
+    2022-09-06T07:16:26.660+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
+    2022-09-06T07:16:32.547+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
     ```
 1. Delete the Pod
     ```
@@ -299,15 +310,15 @@ err := cm.runnables.Others.Start(cm.internalCtx);
     ```
 
     ```
-    deploymentReconciler is called for default/nginx
-    podReconciler is called for default/nginx-8f458dc5b-f86nt
-    deploymentReconciler is called for default/nginx
-    podReconciler is called for default/nginx-8f458dc5b-f86nt
-    deploymentReconciler is called for default/nginx
-    podReconciler is called for default/nginx-8f458dc5b-f86nt
-    deploymentReconciler is called for default/nginx
-    podReconciler is called for default/nginx-8f458dc5b-f86nt
-    deploymentReconciler is called for default/nginx
+    2022-09-06T07:17:04.963+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
+    2022-09-06T07:17:05.281+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
+    2022-09-06T07:17:05.320+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
+    2022-09-06T07:17:05.341+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
+    2022-09-06T07:17:05.342+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
+    2022-09-06T07:17:05.432+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
+    2022-09-06T07:17:05.461+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
+    2022-09-06T07:17:08.630+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
+    2022-09-06T07:17:08.674+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
     ```
 
 1. Delete the Deployment

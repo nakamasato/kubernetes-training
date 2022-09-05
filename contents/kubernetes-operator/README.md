@@ -168,12 +168,12 @@ Considerations:
 
 ## 7. Study Golang for better code quality
 
-- [golang-standanrds/project-layout](https://github.com/golang-standards/project-layout)
-- [Learn Go with tests](https://quii.gitbook.io/learn-go-with-tests/)
-- [GoとDependency Injectionの現在](https://note.com/timakin/n/nc95d66a75b3d)
-- [Go Blog](https://go.dev/blog)
-- [Gopher Reading List](https://github.com/enocom/gopher-reading-list)
-
+1. [golang-standanrds/project-layout](https://github.com/golang-standards/project-layout)
+1. [Learn Go with tests](https://quii.gitbook.io/learn-go-with-tests/)
+1. [GoとDependency Injectionの現在](https://note.com/timakin/n/nc95d66a75b3d)
+1. [Go Blog](https://go.dev/blog)
+1. [Gopher Reading List](https://github.com/enocom/gopher-reading-list)
+1. [Type Embedding](https://go101.org/article/type-embedding.html)
 ## 8. Other Topics
 
 1. Write Kubernetes Operator in other languages

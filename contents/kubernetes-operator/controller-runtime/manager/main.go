@@ -23,6 +23,7 @@ var (
 )
 
 func main() {
+	// Prepare log
 	opts := zap.Options{
 		Development: true,
 		TimeEncoder: zapcore.ISO8601TimeEncoder,
@@ -33,18 +34,21 @@ func main() {
 
 	ctx := context.Background()
 
+	// Get a kubeconfig
 	cfg, err := config.GetConfig()
 	if err != nil {
 		log.Error(err, "unable to get kubeconfig")
 		os.Exit(1)
 	}
 
+	// Create a Manager
 	mgr, err = manager.New(cfg, manager.Options{})
 	if err != nil {
 		log.Error(err, "unable to set up manager")
 		os.Exit(1)
 	}
 
+	// Create Reconcilers
 	podReconciler := reconcile.Func(func(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
 		log.Info("podReconciler is called", "req", req)
 		return reconcile.Result{}, nil
@@ -55,6 +59,7 @@ func main() {
 		return reconcile.Result{}, nil
 	})
 
+	// Create Controller with Manager
 	ctrl.NewControllerManagedBy(mgr).
 		For(&corev1.Pod{}).
 		Complete(podReconciler)
@@ -63,6 +68,13 @@ func main() {
 		For(&appsv1.Deployment{}).
 		Complete(deploymentReconciler)
 
+	// Add raw RunnableFunc to Manager
+	mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+		log.Info("RunnableFunc is called")
+		return nil
+	}))
+
+	// Start the Manager
 	err = mgr.Start(ctx)
 	if err != nil {
 		log.Error(err, "unable to start manager")
