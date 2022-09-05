@@ -17,7 +17,7 @@ type Reconciler interface {
 ## Implement
 
 You can use either implementation of the `Reconciler` interface:
-1. a reconciler type with `Reconcile` function.
+1. a reconciler struct with `Reconcile` function.
 1. a `reconcile.Func`, which implements Reconciler interface:
 	```go
 	type Func func(context.Context, Request) (Result, error)
