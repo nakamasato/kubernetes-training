@@ -69,7 +69,7 @@ There are several ways to create an operator. You can try any of them:
 1. [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
 1. [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
 
-## 4. Understand more detail about each compoenent
+## 4. Understand more detail about each component
 
 Simplified:
 
@@ -101,6 +101,18 @@ More Detailed:
     1. Generate codes for clientset for a custom resource.
 1. [apimachinery](apimachinery):
     1. Scheme: connects Kubernetes API and Go Types, API version conversion
+1. [controller-runtime](controller-runtime)
+    1. [builder](controller-runtime/builder/)
+    1. [cache](controller-runtime/cache/)
+    1. [client](controller-runtime/client/)
+    1. [cluster](controller-runtime/cluster/)
+    1. [controller](controller-runtime/controller/)
+    1. [eventhandler](controller-runtime/eventhandler/)
+    1. [inject](controller-runtime/inject/)
+    1. [log](controller-runtime/log)
+    1. [manager](controller-runtime/manager/)
+    1. [reconciler](controller-runtime/reconciler/)
+    1. [source](controller-runtime/source/)
 
 Reference
 - https://adevjoe.com/post/client-go-informer/

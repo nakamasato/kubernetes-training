@@ -32,8 +32,6 @@ func main() {
 	flag.Parse()
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
-	ctx := context.Background()
-
 	// Get a kubeconfig
 	cfg, err := config.GetConfig()
 	if err != nil {
@@ -75,6 +73,7 @@ func main() {
 	}))
 
 	// Start the Manager
+	ctx := context.Background()
 	err = mgr.Start(ctx)
 	if err != nil {
 		log.Error(err, "unable to start manager")

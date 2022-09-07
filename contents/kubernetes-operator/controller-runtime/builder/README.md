@@ -1,5 +1,23 @@
 # builder
 
+## Types
+
+### [Builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L54)
+
+```go
+// Builder builds a Controller.
+type Builder struct {
+	forInput         ForInput
+	ownsInput        []OwnsInput
+	watchesInput     []WatchesInput
+	mgr              manager.Manager
+	globalPredicates []predicate.Predicate
+	ctrl             controller.Controller
+	ctrlOptions      controller.Options
+	name             string
+}
+```
+
 ## `Complete`: Receive reconciler and build a controller
 
 Receive `reconcile.Reconciler` and call `Build`:

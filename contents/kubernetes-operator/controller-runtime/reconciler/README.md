@@ -3,7 +3,9 @@
 Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)). A Reconciler implements a function which takes a reconcile Request containing the name and namespace of the object to reconcile, reconciles the object, and returns a Response or an error indicating whether to requeue for a second round of processing.
 
 
-## Interface
+## Types
+
+### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/reconcile/reconcile.go#L89)
 
 ```go
 type Reconciler interface {
@@ -14,6 +16,27 @@ type Reconciler interface {
 }
 ```
 
+### Request
+
+```go
+type Request struct {
+	// NamespacedName is the name and namespace of the object to reconcile.
+	types.NamespacedName
+}
+```
+
+### Result
+
+```go
+type Result struct {
+	// Requeue tells the Controller to requeue the reconcile key.  Defaults to false.
+	Requeue bool
+
+	// RequeueAfter if greater than 0, tells the Controller to requeue the reconcile key after the Duration.
+	// Implies that Requeue is true, there is no need to set Requeue to true at the same time as RequeueAfter.
+	RequeueAfter time.Duration
+}
+```
 ## Implement
 
 You can use either implementation of the `Reconciler` interface:
