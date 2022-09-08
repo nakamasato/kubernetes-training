@@ -90,6 +90,7 @@ What's the difference between `Informer` and `Kind`?
         ```
     1. [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L257-L263):
         ```go
+        // If the source of this watch is of type *source.Kind, project it.
 		if srckind, ok := w.src.(*source.Kind); ok {
 			typeForSrc, err := blder.project(srckind.Type, w.objectProjection)
 			if err != nil {

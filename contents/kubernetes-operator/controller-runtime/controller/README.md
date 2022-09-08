@@ -70,6 +70,29 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 }
 ```
 
+1. `Manager` and `Reconciler` need to be prepared.
+1. Call `NewControllerManagedBy(mgr)` and `Complete(r)` with the manager and reconciler.
+1. `Builer.build` calls `bldr.doController` to create a controller with `Controller.New`.
+	1. `Manager.SetFields` is passed to `ctrl.SetFields`
+	1. `workqueue.NewNamedRateLimitingQueue` is set to `ctrl.MakeQueue`
+	1. `Reconciler` is set to `ctrl.Do`
+	1. The created controller is set to `bldr.ctrl`
+1. `Builder.build` also calls `bldr.doWatch`
+	1. `Kind` is created for `For` and `Owns`.
+	1. `EventHandler` is created.
+	1. Call `bldr.ctrl.Watch(src, hdlr, allPredicates...)`
+1. `controller.Watch`
+	1. Inject the cache to the `src` with `SetFields` (given by the Manager).
+	1. Inject (sth) to the `eventHandler` and `Predicates` with `SetFields` (not checked what's injected).
+	1. If the controller hasn't started yet, store the watches locally (`startWatches`) and return.
+	1. If the controller has started, calls `src.Start`
+1. `controller.Start` is called by the `Manager` when `Manager.Start` is called.
+	1. Controller can be started only once.
+	1. Create a `Queue` with `MakeQueue` func which is specified in `New`.
+	1. For the stored watches (`startWatches`), call `watch.src.Start` to start src to monitor API server and enqueue modified objects.
+	1. Convert `Kind` to `syncingSource` and call `syncingSource.WaitForSync`. This waits until the cache is synced in `src.Start` by checking [ks.started](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L123-L163) channel.
+	1. Clean up the `startWatches` after the caches of all the watches are in-sync.
+	1. Call `processNextWorkItem` with `MaxConcurrentReconciles` go routines.
 ## `Watch` func
 
 1. Where is `Watch` called?
