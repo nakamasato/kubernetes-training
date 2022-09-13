@@ -5,7 +5,7 @@ Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https:/
 
 ## Types
 
-### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/reconcile/reconcile.go#L89)
+### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/reconcile/reconcile.go#L89)
 
 ```go
 type Reconciler interface {
@@ -46,7 +46,7 @@ You can use either implementation of the `Reconciler` interface:
 	type Func func(context.Context, Request) (Result, error)
 	```
 
-([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L42) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
+([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L42) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
 ## How reconciler is used
 Reconciler is passed to Controller [builder](../builder) when initializing controller (you can also check it in [Manager](../manager/)):
 

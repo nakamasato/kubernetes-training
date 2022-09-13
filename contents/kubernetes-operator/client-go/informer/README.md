@@ -56,17 +56,17 @@
     - LiserWatcher
 
 
-    [sharedIndexInformer.Run](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/shared_informer.go#L397-L444):
-    1. Create Delta Fifo by [NewDeltaFIFOWithOptions](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/delta_fifo.go#L218)
-    1. Create Controller with [New](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/controller.go#L117)
+    [sharedIndexInformer.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L397-L444):
+    1. Create Delta Fifo by [NewDeltaFIFOWithOptions](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/delta_fifo.go#L218)
+    1. Create Controller with [New](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L117)
     1. Run `s.cacheMutationDetector.Run`
     1. Run `s.processor.run` <- start all listeners. listners are added via `AddEventHandler`. (usually with `cache.ResourceEventHandlerFuncs{AddFunc: xx, UpdateFunc: xx, DeleteFunc: xx}`)
     1. Run `s.controller.Run(stopCh)` <- refer the controller section
-- [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.24.3/tools/cache#NewSharedInformer): call NewSharedIndexInformer with `Indexers{}`.
+- [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedInformer): call NewSharedIndexInformer with `Indexers{}`.
     ```go
     NewSharedIndexInformer(lw, exampleObject, defaultEventHandlerResyncPeriod, Indexers{})
     ```
-- [NewSharedIndexInformer](https://pkg.go.dev/k8s.io/client-go@v0.24.3/tools/cache#NewSharedIndexInformer)
+- [NewSharedIndexInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedIndexInformer)
     ```go
     func NewSharedIndexInformer(lw ListerWatcher, exampleObject runtime.Object, defaultEventHandlerResyncPeriod time.Duration, indexers Indexers) SharedIndexInformer {
         realClock := &clock.RealClock{}
@@ -138,15 +138,15 @@
 
     1. Most things are passed by `Config` (ListerWatcher, ObjectType, Queue (FifoDeltaQueue))
 
-    [Run](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/controller.go#L128):
-    1. Create a Reflector with [NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration)](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/reflector.go#L168)
+    [Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L128):
+    1. Create a Reflector with [NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/reflector.go#L168)
     1. Run `reflector.Run` (details -> ref [reflector](../reflector))
         1. `ListAndWatch`
         1. `watchHandler` -> event.Added -> store.Add, event.Modified -> store.Update, event.Deleted -> store.Delete (store = Queue)
-    1. Run [processLoop](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/controller.go#L182) every second.
+    1. Run [processLoop](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L182) every second.
         1. Pop item from the Queue and process it repeatedly. (Actual process is given by `Config.Process`, controller is just a container to execute `Process`)
             - `Config.Process`: [HandleDeltas](https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L566)
-            `HandleDeltas` calls [processDeltas(s, s.indexer, s.transform, deltas)](https://github.com/kubernetes/client-go/blob/07171f82e7b66573fe0b161587ae23e47d598808/tools/cache/controller.go#L410)
+            `HandleDeltas` calls [processDeltas(s, s.indexer, s.transform, deltas)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L410)
                 - `handler`: sharedIndexInformer
                 - `clientState`: s.indexer
             - Keep indexer up-to-date by calling `indexer.Update()`, `indexer.Add()`, `indexer.Delete()`.
@@ -160,7 +160,7 @@
     ```go
     informerFactory := informers.NewSharedInformerFactory(kubeClient, time.Second*30)
     ```
-    The second argument specifies ***ResyncPeriod***, which defines the interval of resync (*The resync operation consists of delivering to the handler an update notification for every object in the informer's local cache*). For more detail, please read [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.23.1/tools/cache#NewSharedInformer)
+    The second argument specifies ***ResyncPeriod***, which defines the interval of resync (*The resync operation consists of delivering to the handler an update notification for every object in the informer's local cache*). For more detail, please read [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedInformer)
 1. Create an informer for Pods, which watches Pod's changes.
     ```go
     podInformer := informerFactory.Core().V1().Pods()
@@ -177,7 +177,7 @@
 
     1. `Informer()` returns `SharedIndexInformer`
         1. call `f.factory.InformerFor(&corev1.Pod{}, f.defaultInformer)`
-        1. create new informer with [NewFilteredPodInformer](https://github.com/kubernetes/client-go/blob/ee1a5aaf793a9ace9c433f5fb26a19058ed5f37c/informers/core/v1/pod.go#L58) if not exist
+        1. create new informer with [NewFilteredPodInformer](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/core/v1/pod.go#L58) if not exist
         1. return the informer
     1. `Lister()` returns PodLister
         1. call `v1.NewPodLister(f.Informer().GetIndexer())`

@@ -6,7 +6,7 @@ Component structure:
 Dataflow:
 ![](dataflow.drawio.svg)
 
-## [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L57-L68) interface
+## [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L57-L68) interface
 
 ```go
 type Source interface {
@@ -23,16 +23,16 @@ type SyncingSource interface {
 }
 ```
 
-## Implementation: [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L77-L79), [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L91-L102), [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L207-L226), [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L338-L341)
+## Implementation: [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79), [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102), [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L207-L226), [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L338-L341)
 
-1. [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L77-L79): Just a wrapper of `Kind` without `InjectCache`. NewKindWithCache creates a Source without `InjectCache`, so that it is **assured that the given cache is used and not overwritten**.
+1. [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79): Just a wrapper of `Kind` without `InjectCache`. NewKindWithCache creates a Source without `InjectCache`, so that it is **assured that the given cache is used and not overwritten**.
     ```go
     type kindWithCache struct {
     	kind Kind
     }
     ```
     `Kind` has `InjectCache` while `kindWithCache` doesn't.
-1. [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L91-L102): Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
+1. [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102): Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
     ```go
     type Kind struct {
         Type client.Object
@@ -46,15 +46,15 @@ type SyncingSource interface {
         ```go
         src := &source.Kind{Type: typeForSrc}
         ```
-    1. The cache is injected in [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L129-L130) by [inject](../inject) feature.
+    1. The cache is injected in [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L130) by [inject](../inject) feature.
         ```go
         // Inject Cache into arguments
         if err := c.SetFields(src); err != nil {
             return err
         }
         ```
-1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L207-L226): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
-1. [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L338-L341): Informer is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
+1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L207-L226): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
+1. [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L338-L341): Informer is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
     ```go
     type Informer struct {
         // Informer is the controller-runtime Informer
@@ -71,7 +71,7 @@ What's the difference between `Informer` and `Kind`?
 ## How `Source` is used
 
 1. `Source` is initialized in `builder.doWatch` for each of `For`, `Owns`, and `Watches`:
-    1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L222-L225):
+    1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L222-L225):
         ```go
         // Reconcile type
         typeForSrc, err := blder.project(blder.forInput.object, blder.forInput.objectProjection)
@@ -80,7 +80,7 @@ What's the difference between `Informer` and `Kind`?
         }
         src := &source.Kind{Type: typeForSrc}
         ```
-    1. [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L235-L239):
+    1. [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L235-L239):
         ```go
         typeForSrc, err := blder.project(own.object, own.objectProjection)
 		if err != nil {
@@ -88,7 +88,7 @@ What's the difference between `Informer` and `Kind`?
 		}
 		src := &source.Kind{Type: typeForSrc}
         ```
-    1. [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L257-L263):
+    1. [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L257-L263):
         ```go
         // If the source of this watch is of type *source.Kind, project it.
 		if srckind, ok := w.src.(*source.Kind); ok {
@@ -99,14 +99,14 @@ What's the difference between `Informer` and `Kind`?
 			srckind.Type = typeForSrc
 		}
         ```
-1. The initialized source is passed to `controller.Watch` in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L246) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L54)
+1. The initialized source is passed to `controller.Watch` in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L246) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L54)
 
     ```go
     if err := blder.ctrl.Watch(w.src, w.eventhandler, allPredicates...); err != nil {
         return err
     }
     ```
-1. In [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L151)
+1. In [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L151)
     1. `Cache` is injected from controller.
         ```go
         // Inject Cache into arguments
@@ -118,7 +118,7 @@ What's the difference between `Informer` and `Kind`?
         ```go
         return src.Start(c.ctx, evthdler, c.Queue, prct...)
         ```
-1. [Source.Start](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L108)
+1. [Source.Start](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L108)
     1. Get `informer` from the injected `cache`.
         ```go
         i, lastErr = ks.cache.GetInformer(ctx, ks.Type)

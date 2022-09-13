@@ -2,6 +2,8 @@
 
 [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime) is a subproject of kubebuilder which provides a lot of useful tools that help develop Kubernetes Operator.
 
+Version: [v0.13.0](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0)
+
 ## Overview
 
 ![](diagram.drawio.svg)
@@ -11,10 +13,10 @@
 1. Create one or multiple **Reconciler**s. For more details, read [reconciler](reconciler/README.md).
 1. Build the `Reconciler`(s) with the `Manager` using `Builder`.
     1. Internally, `builder.doWatch` and `builder.doController` are called.
-    1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L279) calls [newController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L88) to create a new **Controller** and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`. ([controller](controller/README.md#how-controller-is-used))
+    1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L279) calls [newController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L88) to create a new **Controller** and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`. ([controller](controller/README.md#how-controller-is-used))
         1. Inject dependencies to Reconciler and Controller. e.g. Cache.
-    1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L220) creates [Kind (Source)](source/README.md#how-source-is-used) and call [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125) for `For`, `Owns`, and `Watches`.
-        1. [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L125) calls `source.Start()`, which gets informer from the injected cache and add the event handler.
+    1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L220) creates [Kind (Source)](source/README.md#how-source-is-used) and call [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L125) for `For`, `Owns`, and `Watches`.
+        1. [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L125) calls `source.Start()`, which gets informer from the injected cache and add the event handler.
 1. Start the `Manager`, which trigger to start all the `mgr.runnables` (`Caches`, `Webhooks`, `Others`) in the `Manager`.
     1. `Informer.Run` is called in `cm.runnables.Caches.Start(cm.internalCtx)`
 
@@ -31,7 +33,7 @@ List of components:
     1. Handler
     1. Predicate
 1. [Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client): Package client contains functionality for interacting with Kubernetes API servers.
-    1. [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L69): The default client type whose Get and List get object from [cache.CacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/cache_reader.go#L40), which reduces the API requests to API server.
+    1. [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L69): The default client type whose Get and List get object from [cache.CacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/cache_reader.go#L40), which reduces the API requests to API server.
 1. [Cache](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/cache)
     1. client.Reader: Cache acts as a client to objects stored in the cache.
     1. Informers: Cache loads informers and adds field indices.

@@ -1,12 +1,12 @@
-# [cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go)
+# [cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go)
 
-[Cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go) provides various methods to interact with a cluster. Cluster is initialized and stored in [Manager](../manager/) with [cluster.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L146).
+[Cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go) provides various methods to interact with a cluster. Cluster is initialized and stored in [Manager](../manager/) with [cluster.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L146).
 
 Most of the fields in a cluster (scheme, cache, client, apiReader, recorderProvider, etc.) are used to injected to related components (Controller, EventHandlers, Sources, Predicates)
 
 ## Types
 
-### 1. [Cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L39) interface
+### 1. [Cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L39) interface
 
 ```go
 type Cluster interface {
@@ -23,7 +23,7 @@ type Cluster interface {
 }
 ```
 
-### 2. [cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/internal.go#L34) struct
+### 2. [cluster](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/internal.go#L34) struct
 
 ```go
 type cluster struct {
@@ -39,14 +39,14 @@ type cluster struct {
 }
 ```
 
-## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L146)
+## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L146)
 
 1. `SetOptionDefaults`
 1. Create a `mapper`
     ```go
     mapper, err := options.MapperProvider(config)
     ```
-1. Create a `cache` with `NewCache` ([cache.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L148))
+1. Create a `cache` with `NewCache` ([cache.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L148))
     ```go
     cache, err := options.NewCache(config, cache.Options{Scheme: options.Scheme, Mapper: mapper, Resync: options.SyncPeriod, Namespace: options.Namespace})
     ```
@@ -57,7 +57,7 @@ type cluster struct {
     ```go
     apiReader, err := client.New(config, clientOptions)
     ```
-1. Create a `writeObj` with `NewClient` ([DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L259) -> [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44))
+1. Create a `writeObj` with `NewClient` ([DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L259) -> [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L44))
     ```go
     writeObj, err := options.NewClient(cache, config, clientOptions, options.ClientDisableCacheFor...)
     ```
@@ -124,7 +124,7 @@ type cluster struct {
 	}
     ```
 
-## [SetOptionDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L208)
+## [SetOptionDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L208)
 
 1. `options.Scheme = scheme.Scheme`(Use the Kubernetes client-go scheme if none is specified)
 1. MapperProvider
@@ -156,7 +156,7 @@ type cluster struct {
 1. `record.NewBroadcaster()`
 1. `options.Logger = logf.RuntimeLog.WithName("cluster")`
 
-## [SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/internal.go#L67)
+## [SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/internal.go#L67)
 
 
 
@@ -184,10 +184,10 @@ func (c *cluster) SetFields(i interface{}) error {
 }
 ```
 
-1. `cluster.SetFields` is called in [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L196-L211)
+1. `cluster.SetFields` is called in [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L196-L211)
 1. `cluster.SetFields` injects `Config`, `Client`, `APIReader`, `Scheme`, `Cache` and `Mapper` into the specified `i`.
-1. [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L196-L211)'s usage:
-    1. used for reconciler passed via builder in [controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L138)
+1. [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L196-L211)'s usage:
+    1. used for reconciler passed via builder in [controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L138)
         ```go
         // Inject dependencies into Reconciler
         if err := mgr.SetFields(options.Reconciler); err != nil {
@@ -195,7 +195,7 @@ func (c *cluster) SetFields(i interface{}) error {
         }
         ```
 
-    1. used for runnables added to the Manager with [add function](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L187)
+    1. used for runnables added to the Manager with [add function](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L187)
         ```go
         // Add sets dependencies on i, and adds it to the list of Runnables to start.
         func (cm *controllerManager) Add(r Runnable) error {
@@ -212,4 +212,4 @@ func (c *cluster) SetFields(i interface{}) error {
             return cm.runnables.Add(r)
         }
         ```
-        1. Controller is passed in [controller.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L95)
+        1. Controller is passed in [controller.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L95)

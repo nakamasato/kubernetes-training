@@ -39,7 +39,7 @@ func InjectorInto(f Func, i interface{}) (bool, error) {
 
 ## Usage
 
-Controller implement Injector with [InjectFunc](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L352)
+Controller implement Injector with [InjectFunc](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L352)
 
 ```go
 // InjectFunc implement SetFields.Injector.
@@ -51,7 +51,7 @@ func (c *Controller) InjectFunc(f inject.Func) error {
 
 With this implementation, any function can be injected to the `controller.SetFields` with `InjectorInto(func, controller)`.
 
-This function is used in the [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L187-L211)
+This function is used in the [manager.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L187-L211)
 
 ```go
 if _, err := inject.InjectorInto(cm.SetFields, i); err != nil {

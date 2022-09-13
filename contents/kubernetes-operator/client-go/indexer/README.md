@@ -48,7 +48,7 @@ type cache struct {
 }
 ```
 
-[ThreadSafeStore](https://pkg.go.dev/k8s.io/client-go@v0.24.3/tools/cache#ThreadSafeStore)
+[ThreadSafeStore](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#ThreadSafeStore)
 
 ```go
 type ThreadSafeStore interface {
