@@ -19,7 +19,7 @@ type Manager interface {
 }
 ```
 
-### 2. [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66-L173)
+### 2. [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L66-L173)
 
 ```go
 type controllerManager struct {
@@ -37,7 +37,7 @@ type controllerManager struct {
 }
 ```
 
-### 3. [Runnable](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/manager.go#L293-L298) interface
+### 3. [Runnable](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L293-L298) interface
 
 ```go
 type Runnable interface {
@@ -45,7 +45,7 @@ type Runnable interface {
 }
 ```
 
-### 4. [runnables](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/runnable_group.go#L37-L45)
+### 4. [runnables](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/runnable_group.go#L37-L45)
 
 ```go
 type runnables struct {
@@ -77,7 +77,7 @@ type runnableGroup struct {
 
 ## How to use `Manager`
 
-### 1. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L66) with `NewManager`
+### 1. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L66) with `NewManager`
 ```go
 manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
 ```
@@ -113,7 +113,7 @@ manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
     ```
 ### 2. Bind a Controller to the Manager
 
-Bind a Controller to the Manager using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L66)).
+Bind a Controller to the Manager using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L66)).
 
 ```go
 err = ctrl.
@@ -123,11 +123,11 @@ err = ctrl.
     Complete(&ReplicaSetReconciler{Client: manager.GetClient()})
 ```
 
-Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L175) create a new controller and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`.
+Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L175) create a new controller and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`.
 
 You can also check [Builder](../builder) and [Internal process of adding a Controller to a Manager](#internal-process-of-adding-a-controller-to-a-manager)
 
-### 3. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
+### 3. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
 ```go
 err := cm.runnables.Webhooks.Start(cm.internalCtx);
 ...
@@ -158,14 +158,14 @@ err := cm.runnables.Others.Start(cm.internalCtx);
             return err
         }
         ```
-        1. [cluster.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/internal.go#L67) set dependencies on the object that implements the [inject](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.3/pkg/runtime/inject) interface. Specifically set the following cluster's field to the runnable (controller)
+        1. [cluster.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/internal.go#L67) set dependencies on the object that implements the [inject](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.3/pkg/runtime/inject) interface. Specifically set the following cluster's field to the runnable (controller)
             1. `config` (`inject.ConfigInto(c.config, i)`)
             1. `client` (`inject.ClientInto(c.client, i)`)
             1. `apiReader` (`inject.APIReaderInto(c.apiReader, i)`)
             1. `scheme` (`inject.SchemeInto(c.scheme, i)`)
             1. `cache` (`inject.CacheInto(c.cache, i)`)
             1. `mapper` (`inject.MapperInto(c.mapper, i)`)
-        1. `cm.SetFields` is set to `controller.SetFields` via `InjectorInto`. (details: [inject](../inject/)) <- `controller.SetFields` will be used for source, event handler and predicates in [Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L129-L140).
+        1. `cm.SetFields` is set to `controller.SetFields` via `InjectorInto`. (details: [inject](../inject/)) <- `controller.SetFields` will be used for source, event handler and predicates in [Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L140).
         1. `StopChannelInto` and `Logger`.
     1. `cm.runnables.Add(r)`
         ```go
@@ -249,7 +249,7 @@ err := cm.runnables.Others.Start(cm.internalCtx);
     1. `Complete`: pass the reconciler to complete the controller.
     1. Internally, `NewControllerManagedBy` returns controller builder.
     1. Controller builder calls two functions in `Complete(reconcile.Reconciler)`
-        1. [doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L279): Set controller to the builder
+        1. [doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L279): Set controller to the builder
             ```go
             blder.ctrl, err = newController(controllerName, blder.mgr, ctrlOptions)
             ```

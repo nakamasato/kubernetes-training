@@ -2,7 +2,7 @@
 
 ## Types
 
-### [Builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L54)
+### [Builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L54)
 
 ```go
 // Builder builds a Controller.
@@ -48,13 +48,13 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
 }
 ```
 
-1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L191) to register the controler to the buidler
+1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L191) to register the controler to the buidler
     1. Create a new controller.
         ```go
         blder.ctrl, err = newController(controllerName, blder.mgr, ctrlOptions)
         ```
     1. the controller is added to `manager.runnables.Others` by `Manager.Add(Runnable)` in `newController`. ([controller](../controller/README.md#how-controller-is-used))
-1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L196) to start watching the target resources configured by `For`, `Owns`, and `Watches`.
+1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L196) to start watching the target resources configured by `For`, `Owns`, and `Watches`.
     1. The actual implementation of `Watch` function is in the [controller](../controller)
 
 ## `For`, `Owns`, and `Watches`: Define what object to watch
@@ -65,12 +65,12 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
 
 ## Convert `client.Object` to `Source`
 
-1. [Controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L76) needs `Source` as the first argument.
+1. [Controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L76) needs `Source` as the first argument.
     ```go
     Watch(src source.Source, eventhandler handler.EventHandler, predicates ...predicate.Predicate) error
     ```
 1. `client.Object` is set in `ForInput`, `OwnsInput`, and `WatchesInput` for `For`, `Owns`, and `Watches` respectively.
-1. Before calling `Controller.Watch`, the `client.Object` needs to be [project](https://github.com/kubernetes-sigs/controller-runtime/blob/cd0058ad295c268da1e7233e609a9a18dd60b5f6/pkg/builder/controller.go#L203-L218)ed into [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L57-L61) based on `objectProjection`:
+1. Before calling `Controller.Watch`, the `client.Object` needs to be [project](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L203-L218)ed into [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L57-L61) based on `objectProjection`:
     1. `projectAsNormal`: Use the object as it is. (**In most cases**)
     1. `projectAsMetadata`: Extract only metadata.
 
@@ -82,7 +82,7 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
 	src := &source.Kind{Type: typeForSrc}
     ```
 
-    [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L91-L102) implements the [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L57-L61) interface.
+    [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102) implements the [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L57-L61) interface.
 
     ```go
     type Kind struct {

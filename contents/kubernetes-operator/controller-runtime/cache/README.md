@@ -2,8 +2,8 @@
 
 ![](diagram.drawio.svg)
 
-1. So-called "Cache" in stored in [cluster](../cluster/README.md) is **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)**.
-1. **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)** implements [Cache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L41), [Informers](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L52), and [client.Reader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/interfaces.go#L48) interfaces.
+1. So-called "Cache" in stored in [cluster](../cluster/README.md) is **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/informer_cache.go#L49)**.
+1. **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/informer_cache.go#L49)** implements [Cache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L41), [Informers](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L52), and [client.Reader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/interfaces.go#L48) interfaces.
 1. **informerCache** has a **specificInformersMap** for structured, unstructured, and metadata.
     1. What is structured, unstructured. and metadata? ref: [Unstructured](https://github.com/kubernetes/apimachinery/blob/master/pkg/apis/meta/v1/unstructured/unstructured.go#L31), [Caching unstrctured objects using controller-runtime](https://ymmt2005.hatenablog.com/entry/2021/07/25/Caching_Unstructured_Objects_using_controller-runtime)
 1. **specificInformersMap** has several fields but the most important field is **informersByGVK**.
@@ -13,7 +13,7 @@
 
 ## Types
 
-### [Cache interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L41)
+### [Cache interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L41)
 
 ```go
 // Cache knows how to load Kubernetes objects, fetch informers to request
@@ -28,7 +28,7 @@ type Cache interface {
 }
 ```
 
-### [Informers interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L52)
+### [Informers interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L52)
 
 ```go
 // Informers knows how to create or fetch informers for different
@@ -76,13 +76,13 @@ type Informer interface {
 }
 ```
 
-### [informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)
+### [informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/informer_cache.go#L49)
 
 
 
-## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L148)
+## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L148)
 
-1. [Cache.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/cache.go#L148) initializes and returns informerCache.
+1. [Cache.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L148) initializes and returns informerCache.
     ```go
     im := internal.NewInformersMap(config, opts.Scheme, opts.Mapper, *opts.Resync, opts.Namespace, selectorsByGVK, disableDeepCopyByGVK, transformByGVK)
     return &informerCache{InformersMap: im}, nil
@@ -96,13 +96,13 @@ type Informer interface {
         type DisableDeepCopyByGVK map[schema.GroupVersionKind]bool
         ```
     1. Default value is empty: `internal.DisableDeepCopyByGVK{}`
-1. [informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/informer_cache.go#L49)
+1. [informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/informer_cache.go#L49)
     ```go
     type informerCache struct {
         *internal.InformersMap
     }
     ```
-1. [InformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/deleg_map.go#L34)
+1. [InformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/deleg_map.go#L34)
     ```go
     type InformersMap struct {
         // we abstract over the details of structured/unstructured/metadata with the specificInformerMaps
@@ -117,7 +117,7 @@ type Informer interface {
     }
     ```
 
-    Initialized with [NewInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/deleg_map.go#L48):
+    Initialized with [NewInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/deleg_map.go#L48):
     ```go
     &InformersMap{
         structured:   newStructuredInformersMap(config, scheme, mapper, resync, namespace, selectors, disableDeepCopy, transformers),
@@ -127,7 +127,7 @@ type Informer interface {
         Scheme: scheme,
     }
     ```
-1. [All newXXXInformersMap calls specificInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/deleg_map.go#L110-L126):
+1. [All newXXXInformersMap calls specificInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/deleg_map.go#L110-L126):
     ```go
     // newStructuredInformersMap creates a new InformersMap for structured objects.
     func newStructuredInformersMap(config *rest.Config, scheme *runtime.Scheme, mapper meta.RESTMapper, resync time.Duration,
@@ -147,8 +147,8 @@ type Informer interface {
         return newSpecificInformersMap(config, scheme, mapper, resync, namespace, selectors, disableDeepCopy, transformers, createMetadataListWatch)
     }
     ```
-1. [specificInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/informers_map.go#L89)
-    Initialized with [newSpecificInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/informers_map.go#L50)
+1. [specificInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L89)
+    Initialized with [newSpecificInformersMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L50)
     ```go
     ip := &specificInformersMap{
         config:            config,
@@ -167,7 +167,7 @@ type Informer interface {
     }
     ```
 
-1. [MapEntry](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/informers_map.go#L79)
+1. [MapEntry](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L79)
 
     ```go
     // MapEntry contains the cached data for an Informer.
@@ -179,7 +179,7 @@ type Informer interface {
         Reader CacheReader
     }
     ```
-1. [CacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/cache_reader.go#L40)
+1. [CacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/cache_reader.go#L40)
     ```go
     // CacheReader wraps a cache.Index to implement the client.CacheReader interface for a single type.
     type CacheReader struct {
@@ -198,7 +198,7 @@ type Informer interface {
         disableDeepCopy bool
     }
     ```
-1. `MapEntry` and `CacheReader` is initialized in [addInformerToMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/informers_map.go#L247):
+1. `MapEntry` and `CacheReader` is initialized in [addInformerToMap](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L247):
 
     ```go
 	i := &MapEntry{
@@ -212,7 +212,7 @@ type Informer interface {
 	}
     ```
 
-    `disableDeepCopy` is determined by [isDisabled()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/disabledeepcopy.go#L28) originally given from `opts.UnsafeDisableDeepCopyByObject`.
+    `disableDeepCopy` is determined by [isDisabled()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/disabledeepcopy.go#L28) originally given from `opts.UnsafeDisableDeepCopyByObject`.
 
     ```go
     // IsDisabled returns whether a GroupVersionKind is disabled DeepCopy.

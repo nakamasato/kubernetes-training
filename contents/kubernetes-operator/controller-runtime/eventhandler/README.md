@@ -1,6 +1,6 @@
 # EventHandler
 
-## [EventHandler interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/handler/eventhandler.go)
+## [EventHandler interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/handler/eventhandler.go)
 
 ```go
 // * Use EnqueueRequestsFromMapFunc to transform an event for an object to a reconcile of an object
@@ -25,4 +25,4 @@ type EventHandler interface {
 }
 ```
 
-## [EnqueueRequestForObject](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/handler/enqueue.go#L36)
+## [EnqueueRequestForObject](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/handler/enqueue.go#L36)

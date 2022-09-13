@@ -2,7 +2,7 @@
 
 Controllers ([pkg/controller](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller)) use events ([pkg/event](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/event)) to eventually trigger reconcile requests. They may be constructed manually, but are often constructed with a Builder ([pkg/builder](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder)), which eases the wiring of event sources ([pkg/source](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/source)), like Kubernetes API object changes, to event handlers ([pkg/handler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/handler)), like "enqueue a reconcile request for the object owner". Predicates ([pkg/predicate](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/predicate)) can be used to filter which events actually trigger reconciles. There are pre-written utilities for the common cases, and interfaces and helpers for advanced cases.
 
-## [Controller interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L66-L84)
+## [Controller interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L66-L84)
 
 Controller embeds reconcile.Reconciler.
 
@@ -28,7 +28,7 @@ type Controller interface {
 }
 ```
 
-## [Controller type](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/internal/controller/controller.go#L42-L95)
+## [Controller type](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L42-L95)
 
 ![](diagram.drawio.svg)
 
@@ -90,13 +90,13 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 	1. Controller can be started only once.
 	1. Create a `Queue` with `MakeQueue` func which is specified in `New`.
 	1. For the stored watches (`startWatches`), call `watch.src.Start` to start src to monitor API server and enqueue modified objects.
-	1. Convert `Kind` to `syncingSource` and call `syncingSource.WaitForSync`. This waits until the cache is synced in `src.Start` by checking [ks.started](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/source/source.go#L123-L163) channel.
+	1. Convert `Kind` to `syncingSource` and call `syncingSource.WaitForSync`. This waits until the cache is synced in `src.Start` by checking [ks.started](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L123-L163) channel.
 	1. Clean up the `startWatches` after the caches of all the watches are in-sync.
 	1. Call `processNextWorkItem` with `MaxConcurrentReconciles` go routines.
 ## `Watch` func
 
 1. Where is `Watch` called?
-    1. `Watch` is called in [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/builder/controller.go#L196) in [builder](../builder) for `For`, `Owns`, and `Watches` configured with a controller builder.
+    1. `Watch` is called in [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L196) in [builder](../builder) for `For`, `Owns`, and `Watches` configured with a controller builder.
 1. `Watch` calls `SetFields` for `Source`, `EventHandler`, and `Predicate`s.
     ```go
 	if err := c.SetFields(src); err != nil {
@@ -111,12 +111,12 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 		}
 	}
     ```
-    1. `SetFields` is one of the Controller's field `SetFields func(i interface{}) error`, which is set when initializing in [NewUnmanaged](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/controller/controller.go#L100) from `mgr.SetFields`.
+    1. `SetFields` is one of the Controller's field `SetFields func(i interface{}) error`, which is set when initializing in [NewUnmanaged](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L100) from `mgr.SetFields`.
 	1. For more details, you can check [inject](../inject/) and [manager](../manager/)
 
 ## `Start` func
 
-1. calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/cd0058ad295c268da1e7233e609a9a18dd60b5f6/pkg/internal/controller/controller.go#L234-L235).
+1. calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L234-L235).
 
 Where is `Start` called?
 1. Called from [manager](../manager/).

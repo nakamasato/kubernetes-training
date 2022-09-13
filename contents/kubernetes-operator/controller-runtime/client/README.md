@@ -2,7 +2,7 @@
 
 ![](diagram.drawio.svg)
 
-## [Client interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/interfaces.go#L101)
+## [Client interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/interfaces.go#L101)
 
 ```go
 // Client knows how to perform CRUD operations on Kubernetes objects.
@@ -51,7 +51,7 @@ type StatusWriter interface {
 }
 ```
 
-## [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L69)
+## [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L69)
 
 ```go
 type delegatingClient struct {
@@ -64,13 +64,13 @@ type delegatingClient struct {
 }
 ```
 
-There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L102) to check if the target object is cached or not. If cached, call [cacheReader](), otherwise call [clientReader]()
+There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L102) to check if the target object is cached or not. If cached, call [cacheReader](), otherwise call [clientReader]()
 
 
 ## How `client` is used
 
 1. When a **Manager** is created, a **Cluster** is created internally. (You can check more details in [cluster](../cluster/README.md))
-1. When creating a **cluster**, **client** is also created. If `Options.NewClient` is not specified [DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L259) is used, which calls [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44) to return a client.
+1. When creating a **cluster**, **client** is also created. If `Options.NewClient` is not specified [DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L259) is used, which calls [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L44) to return a client.
 
 	```go
 	if options.NewClient == nil {
@@ -82,7 +82,7 @@ There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs
 	writeObj, err := options.NewClient(cache, config, clientOptions, options.ClientDisableCacheFor...)
 	```
 
-1. In [DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cluster/cluster.go#L259), new client is created first, and then delegatingClient is created.
+1. In [DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L259), new client is created first, and then delegatingClient is created.
 	```go
 	c, err := client.New(config, options)
 	```
@@ -106,7 +106,7 @@ There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs
 	}
 	```
 
-1. `delegatingClient` is initialized in [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/split.go#L44)
+1. `delegatingClient` is initialized in [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L44)
 
 	Three roles:
 	1. `Reader`: client + cache <- utilize the cache to reduce API requests (`Get` and `List`)
@@ -129,7 +129,7 @@ There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs
 	}
 	```
 
-	[cacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/cache/internal/cache_reader.go#L40):
+	[cacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/cache_reader.go#L40):
 
 	```go
 	// CacheReader wraps a cache.Index to implement the client.CacheReader interface for a single type.
@@ -141,7 +141,7 @@ There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs
 	}
 	```
 
-## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.12.3/pkg/client/client.go#L75)
+## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/client.go#L75)
 
 ```go
 func newClient(config *rest.Config, options Options) (*client, error) {
