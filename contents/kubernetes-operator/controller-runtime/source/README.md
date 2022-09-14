@@ -132,3 +132,119 @@ What's the difference between `Informer` and `Kind`?
     manager.runnables.Cache.Start()
     ```
     1. cache is initialized in [cluster](../cluster/README.md#set-fields) when a [Manager](../manager/README.md#1-initialize-a-controllermanagerhttpsgithubcomkubernetes-sigscontroller-runtimeblobv0123pkgmanagerinternalgol66-with-newmanager) is created.
+
+## Example Usage: Debugging your controller
+
+if you want to check events of specific resource you can set by the following.
+
+1. Set up scheme if you want to monitor CRD (Optional)
+    ```go
+    import (
+        mysqlv1alpha1 "github.com/nakamasato/mysql-operator/api/v1alpha1" // Target CRD
+	    utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	    clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+    )
+
+    func init() {
+    	utilruntime.Must(mysqlv1alpha1.AddToScheme(scheme))
+    	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+    }
+    ```
+
+1. `cache.Get()`: Internally create informer if not exists.
+
+    ```go
+    pod := &v1.Pod{}
+    cache.Get(ctx, client.ObjectKeyFromObject(pod), pod)
+
+    mysqluser := &mysqlv1alpha1.MySQLUser{}
+    cache.Get(ctx, client.ObjectKeyFromObject(mysqluser), mysqluser)
+    ```
+1. Start the cache.
+
+    ```go
+	go func() {
+		if err := cache.Start(ctx); err != nil { // func (m *InformersMap) Start(ctx context.Context) error {
+			log.Error(err, "failed to start cache")
+		}
+	}()
+    ```
+1. Create `kindWithCache` for the target resource.
+    ```go
+    kindWithCache := source.NewKindWithCache(mysqluser, cache)
+    ```
+1. Prepare `workqueue` and `eventHandler`.
+    ```go
+	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
+	eventHandler := handler.Funcs{
+		CreateFunc: func(e event.CreateEvent, q workqueue.RateLimitingInterface) {
+			log.Info("CreateFunc is called", "object", e.Object.GetName())
+			// queue.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
+		},
+		UpdateFunc: func(e event.UpdateEvent, q workqueue.RateLimitingInterface) {
+			log.Info("UpdateFunc is called", "objectNew", e.ObjectNew.GetName(), "objectOld", e.ObjectOld.GetName())
+			// queue.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
+		},
+		DeleteFunc: func(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
+			log.Info("DeleteFunc is called", "object", e.Object.GetName())
+			// queue.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
+		},
+	}
+    ```
+1. Start `kindWithCache` with the prepared `eventHandler` and `queue`.
+    ```go
+	if err := kindWithCache.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+		log.Error(err, "")
+	}
+    ```
+
+You can run:
+
+1. Install your CRD
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/crd/bases/mysql.nakamasato.com_mysqlusers.yaml
+    ```
+1. Run the `kindWithCache`
+    ```
+    go run main.go
+    ```
+
+    <details>
+
+    ```
+    2022-09-15T06:58:43.895+0900    INFO    source-examples source start
+    2022-09-15T06:58:44.070+0900    INFO    source-examples cache is created
+    2022-09-15T06:58:44.071+0900    INFO    source-examples cache is started
+    2022-09-15T06:58:44.096+0900    INFO    source-examples CreateFunc is called    {"object": "kube-apiserver-kind-control-plane"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kube-controller-manager-kind-control-plane"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kube-scheduler-kind-control-plane"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kube-proxy-zpj2w"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "coredns-6d4b75cb6d-s2dhg"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "coredns-6d4b75cb6d-25dbf"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "etcd-kind-control-plane"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kindnet-8fjbg"}
+    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "local-path-provisioner-9cd9bd544-xl67h"}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples kindWithCache is ready
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-apiserver-kind-control-plane"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-controller-manager-kind-control-plane"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-scheduler-kind-control-plane"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-proxy-zpj2w"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"coredns-6d4b75cb6d-s2dhg"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"coredns-6d4b75cb6d-25dbf"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"etcd-kind-control-plane"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kindnet-8fjbg"}}
+    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"local-path-provisioner-9cd9bd544-xl67h"}}
+    ```
+
+    </details>
+
+1. Run your controller or create custom resource manually. You'll see the events related to the CRD.
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/samples/mysql_v1alpha1_mysqluser.yaml
+    ```
+
+    ```
+    2022-09-15T06:59:07.178+0900    INFO    source-examples CreateFunc is called    {"object": "nakamasato"}
+    2022-09-15T06:59:07.178+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"nakamasato"}}
+    ```
+

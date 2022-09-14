@@ -75,12 +75,39 @@ type runnableGroup struct {
 }
 ```
 
-## How to use `Manager`
+## How `Manager` is initialized by [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L336)
 
-### 1. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L66) with `NewManager`
+### 1. Set default values for Options fields wiht [setOptionsDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L571)
+
 ```go
 manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
 ```
+
+```go
+options = setOptionsDefaults(options)
+```
+
+|name|value|where is the option used|
+|---|---|---|
+|newResourceLock|leaderelection.NewResourceLock|`setLeaderElectionConfig`|
+|newRecorderProvider|intrec.NewProvider|New to create recorderProvider|
+|EventBroadcaster|`func() (record.EventBroadcaster, bool) {return record.NewBroadcaster(), true}`|as an option for `newRecorderProvider` in New|
+|newMetricsListener|metrics.NewListener|New to create metricsListener|
+|LeaseDuration|*defaultLeaseDuration|`setLeaderElectionConfig`|
+|RenewDeadline|*defaultRenewDeadline|`setLeaderElectionConfig`|
+|RetryPeriod|*defaultRetryPeriod|`setLeaderElectionConfig`|
+|ReadinessEndpointName|defaultReadinessEndpoint||
+|LivenessEndpointName|defaultLivenessEndpoint||
+|newHealthProbeListener|defaultHealthProbeListener|
+|GracefulShutdownTimeout|*defaultGracefulShutdownPeriod||
+|Logger|log.Log||
+|BaseContext|defaultBaseContext||
+
+※ **New** in the table means [Manager.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L336)
+
+
+### 2. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L66)
+
 1. Initialize **Cluster**, which provides methods to interact with Kubernetes cluster
     ```go
     cluster, err := cluster.New(config, func(clusterOptions *cluster.Options) {
@@ -111,7 +138,7 @@ manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
 		recorderProvider:              recorderProvider,
 	}
     ```
-### 2. Bind a Controller to the Manager
+### 3. Bind a Controller to the Manager
 
 Bind a Controller to the Manager using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L66)).
 
@@ -127,7 +154,7 @@ Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtim
 
 You can also check [Builder](../builder) and [Internal process of adding a Controller to a Manager](#internal-process-of-adding-a-controller-to-a-manager)
 
-### 3. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
+### 4. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
 ```go
 err := cm.runnables.Webhooks.Start(cm.internalCtx);
 ...

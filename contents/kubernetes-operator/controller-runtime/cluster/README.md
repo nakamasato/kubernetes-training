@@ -41,7 +41,9 @@ type cluster struct {
 
 ## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L146)
 
-1. `SetOptionDefaults`
+1. [SetOptionDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0//pkg/cluster/cluster.go#L208)
+	For more details, check below
+
 1. Create a `mapper`
     ```go
     mapper, err := options.MapperProvider(config)
@@ -125,6 +127,17 @@ type cluster struct {
     ```
 
 ## [SetOptionDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L208)
+
+
+|name|value|where to use|
+|---|---|---|
+|Scheme|scheme.Scheme||
+|MapperProvider|`func(c *rest.Config) (meta.RESTMapper, error) {return apiutil.NewDynamicRESTMapper(c)}`||
+|NewClient|DefaultNewClient|
+|NewCache|cache.New|
+|newRecorderProvider|intrec.NewProvider|
+|makeBroadcaster|`func() (record.EventBroadcaster, bool) {return record.NewBroadcaster(), true}`|
+|Logger|logf.RuntimeLog.WithName("cluster")|
 
 1. `options.Scheme = scheme.Scheme`(Use the Kubernetes client-go scheme if none is specified)
 1. MapperProvider
