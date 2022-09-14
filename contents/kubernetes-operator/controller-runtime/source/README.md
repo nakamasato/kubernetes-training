@@ -247,4 +247,3 @@ You can run:
     2022-09-15T06:59:07.178+0900    INFO    source-examples CreateFunc is called    {"object": "nakamasato"}
     2022-09-15T06:59:07.178+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"nakamasato"}}
     ```
-
