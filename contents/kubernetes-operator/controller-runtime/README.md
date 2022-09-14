@@ -49,10 +49,11 @@ List of components:
 1. [controller](controller)
 1. [cluster](cluster)
     1. [client](client)
-    1. cache
+    1. [cache](cache)
 1. [inject](inject)
 1. [source](source)
 1. [builder](builder)
+1. [handler](handler)
 
 ## Examples
 1. [example-controller](example-controller)
