@@ -2,6 +2,8 @@
 
 ![](diagram.drawio.svg)
 
+![](diagram-2.drawio.svg)
+
 1. So-called "Cache" in stored in [cluster](../cluster/README.md) is **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/informer_cache.go#L49)**.
 1. **[informerCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/informer_cache.go#L49)** implements [Cache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L41), [Informers](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/cache.go#L52), and [client.Reader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/interfaces.go#L48) interfaces.
 1. **informerCache** has a **specificInformersMap** for structured, unstructured, and metadata.
@@ -226,6 +228,14 @@ type Informer interface {
     }
     ```
     As you can see, if it's empty (the default value), it returns `false`, which means **when cacheReader gets an obejct from the cache, it internally deepcopies the object**. You can modified the got object without deepcopying by yourself.
+
+## How cache is used
+
+1. Create cache.
+1. Start cache.
+1. Wait until cache is synced.
+1. Get informer.
+1. Wait until informer is synced.
 
 ## Example: Get nginx Pod
 
