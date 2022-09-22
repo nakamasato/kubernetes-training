@@ -2,10 +2,142 @@
 
 ## Overview
 
+### Factory & Informers
+
+![](informer-factory.drawio.svg)
+### Single Informer
+
 ![](informer.drawio.svg)
 
 ***Informer*** monitors the changes of target resource. An informer is created for each of the target resources if you need to handle multiple resources (e.g. podInformer, deploymentInformer).
 
+## types
+
+### Interface [SharedInformerFactory](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/factory.go#L187)
+
+```go
+type SharedInformerFactory interface {
+	internalinterfaces.SharedInformerFactory
+	ForResource(resource schema.GroupVersionResource) (GenericInformer, error)
+	WaitForCacheSync(stopCh <-chan struct{}) map[reflect.Type]bool
+
+	Admissionregistration() admissionregistration.Interface
+	Internal() apiserverinternal.Interface
+	Apps() apps.Interface
+	Autoscaling() autoscaling.Interface
+	Batch() batch.Interface
+	Certificates() certificates.Interface
+	Coordination() coordination.Interface
+	Core() core.Interface
+	Discovery() discovery.Interface
+	Events() events.Interface
+	Extensions() extensions.Interface
+	Flowcontrol() flowcontrol.Interface
+	Networking() networking.Interface
+	Node() node.Interface
+	Policy() policy.Interface
+	Rbac() rbac.Interface
+	Scheduling() scheduling.Interface
+	Storage() storage.Interface
+}
+```
+
+### Implementation [sharedInformerFactory](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/factory.go#L55)
+
+
+```go
+type sharedInformerFactory struct {
+	client           kubernetes.Interface
+	namespace        string
+	tweakListOptions internalinterfaces.TweakListOptionsFunc
+	lock             sync.Mutex
+	defaultResync    time.Duration
+	customResync     map[reflect.Type]time.Duration
+
+	informers map[reflect.Type]cache.SharedIndexInformer
+	// startedInformers is used for tracking which informers have been started.
+	// This allows Start() to be called multiple times safely.
+	startedInformers map[reflect.Type]bool
+}
+```
+
+Fields:
+1. `client`: clientset to interact with API server
+1. `namespace`: you can specify a namespace or all namespaces ([v1.NamespaceAll](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/factory.go#L112)) by default
+1. `informers`: store created informers to start them when `factory.Start` is called.
+
+Methods: Get group's interface (e.g. `Apps()`) which returns version interface, and eventually you can get the corresponding informer.
+
+How a new informer is created with a Factory:
+1. Create a factory.
+    ```go
+    kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
+    ```
+1. Create a new informer for a target resource. (e.g. `Deployment`)
+    ```go
+    deploymentInformer := kubeInformerFactory.Apps().V1().Deployments()
+    ```
+
+    1. [kubeInformerFactory.Apps()](https://github.com/kubernetes/client-go/blob/v0.25.1/informers/factory.go#L220) returns `apps.New(f, f.namespace, f.tweakListOptions)`
+        1. [apps.New(f, f.namespace, f.tweakListOptions)](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/interface.go#L45) returns `&group{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}`
+        1. `kubeInformerFactory.Apps()` is `&group`.
+    1. `kubeInformerFactory.Apps().V1()` is `group.V1()` and [group.V1()](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/interface.go#L50) returns `v1.New(g.factory, g.namespace, g.tweakListOptions)`
+        1. [v1.New](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/v1/interface.go#L46) returns `&version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}`
+        1. `kubeInformerFactory.Apps().V1()` is `&version`.
+    1. `kubeInformerFactory.Apps().V1().Deployments()` is `&version` and [version.Deployments()](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/v1/interface.go#L61) returns `&deploymentInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}`.
+        1. [deploymentInformer](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/v1/deployment.go#L42)
+
+    Note that there's nothing happening but just creating `deploymentInformer` at this moment.
+1. Pass the informer to a controller.
+    Example:
+    ```go
+    NewController(
+        deploymentInformer,
+        ...
+    )
+    ```
+
+    1. Inside the controller, call `deploymentInformer.Informer().AddEventHandler(..)` e.g. [sample-controller/blob/v0.0.6/controller.go#L102](https://github.com/nakamasato/sample-controller/blob/v0.0.6/controller.go#L102)
+    1. [deploymentInformer.Informer()](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/v1/deployment.go#L84) returns `f.factory.InformerFor(&appsv1.Deployment{}, f.defaultInformer)`
+    1. [factory.InformerFor](https://github.com/kubernetes/client-go/blob/v0.25.1/informers/factory.go#L164) create **a new informer** and **register** it to `factory.informers` <- **This is the moment the new informer is created!!**
+        ```go
+	    informer = newFunc(f.client, resyncPeriod)
+	    f.informers[informerType] = informer
+        ```
+        `newFunc = defaultInformer` in this example. (`defaultInformer` is defined each informer)
+        e.g. [deploymentInformer.defaultInformer](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/apps/v1/deployment.go#L80)
+        ```go
+        func NewFilteredDeploymentInformer(client kubernetes.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+            return cache.NewSharedIndexInformer(
+                &cache.ListWatch{
+                    ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
+                        if tweakListOptions != nil {
+                            tweakListOptions(&options)
+                        }
+                        return client.AppsV1().Deployments(namespace).List(context.TODO(), options)
+                    },
+                    WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
+                        if tweakListOptions != nil {
+                            tweakListOptions(&options)
+                        }
+                        return client.AppsV1().Deployments(namespace).Watch(context.TODO(), options)
+                    },
+                },
+                &appsv1.Deployment{},
+                resyncPeriod,
+                indexers,
+            )
+        }
+        ```
+
+1. Start factory.
+    ```go
+    kubeInformerFactory.Start(stopCh)
+    ```
+    1. [factory.Start()](https://github.com/kubernetes/client-go/blob/v0.25.1/informers/factory.go#L128) run all the informers in the factory by `informer.Run(stopCh)`
+
+1. [informer.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L397): you can reference below
+### Interface SharedInformer
 
 - Interface:
     SharedInformer
@@ -31,42 +163,47 @@
         GetIndexer() Indexer
     }
     ```
-- Implementation:
-    ```go
-    type sharedIndexInformer struct {
-        indexer    Indexer
-        controller Controller
-        processor             *sharedProcessor
-        cacheMutationDetector MutationDetector
-        listerWatcher ListerWatcher
-        objectType runtime.Object
-        resyncCheckPeriod time.Duration
-        defaultEventHandlerResyncPeriod time.Duration
-        clock clock.Clock
-        started, stopped bool
-        startedLock      sync.Mutex
-        blockDeltas sync.Mutex
-        watchErrorHandler WatchErrorHandler
-        transform TransformFunc
-    }
-    ```
-    Components:
-    - [Indexer](../indexer)
-    - sharedProcessor
-    - LiserWatcher
+
+### Implementation sharedIndexInformer
+```go
+type sharedIndexInformer struct {
+    indexer    Indexer
+    controller Controller
+    processor             *sharedProcessor
+    cacheMutationDetector MutationDetector
+    listerWatcher ListerWatcher
+    objectType runtime.Object
+    resyncCheckPeriod time.Duration
+    defaultEventHandlerResyncPeriod time.Duration
+    clock clock.Clock
+    started, stopped bool
+    startedLock      sync.Mutex
+    blockDeltas sync.Mutex
+    watchErrorHandler WatchErrorHandler
+    transform TransformFunc
+}
+```
+Components:
+- [Indexer](../indexer)
+- controller: explained below
+- sharedProcessor: explained below
+- [LiserWatcher](../listerwatcher/)
 
 
-    [sharedIndexInformer.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L397-L444):
-    1. Create Delta Fifo by [NewDeltaFIFOWithOptions](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/delta_fifo.go#L218)
-    1. Create Controller with [New](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L117)
-    1. Run `s.cacheMutationDetector.Run`
-    1. Run `s.processor.run` <- start all listeners. listners are added via `AddEventHandler`. (usually with `cache.ResourceEventHandlerFuncs{AddFunc: xx, UpdateFunc: xx, DeleteFunc: xx}`)
-    1. Run `s.controller.Run(stopCh)` <- refer the controller section
-- [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedInformer): call NewSharedIndexInformer with `Indexers{}`.
+[sharedIndexInformer.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L397-L444):
+1. Create DeltaFifo by [NewDeltaFIFOWithOptions](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/delta_fifo.go#L218)
+1. Create Controller with [New](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L117)
+1. Run [s.cacheMutationDetector.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/mutation_detector.go#L49)
+1. Run `s.processor.run` <- start all listeners. listeners are added via `AddEventHandler`. (usually with `cache.ResourceEventHandlerFuncs{AddFunc: xx, UpdateFunc: xx, DeleteFunc: xx}`)
+1. Run [s.controller.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L128) <- refer the controller section
+        1. Create a new Reflector and call [r.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/reflector.go#L220) (ListAndWatch is called inside)
+
+NewSharedInformer:
+1. [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedInformer): call NewSharedIndexInformer with `Indexers{}`.
     ```go
     NewSharedIndexInformer(lw, exampleObject, defaultEventHandlerResyncPeriod, Indexers{})
     ```
-- [NewSharedIndexInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedIndexInformer)
+1. [NewSharedIndexInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedIndexInformer)
     ```go
     func NewSharedIndexInformer(lw ListerWatcher, exampleObject runtime.Object, defaultEventHandlerResyncPeriod time.Duration, indexers Indexers) SharedIndexInformer {
         realClock := &clock.RealClock{}
@@ -84,75 +221,108 @@
     }
     ```
 
-- **sharedProcessor**
+#### [sharedProcessor](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L619)
 
+Role: hold a collection of listeners and distribute a notification object to those listeners.
+
+```go
+type sharedProcessor struct {
+    listenersStarted bool
+    listenersLock    sync.RWMutex
+    listeners        []*processorListener
+    syncingListeners []*processorListener
+    clock            clock.Clock
+    wg               wait.Group
+}
+```
+
+1. `Listeners` are added for ResourceEventHandler via AddEventHandler
+1. `distribute()` calls `listener.add` to propagate new events to each listener. `distribute()` is called by `informer.OnAdd`, `informer.OnUpdate`,  and `informer.OnDelete`
+1. `run()` calls `listener.run` and `listener.pop` for all listeners.
+`handler.OnAdd`, `handler.OnUpdate`, `handler.OnDelete` based on the notification type.
+
+#### [Controller](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L99)
+
+Role: Run a reflector and enqueue item to Queue from ListerWatcher and process item from the queue with processfunc.
+
+Interface:
+
+```go
+// Controller is a low-level controller that is parameterized by a
+// Config and used in sharedIndexInformer.
+type Controller interface {
+    // Run does two things.  One is to construct and run a Reflector
+    // to pump objects/notifications from the Config's ListerWatcher
+    // to the Config's Queue and possibly invoke the occasional Resync
+    // on that Queue.  The other is to repeatedly Pop from the Queue
+    // and process with the Config's ProcessFunc.  Both of these
+    // continue until `stopCh` is closed.
+    Run(stopCh <-chan struct{})
+
+    // HasSynced delegates to the Config's Queue
+    HasSynced() bool
+
+    // LastSyncResourceVersion delegates to the Reflector when there
+    // is one, otherwise returns the empty string
+    LastSyncResourceVersion() string
+}
+```
+
+Implementation:
+```go
+type controller struct {
+    config         Config
+    reflector      *Reflector
+    reflectorMutex sync.RWMutex
+    clock          clock.Clock
+}
+```
+
+1. Most things are passed by `Config` (ListerWatcher, ObjectType, Queue (FifoDeltaQueue))
+
+[Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L128):
+1. Create a Reflector with [NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/reflector.go#L168)
+1. Run `reflector.Run` (details -> ref [reflector](../reflector))
+    1. `ListAndWatch`
+    1. `watchHandler`:
+        1. event.Added -> store.Add
+        1. event.Modified -> store.Update
+        1. event.Deleted -> store.Delete (store = Queue)
+1. Run [processLoop](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L182) every second.
+    1. Pop item from the Queue and process it repeatedly. (Actual process is given by `Config.Process`, controller is just a container to execute `Process`)
+        - `Config.Process`: [HandleDeltas](https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L566)
+        `HandleDeltas` calls [processDeltas(s, s.indexer, s.transform, deltas)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L410)
+            - `handler`: sharedIndexInformer
+            - `clientState`: s.indexer
+        - Keep indexer up-to-date by calling `indexer.Update()`, `indexer.Add()`, `indexer.Delete()`.
+        - Distribute notification and add object to cacheMutationDetector by calling `sharedIndexInformer.OnUpdate()`, `sharedIndexInformer.OnAdd()`, `sharedIndexInformer.OnDelete()`
+
+#### [MutationDetector](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/mutation_detector.go#L40)
+
+Role: Check if a cached object is mutated. Call failurefunc or panic if mutated.
+
+1. By default, mutation detector is **not enabled**. (You can skip this components)
     ```go
-    type sharedProcessor struct {
-        listenersStarted bool
-        listenersLock    sync.RWMutex
-        listeners        []*processorListener
-        syncingListeners []*processorListener
-        clock            clock.Clock
-        wg               wait.Group
+    var mutationDetectionEnabled = false
+
+    func init() {
+        mutationDetectionEnabled, _ = strconv.ParseBool(os.Getenv("KUBE_CACHE_MUTATION_DETECTOR"))
     }
     ```
-
-    1. Listeners are added for ResourceEventHandler via AddEventHandler
-    1. Notification is added (addCh) to a listener by `handleDeletas(processDelta)` for each event from DeltaFifo.
-    1. `run()` calls `handler.OnAdd`, `handler.OnUpdate`, `handler.OnDelete` based on the notification type.
-
-- **Controller**
-
-    Interface:
-
+1. Run periodically calls [CompareObjects](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/mutation_detector.go#L133).
+1. CompareObjects compares `cached` and `copied` of `cacheObj` in `d.cachedObjs` and `d.retainedCachedObjs`.
     ```go
-    // Controller is a low-level controller that is parameterized by a
-    // Config and used in sharedIndexInformer.
-    type Controller interface {
-        // Run does two things.  One is to construct and run a Reflector
-        // to pump objects/notifications from the Config's ListerWatcher
-        // to the Config's Queue and possibly invoke the occasional Resync
-        // on that Queue.  The other is to repeatedly Pop from the Queue
-        // and process with the Config's ProcessFunc.  Both of these
-        // continue until `stopCh` is closed.
-        Run(stopCh <-chan struct{})
-
-        // HasSynced delegates to the Config's Queue
-        HasSynced() bool
-
-        // LastSyncResourceVersion delegates to the Reflector when there
-        // is one, otherwise returns the empty string
-        LastSyncResourceVersion() string
+    type cacheObj struct {
+        cached interface{}
+        copied interface{}
     }
     ```
-
-    Implementation:
-    ```go
-    type controller struct {
-        config         Config
-        reflector      *Reflector
-        reflectorMutex sync.RWMutex
-        clock          clock.Clock
-    }
+1. If any object is altered, call `failureFunc`. (if created with [NewCacheMutationDetector](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/mutation_detector.go#L49), it doesn't have failureFunc, the program goes `panic`)
+1. [AddObject](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/mutation_detector.go#L120) adds an object to `d.addedObjs`.
+1. Test: you can enable mutation detector and you'll get error `panic: cache *v1.Pod modified`.
     ```
-
-    1. Most things are passed by `Config` (ListerWatcher, ObjectType, Queue (FifoDeltaQueue))
-
-    [Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L128):
-    1. Create a Reflector with [NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/reflector.go#L168)
-    1. Run `reflector.Run` (details -> ref [reflector](../reflector))
-        1. `ListAndWatch`
-        1. `watchHandler` -> event.Added -> store.Add, event.Modified -> store.Update, event.Deleted -> store.Delete (store = Queue)
-    1. Run [processLoop](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L182) every second.
-        1. Pop item from the Queue and process it repeatedly. (Actual process is given by `Config.Process`, controller is just a container to execute `Process`)
-            - `Config.Process`: [HandleDeltas](https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L566)
-            `HandleDeltas` calls [processDeltas(s, s.indexer, s.transform, deltas)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L410)
-                - `handler`: sharedIndexInformer
-                - `clientState`: s.indexer
-            - Keep indexer up-to-date by calling `indexer.Update()`, `indexer.Add()`, `indexer.Delete()`.
-            - Distribute notification and add object to cacheMutationDetector by calling `sharedIndexInformer.OnUpdate()`, `sharedIndexInformer.OnAdd()`, `sharedIndexInformer.OnDelete()`
-
-
+    KUBE_CACHE_MUTATION_DETECTOR=true go run informer.go
+    ```
 ## Example
 
 1. Initialize clientset with `.kube/config`

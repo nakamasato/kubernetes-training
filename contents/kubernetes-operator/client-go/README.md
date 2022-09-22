@@ -1,5 +1,7 @@
 # client-go
 
+![](diagram.drawio.svg)
+
 Version: [v0.25.0](https://github.com/kubernetes/client-go/releases/tag/v0.25.0)
 
 1. [clientset](clientset): a set of clients to access Kubernetes API
