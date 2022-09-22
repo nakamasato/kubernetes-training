@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"path/filepath"
 	"time"
 
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -67,6 +69,12 @@ func run() {
 
 func handleAdd(obj interface{}) {
 	key := getKeyFromObj(obj)
+	if pod, ok := obj.(*v1.Pod); !ok {
+		fmt.Println("couldn't convert to pod")
+	} else {
+		pod.SetLabels(map[string]string{"test": "test"}) // modify the object to trigger MutationDetector
+		fmt.Printf("converted to Pod label: %s\n", pod.GetLabels())
+	}
 	log.Printf(eventHandlerMessage, "handleAdd", key)
 }
 
