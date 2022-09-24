@@ -11,6 +11,14 @@
 1. **specificInformersMap** has several fields but the most important field is **informersByGVK**.
 1. **informersByGVK**, as the variable name indicates, is a map from GroupVersionKind to **MapEntry**
 1. **MapEntry** is a pair of `cache.SharedIndexInformer` and `CacheReader`
+1. [NewSharedIndexInformer](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L225) requires `lw ListerWatcher, exampleObject runtime.Object, defaultEventHandlerResyncPeriod time.Duration, indexers Indexers`. Those functions use `k8s.io/client-go/metadata`, `k8s.io/client-go/dynamic`, and `k8s.io/client-go/rest` to get `ListFunc` and `WatchFunc` that are necessary to generate [cache.ListWatch]
+    1. In controller-runtime, `ListerWatcher` is created by `createListWatcher` which is passed to `newSpecificInformersMap`. Specifically, [createStructuredListWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L268), [createUnstructuredListWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L311), [createMetadataListWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/informers_map.go#L355)
+    1. In controller-runtime, `Indexers` is generated as follows:
+        ```go
+        cache.Indexers{
+            cache.NamespaceIndex: cache.MetaNamespaceIndexFunc,
+        }
+        ```
 
 
 ## Types
