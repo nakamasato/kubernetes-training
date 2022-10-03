@@ -6,7 +6,7 @@ on:
       - main
   pull_request: # You can deploy for pull_request with deploy-gh-pages label
     types:
-      - label
+      - labeled
       - opened
       - synchronize
       - reopened
