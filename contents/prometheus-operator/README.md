@@ -81,8 +81,11 @@ spec:
 ```
 
 **Prometheus scrape_config**
+
 The above `ServiceMonitor` is converted into a job `serviceMonitor/default/example-app-with-service-monitor/0` in scrape_config
+
 - `relabel_configs`: relabel based on the available Kubernetes metadata for [endpoints](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#endpoints)
+
     ```yaml
     relabel_configs:
       - source_labels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_labelpresent_app]
@@ -97,6 +100,7 @@ The above `ServiceMonitor` is converted into a job `serviceMonitor/default/examp
         action: keep
     ...
     ```
+
 - `kubernetes_sd_configs`: Kubernetes service discovery config. ServiceMonitor uses `endpoints` role.
 
     ```yaml
@@ -108,6 +112,81 @@ The above `ServiceMonitor` is converted into a job `serviceMonitor/default/examp
         names:
         - default
     ```
+
+You can check the whole config by the following command:
+
+```
+kubectl get secret prometheus-prometheus -n monitoring -o yaml | yq '.data["prometheus.yaml.gz"]' | base64 -d | gunzip | yq '.scrape_configs[] | select(.job_name == "serviceMonitor/default/example-app-with-service-monitor/0")'
+```
+
+<details>
+
+```yaml
+job_name: serviceMonitor/default/example-app-with-service-monitor/0
+honor_labels: false
+kubernetes_sd_configs:
+  - role: endpoints
+    namespaces:
+      names:
+        - default
+relabel_configs:
+  - source_labels:
+      - job
+    target_label: __tmp_prometheus_job_name
+  - action: keep
+    source_labels:
+      - __meta_kubernetes_service_label_app
+      - __meta_kubernetes_service_labelpresent_app
+    regex: (example-app-with-service-monitor);true
+  - action: keep
+    source_labels:
+      - __meta_kubernetes_endpoint_port_name
+    regex: web
+  - source_labels:
+      - __meta_kubernetes_endpoint_address_target_kind
+      - __meta_kubernetes_endpoint_address_target_name
+    separator: ;
+    regex: Node;(.*)
+    replacement: ${1}
+    target_label: node
+  - source_labels:
+      - __meta_kubernetes_endpoint_address_target_kind
+      - __meta_kubernetes_endpoint_address_target_name
+    separator: ;
+    regex: Pod;(.*)
+    replacement: ${1}
+    target_label: pod
+  - source_labels:
+      - __meta_kubernetes_namespace
+    target_label: namespace
+  - source_labels:
+      - __meta_kubernetes_service_name
+    target_label: service
+  - source_labels:
+      - __meta_kubernetes_pod_name
+    target_label: pod
+  - source_labels:
+      - __meta_kubernetes_pod_container_name
+    target_label: container
+  - source_labels:
+      - __meta_kubernetes_service_name
+    target_label: job
+    replacement: ${1}
+  - target_label: endpoint
+    replacement: web
+  - source_labels:
+      - __address__
+    target_label: __tmp_hash
+    modulus: 1
+    action: hashmod
+  - source_labels:
+      - __tmp_hash
+    regex: $(SHARD)
+    action: keep
+metric_relabel_configs: []
+```
+
+</details>
 
 ![](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/custom-metrics-elements.png?raw=true)
 
@@ -135,6 +214,62 @@ We can see `podMonitor/default/example-app-with-pod-monitor/0` in `scrape_config
         names:
         - default
     ```
+
+You can check the whole config by the following command:
+
+```
+kubectl get secret prometheus-prometheus -n monitoring -o yaml | yq '.data["prometheus.yaml.gz"]' | base64 -d | gunzip | yq '.scrape_configs[] | select(.job_name == "podMonitor/default/example-app-with-pod-monitor/0")'
+```
+
+<details>
+
+```yaml
+job_name: podMonitor/default/example-app-with-pod-monitor/0
+honor_labels: false
+kubernetes_sd_configs:
+  - role: pod
+    namespaces:
+      names:
+        - default
+relabel_configs:
+  - source_labels:
+      - job
+    target_label: __tmp_prometheus_job_name
+  - action: keep
+    source_labels:
+      - __meta_kubernetes_pod_label_app
+      - __meta_kubernetes_pod_labelpresent_app
+    regex: (example-app-with-pod-monitor);true
+  - action: keep
+    source_labels:
+      - __meta_kubernetes_pod_container_port_name
+    regex: web
+  - source_labels:
+      - __meta_kubernetes_namespace
+    target_label: namespace
+  - source_labels:
+      - __meta_kubernetes_pod_container_name
+    target_label: container
+  - source_labels:
+      - __meta_kubernetes_pod_name
+    target_label: pod
+  - target_label: job
+    replacement: default/example-app-with-pod-monitor
+  - target_label: endpoint
+    replacement: web
+  - source_labels:
+      - __address__
+    target_label: __tmp_hash
+    modulus: 1
+    action: hashmod
+  - source_labels:
+      - __tmp_hash
+    regex: $(SHARD)
+    action: keep
+metric_relabel_configs: []
+```
+
+</details>
 
 ### 4. Clean up
 
