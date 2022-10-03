@@ -119,7 +119,7 @@ You can check the whole config by the following command:
 kubectl get secret prometheus-prometheus -n monitoring -o yaml | yq '.data["prometheus.yaml.gz"]' | base64 -d | gunzip | yq '.scrape_configs[] | select(.job_name == "serviceMonitor/default/example-app-with-service-monitor/0")'
 ```
 
-<details>
+<details><summary>scrape_configs</summary>
 
 ```yaml
 job_name: serviceMonitor/default/example-app-with-service-monitor/0
@@ -221,7 +221,7 @@ You can check the whole config by the following command:
 kubectl get secret prometheus-prometheus -n monitoring -o yaml | yq '.data["prometheus.yaml.gz"]' | base64 -d | gunzip | yq '.scrape_configs[] | select(.job_name == "podMonitor/default/example-app-with-pod-monitor/0")'
 ```
 
-<details>
+<details><summary>scrape_configs</summary>
 
 ```yaml
 job_name: podMonitor/default/example-app-with-pod-monitor/0
