@@ -62,6 +62,7 @@ type sharedInformerFactory struct {
 ```
 
 Fields:
+
 1. `client`: clientset to interact with API server
 1. `namespace`: you can specify a namespace or all namespaces ([v1.NamespaceAll](https://github.com/kubernetes/client-go/blob/v0.25.0/informers/factory.go#L112)) by default
 1. `informers`: store created informers to start them when `factory.Start` is called.
@@ -74,6 +75,7 @@ How a new informer is created with a Factory:
     kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
     ```
 1. Create a new informer for a target resource. (e.g. `Deployment`)
+
     ```go
     deploymentInformer := kubeInformerFactory.Apps().V1().Deployments()
     ```
@@ -191,6 +193,7 @@ Components:
 
 
 [sharedIndexInformer.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L397-L444):
+
 1. Create DeltaFifo by [NewDeltaFIFOWithOptions](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/delta_fifo.go#L218)
 1. Create Controller with [New](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L117)
 1. Run [s.cacheMutationDetector.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/mutation_detector.go#L49)
@@ -199,6 +202,7 @@ Components:
         1. Create a new Reflector and call [r.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/reflector.go#L220) (ListAndWatch is called inside)
 
 NewSharedInformer:
+
 1. [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.25.0/tools/cache#NewSharedInformer): call NewSharedIndexInformer with `Indexers{}`.
     ```go
     NewSharedIndexInformer(lw, exampleObject, defaultEventHandlerResyncPeriod, Indexers{})
@@ -281,6 +285,7 @@ type controller struct {
 1. Most things are passed by `Config` (ListerWatcher, ObjectType, Queue (FifoDeltaQueue))
 
 [Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/controller.go#L128):
+
 1. Create a Reflector with [NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration)](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/reflector.go#L168)
 1. Run `reflector.Run` (details -> ref [reflector](../reflector))
     1. `ListAndWatch`
@@ -370,11 +375,13 @@ Role: Check if a cached object is mutated. Call failurefunc or panic if mutated.
     ```
 
     `handleAdd`, `handleUpdate`, and `handleDelete` define custom logic for each event. In this example, just print `"handleXXX is called"`
+
 1. Create a stop channel and start the factory.
     ```go
     ch := make(chan struct{}) // stop channel
 	informerFactory.Start(ch)
     ```
+
 1. Wait until the cache is synced.
     ```go
     cacheSynced := podInformer.Informer().HasSynced
@@ -383,6 +390,58 @@ Role: Check if a cached object is mutated. Call failurefunc or panic if mutated.
 	}
 	log.Println("cache is synced")
     ```
+
+    [WaitForCacheSync](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L266-L287)
+
+    <details>
+
+    ```go
+    func WaitForCacheSync(stopCh <-chan struct{}, cacheSyncs ...InformerSynced) bool {
+        err := wait.PollImmediateUntil(syncedPollPeriod,
+            func() (bool, error) {
+                for _, syncFunc := range cacheSyncs {
+                    if !syncFunc() {
+                        return false, nil
+                    }
+                }
+                return true, nil
+            },
+            stopCh)
+        if err != nil {
+            klog.V(2).Infof("stop requested")
+            return false
+        }
+
+        klog.V(4).Infof("caches populated")
+        return true
+    }
+    ```
+
+    [wait.PollImmediateUntil](https://github.com/kubernetes/apimachinery/blob/v0.25.0/pkg/util/wait/wait.go#L299)
+
+    ```go
+    // ContextForChannel derives a child context from a parent channel.
+    //
+    // The derived context's Done channel is closed when the returned cancel function
+    // is called or when the parent channel is closed, whichever happens first.
+    //
+    // Note the caller must *always* call the CancelFunc, otherwise resources may be leaked.
+    func ContextForChannel(parentCh <-chan struct{}) (context.Context, context.CancelFunc) {
+        ctx, cancel := context.WithCancel(context.Background())
+
+        go func() {
+            select {
+            case <-parentCh:
+                cancel()
+            case <-ctx.Done():
+            }
+        }()
+        return ctx, cancel
+    }
+    ```
+
+    </details>
+
 1. Run `run` function every 10 seconds
     ```go
     go wait.Until(run, time.Second*10, ch)
