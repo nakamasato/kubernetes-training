@@ -335,3 +335,4 @@ kubectl delete ns monitoring
 - [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator/)
 - [getting-started](https://github.com/prometheus-operator/prometheus-operator/tree/master/example/user-guides/getting-started): The examples above are from here.
 - [prometheus/discovery/kubernetes](https://github.com/prometheus/prometheus/tree/main/discovery/kubernetes): Implementation of Kubernetes Discovery in Prometheus.
+- [Kube-Prometheus-Stack and ArgoCD 2.5 – Server-Side Apply to the Rescue!](https://blog.ediri.io/kube-prometheus-stack-and-argocd-25-server-side-apply-to-the-rescue)
