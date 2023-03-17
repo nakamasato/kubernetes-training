@@ -56,7 +56,7 @@
     1. [Grafana](grafana)
     1. [Grafana Operator](grafana-operator)
     1. [Grafana Loki](loki)
-    1. [Grafana Tempo (todo)] https://grafana.com/docs/tempo/latest/
+    1. [Grafana Tempo](tempo)
     1. [Jaeger (todo)] https://www.jaegertracing.io/
 1. Security
     1. [open-policy-agent](open-policy-agent)

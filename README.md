@@ -15,7 +15,7 @@
 - Grafana: [latest](https://github.com/grafana/grafana/releases)
 - Grafana Operator: [](https://github.com/grafana-operator/grafana-operator)
 - Grafana Loki: [](https://github.com/grafana/loki)
-- Grafana Tempo: [](https://github.com/grafana/tempo)(ToDo)
+- Grafana Tempo: [latest](https://github.com/grafana/tempo)
 - Jaegar: [](https://github.com/jaegertracing/jaeger)(ToDo)
 - Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0)
 - Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1)
