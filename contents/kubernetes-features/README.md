@@ -41,3 +41,11 @@ Admission controllers list:
 1. **MutatingAdmissionWebhook** ([dynamic admission control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)): execute mutating admission control webhook
 1. **ValidatingAdmissionWebhook** ([dynamic admission control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)): execute validating admission control webhook
 1. [and more...](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do)
+
+## Owner References
+
+[Owner References](owner-references/README.md)
+
+## Garbage Collection
+
+If you want to know about garbage collection, please read [Garbage Collection](../kubernetes-components/kube-controller-manager/README.md#garbagecollector).
