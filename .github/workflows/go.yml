@@ -7,6 +7,8 @@ on:
       - .github/workflows/go.yml
       - '**go**'
   push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -14,28 +16,26 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+
       - name: setup go
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+
       - name: test
-        run: go test ./...
+        run: go test -coverprofile="coverage.txt" -covermode=atomic ./...
         working-directory: contents/kubernetes-operator
+
+      - name: coverage
+        uses: codecov/codecov-action@v3
 
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v3
+
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
           go_version_file: go.mod
-
-  codecov:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: coverage
-        uses: codecov/codecov-action@v3
