@@ -42,7 +42,7 @@ versions:
     version: null
     repoUrl: https://github.com/grafana/tempo
     category: Monitoring
-    todo: true
+    todo: false
   - name: Jaegar
     version: null
     repoUrl: https://github.com/jaegertracing/jaeger
