@@ -6,6 +6,7 @@ on:
       - 'contents/kubernetes-operator/**.go'
       - .github/workflows/go.yml
       - '**go**'
+  push:
 
 jobs:
   test:
