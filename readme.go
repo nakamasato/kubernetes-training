@@ -25,11 +25,7 @@ func main() {
         log.Fatal(err)
     }
 
-	for _, e := range m["versions"] {
-		fmt.Printf("%v\n", e)
-	}
-
-	example(m["versions"])
+	generateReadme(m["versions"], "README.md")
 }
 
 type Version struct {
@@ -58,7 +54,7 @@ func (v Version) getToDoString() string {
 	}
 }
 
-func example(versions []Version) {
+func generateReadme(versions []Version, filename string) {
 	book := doc.NewMarkDown()
 	book.WriteTitle("Kubernetes Training", doc.LevelTitle).
 		WriteLines(2)
@@ -75,6 +71,7 @@ func example(versions []Version) {
 
 	book.WriteTitle("Versions", doc.LevelSection)
 	for _, version := range versions {
+		fmt.Printf("name: %s, version: %s\n", version.Name, version.Version)
 		book.WriteList(
 			fmt.Sprintf(
 				"%s: %s%s",
@@ -91,7 +88,7 @@ func example(versions []Version) {
 
 	book.WriteWordLine(fmt.Sprintf("!%s", book.GetLink("", "https://github.com/cncf/trailmap/blob/master/CNCF_TrailMap_latest.png?raw=true")))
 
-	err := book.Export("README.md")
+	err := book.Export(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
