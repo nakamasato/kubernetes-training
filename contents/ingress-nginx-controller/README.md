@@ -5,12 +5,8 @@ https://kubernetes.github.io/ingress-nginx/deploy
 ## Prerequisite
 
 - Kubernetes:
-
-    Example: Kubernetes for Mac
     ```
     kubectl version --short
-    Client Version: v1.21.2
-    Server Version: v1.21.2
     ```
 
 ## Get started

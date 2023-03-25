@@ -106,5 +106,3 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
     kubectl delete -f cert-manager.custom.yaml
     ```
     </details>
-
-##
