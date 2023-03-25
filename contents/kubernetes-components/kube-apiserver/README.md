@@ -68,42 +68,47 @@ Components:
     ```sh
     etcd
     ```
-1. Create certificates for `service-account`. (You can skip this step by running `./generate_certificate.sh`)
-
+1. Create certificates.
     ```sh
-    openssl genrsa -out service-account-key.pem 4096
-    openssl req -new -x509 -days 365 -key service-account-key.pem -subj "/CN=test" -sha256 -out service-account.pem
+    ./generate_certificate.sh
     ```
 
-1. Create certificate for `apiserver`. (You can skip this step by running `./generate_certificate.sh`)
+    <details><summary>manual steps</summary>
 
-    <details><summary>Steps</summary>
+    1. Create certificates for `service-account`.
 
-    1. Generate a `ca.key` with 2048bit:
-        ```
-        openssl genrsa -out ca.key 2048
-        ```
-    1. According to the `ca.key` generate a `ca.crt` (use -days to set the certificate effective time):
-        ```
-        openssl req -x509 -new -nodes -key ca.key -subj "/CN=127.0.0.1" -days 10000 -out ca.crt
-        ```
-    1. `server.key`
-        ```
-        openssl genrsa -out server.key 2048
-        ```
-    1. `csr.conf`
-    1. generate certificate signing request (`server.csr`)
-        ```
-        openssl req -new -key server.key -out server.csr -config csr.conf
-        ```
-    1. generate server certificate `server.crt` using `ca.key`, `ca.crt` and `server.csr`.
-        ```
-        openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
-        -CAcreateserial -out server.crt -days 10000 \
-        -extensions v3_ext -extfile csr.conf
+        ```sh
+        openssl genrsa -out service-account-key.pem 4096
+        openssl req -new -x509 -days 365 -key service-account-key.pem -subj "/CN=test" -sha256 -out service-account.pem
         ```
 
-    <details>
+    1. Create certificate for `apiserver`.
+
+        1. Generate a `ca.key` with 2048bit:
+            ```
+            openssl genrsa -out ca.key 2048
+            ```
+        1. According to the `ca.key` generate a `ca.crt` (use -days to set the certificate effective time):
+            ```
+            openssl req -x509 -new -nodes -key ca.key -subj "/CN=127.0.0.1" -days 10000 -out ca.crt
+            ```
+        1. `server.key`
+            ```
+            openssl genrsa -out server.key 2048
+            ```
+        1. `csr.conf`
+        1. generate certificate signing request (`server.csr`)
+            ```
+            openssl req -new -key server.key -out server.csr -config csr.conf
+            ```
+        1. generate server certificate `server.crt` using `ca.key`, `ca.crt` and `server.csr`.
+            ```
+            openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
+            -CAcreateserial -out server.crt -days 10000 \
+            -extensions v3_ext -extfile csr.conf
+            ```
+
+    </details>
 
 1. Run the built binary.
 
