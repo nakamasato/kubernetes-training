@@ -31,6 +31,7 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           go_version_file: go.mod
+
   codecov:
     runs-on: ubuntu-latest
     steps:
