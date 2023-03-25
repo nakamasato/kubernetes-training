@@ -255,80 +255,101 @@ type GraphBuilder struct {
 
 #### 3.2.2. Steps
 
-1. **GarbageCollector** and **GraphBuilder** are initialized in [NewGarbageCollector](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L87)
-1. [GarbageCollector.Run()](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L143) executes the following functions:
-	1. Start **gc.dependencyGraphBuilder.Run()** (wait until cache is synced)
+
+[NewGarbageCollector](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L87):
+
+1. **GarbageCollector** and **GraphBuilder** are initialized
+
+[GarbageCollector.Run()](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L143):
+1. Start **gc.dependencyGraphBuilder.Run()** (wait until cache is synced)
+	```go
+	go gc.dependencyGraphBuilder.Run(ctx.Done())
+	```
+	1. Start `gb.startMonitors()`: ensure the current set of monitors are running. Start each of the monitors
 		```go
-		go gc.dependencyGraphBuilder.Run(ctx.Done())
+		gb.sharedInformers.Start(gb.stopCh)
+		go monitor.Run()
 		```
-		1. Start `gb.startMonitors()`: ensure the current set of monitors are running. Start each of the monitors
-			```go
-			gb.sharedInformers.Start(gb.stopCh)
-			go monitor.Run()
-			```
-		1. Run `runProcessGraphChanges` every second
-			```go
-			wait.Until(gb.runProcessGraphChanges, 1*time.Second, stopCh)
-			```
-		1. [runProcessGraphChanges](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L600) calls **processGraphChanges** in a for loop.
-			```go
-			func (gb *GraphBuilder) runProcessGraphChanges() {
-				for gb.processGraphChanges() {
-				}
-			}
-			```
-		1. `processGraphChanges`: Get an item from `graphChanges` and put the corresponding node to `attemptToDelete` or `attemptToOrphan` queue.
-			1. if the node in `uidToNode` is not observed and now observed -> node.`markObserved()` (Add a potentially invalid dependent to `attemptToDelete` queue) [ref](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph_builder.go#L638-L666)
-			1. [`addEvent` or `updateEvent`] if not found in `uidToNode`, `insertNode` + `processTransitions` [ref](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph_builder.go#L668-L679)
-			1. [`addEvent` or `updateEvent`] if found in `uidToNode`, reflect changes in ownerReferences and if being deleted, `markBeingDeleted()` + `processTransitions` [ref](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L680-L699)
-			1. [`deleteEvent`] if found
-				1. if `event.virtual` (event from GarbageCollector) -> in some case set `removeExistingNode` to false as it's not certain. Detail: [ref](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L708-L760)
-				1. if `removeExistingNode`, `removeNode`, add dependents to `attemptToDelete`, and add owners to `attemptToDelete`
-	1. Start gc workers
+	1. Run `runProcessGraphChanges` every second
 		```go
-		// gc workers
-		for i := 0; i < workers; i++ {
-			go wait.UntilWithContext(ctx, gc.runAttemptToDeleteWorker, 1*time.Second)
-			go wait.Until(gc.runAttemptToOrphanWorker, 1*time.Second, ctx.Done())
+		wait.Until(gb.runProcessGraphChanges, 1*time.Second, stopCh)
+		```
+	1. [runProcessGraphChanges](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L600) calls **processGraphChanges** in a for loop.
+		```go
+		func (gb *GraphBuilder) runProcessGraphChanges() {
+			for gb.processGraphChanges() {
+			}
 		}
 		```
-		1. run **runAttemptToDeleteWorker()**
-			1. Get an item from **attemptToDelete** queue.
-			1. In case the node, converted from the item in the queue, is not observed (meaning that it's added from `objectReference` whose object is not found in API server), forget the item if it doesn't exist in the graph or it's observed.
-			1. Delete the item
+	1. `processGraphChanges`: Get an item from `graphChanges` and put the corresponding node to `attemptToDelete` or `attemptToOrphan` queue.
+		1. if the node in `uidToNode` is not observed and now observed -> node.`markObserved()` (Add a potentially invalid dependent to `attemptToDelete` queue) [ref](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph_builder.go#L638-L666)
+		1. [`addEvent` or `updateEvent`] if not found in `uidToNode`, `insertNode` + `processTransitions` [ref](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph_builder.go#L668-L679)
+		1. [`addEvent` or `updateEvent`] if found in `uidToNode`, reflect changes in ownerReferences and if being deleted, `markBeingDeleted()` + `processTransitions` [ref](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L680-L699)
+		1. [`deleteEvent`] if found
+			1. if `event.virtual` (event from GarbageCollector) -> in some case set `removeExistingNode` to false as it's not certain. Detail: [ref](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L708-L760)
+			1. if `removeExistingNode`, `removeNode`, add dependents to `attemptToDelete`, and add owners to `attemptToDelete`
+1. Start gc workers
+	```go
+	// gc workers
+	for i := 0; i < workers; i++ {
+		go wait.UntilWithContext(ctx, gc.runAttemptToDeleteWorker, 1*time.Second)
+		go wait.Until(gc.runAttemptToOrphanWorker, 1*time.Second, ctx.Done())
+	}
+	```
+	1. run [runAttemptToDeleteWorker()](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L302-L305)
+		```go
+		func (gc *GarbageCollector) runAttemptToDeleteWorker(ctx context.Context) {
+			for gc.processAttemptToDeleteWorker(ctx) {
+			}
+		}
+		```
+		[processAttemptToDeleteWorker](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L311-L326):
+		1. Get an item (node) from **attemptToDelete** queue.
+			```go
+			action := gc.attemptToDeleteWorker(ctx, item)
+			```
+		1. Process it in [attemptToDeleteWorker](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L338-L392)
+			1. In case the node, converted from the item in the queue, is not observed (meaning that it's added from `objectReference` whose object is not found in API server), forget the item if it doesn't exist in the graph or it's observed. [ref](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L345-L359)
+		1. Delete the item with [attemptToDeleteItem](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L494-L617)
+			```go
+			err := gc.attemptToDeleteItem(ctx, n)
+			```
+			1. `item.isBeingDeleted` & `!item.isDeletingDependents` -> Do nothing and return `nil`
+			1. Get the latest object from API server
 				```go
-				err := gc.attemptToDeleteItem(ctx, n)
+				latest, err := gc.getObject(item.identity)
 				```
-				1. `item.isBeingDeleted` & `!item.isDeletingDependents` -> nil
-				1. Get the latest object from API server
-					```go
-					latest, err := gc.getObject(item.identity)
-					```
-					1. NotFound -> `enqueueVirtualDeleteEvent` -> `graphChanges` with `virtual`
-					1. latest.GetUID() != item.identity.UID ->  `enqueueVirtualDeleteEvent` -> `graphChanges` with `virtual`
-				1. `item.isDeletingDependents()` -> `gc.processDeletingDependentsItem(item)`
-					1. If no `blockingDependents` -> `gc.removeFinalizer(item, metav1.FinalizerDeleteDependents)`
-					1. For `blockingDependents`, if not `isBeingDeleted` -> `gc.attemptToDelete.Add(dep)`
+			1. err=NotFound -> `enqueueVirtualDeleteEvent`(enqueue event to `graphChanges` with `virtual=true`)
+				```go
+				gc.dependencyGraphBuilder.enqueueVirtualDeleteEvent(item.identity)
+				```
+			1. `latest.GetUID() != item.identity.UID` -> `enqueueVirtualDeleteEvent`(enqueue event to `graphChanges` with `virtual=true`) and return `enqueuedVirtualDeleteEventErr`
+				```go
+				gc.dependencyGraphBuilder.enqueueVirtualDeleteEvent(item.identity)
+				```
+			1. `item.isDeletingDependents()` -> `gc.processDeletingDependentsItem(item)` and return `enqueuedVirtualDeleteEventErr`
+				1. If no `blockingDependents` -> `gc.removeFinalizer(item, metav1.FinalizerDeleteDependents)`
+				1. For `blockingDependents`, if not `isBeingDeleted` -> `gc.attemptToDelete.Add(dep)`
 			1. If there's no `OwnerReferences` -> nil
 			1. Classify ownerReferences
 				```go
 				solid, dangling, waitingForDependentsDeletion, err := gc.classifyReferences(ctx, item, ownerReferences)
 				```
-				1. `len(solid) != 0`
-					1. `len(dangling) == 0 && len(waitingForDependentsDeletion) == 0` -> nil
-					1. Delete owner references for `dangling` and `waitingForDependentsDeletion` (send PATCH request to API server)
-				1. `len(waitingForDependentsDeletion) != 0 && item.dependentsLength() != 0`
-					for all dependents, if `isBeingDeleted` -> send `unblockOwnerReferencesStrategicMergePatch` PATCH request to API server
-					1. delete with for `DeletePropagationForeground` (API server)
-				1. default
-					1. `hasOrphanFinalizer` -> delete with `DeletePropagationOrphan`
-					1. `hasDeleteDependentsFinalizer` -> delete with `DeletePropagationForeground`
-					1. default -> delete with `DeletePropagationBackground`
-		1. run **runAttemptToOrphanWorker()** every second
-			1. Get owner from **attemptToOrphan**
-			1. `attemptToOrphanWorker`
-				1. `orphanDependents(owner, dependents)`: remove owner references via PATCH (API server)
-				1. `gc.removeFinalizer(owner, metav1.FinalizerOrphanDependents)`
+			1. `len(solid) != 0`
+				1. `len(dangling) == 0 && len(waitingForDependentsDeletion) == 0` -> return `nil`
+				1. Delete owner references for `dangling` and `waitingForDependentsDeletion` (send PATCH request to API server)
+			1. `len(waitingForDependentsDeletion) != 0 && item.dependentsLength() != 0`
+				for all dependents, if `isBeingDeleted` -> send `unblockOwnerReferencesStrategicMergePatch` PATCH request to API server
+				1. delete with for `DeletePropagationForeground` (API server)
+			1. default
+				1. `hasOrphanFinalizer` -> delete with `DeletePropagationOrphan`
+				1. `hasDeleteDependentsFinalizer` -> delete with `DeletePropagationForeground`
+				1. default -> delete with `DeletePropagationBackground`
+	1. run **runAttemptToOrphanWorker()** every second
+		1. Get owner from **attemptToOrphan**
+		1. `attemptToOrphanWorker`
+			1. `orphanDependents(owner, dependents)`: remove owner references via PATCH (API server)
+			1. `gc.removeFinalizer(owner, metav1.FinalizerOrphanDependents)`
 
 
 [GarbageCollector.Sync](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/garbagecollector.go#L181) keeps updating the resources to monitor periodically. -> `GraphBuilder.syncMonitors(resources)` but not found where it's called.
