@@ -7,7 +7,7 @@
 ## Versions
 - Kubernetes: [v1.25.3](https://github.com/kubernetes/kubernetes/releases/tag/v1.25.3)
 - Kustomize: [kustomize/v4.5.7](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v4.5.7)
-- Helm: [v3.6.3](https://github.com/helm/helm/releases/tag/v3.6.3)
+- Helm: [v3.11.2](https://github.com/helm/helm/releases/tag/v3.11.2)
 - Traefik: [v2.9.0](https://github.com/traefik/traefik/releases/tag/v2.9.0)
 - ArgoCD: [v2.6.7](https://github.com/argoproj/argo-cd/releases/tag/v2.6.7)
 - Prometheus-Operator: [v0.43.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.43.1)
@@ -19,7 +19,7 @@
 - Jaegar: [](https://github.com/jaegertracing/jaeger)(ToDo)
 - Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0)
 - Kind: [v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)
-- Ingress Nginx Controller: [controller-v0.48.1](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v0.48.1)
+- Ingress Nginx Controller: [controller-v1.7.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.7.0)
 - Conftest: [v0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0)
 - Istio: [1.12.2](https://github.com/istio/istio/releases/tag/1.12.2)
 - Postgres Operator: [v1.7.1](https://github.com/zalando/postgres-operator/releases/tag/v1.7.1)
