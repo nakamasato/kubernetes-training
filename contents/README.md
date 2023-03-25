@@ -173,17 +173,16 @@
 ![](prometheus/prometheus.drawio.svg)
 ### 4.2. [Prometheus Operator](prometheus-operator)
 
+### 4.3. [Opentelemetry & Jaeger](https://github.com/nakamasato/golang-training/tree/main/pragmatic-cases/opentelemetry)
 ### TBD
 - fluentd
-- Jaeger
-- Open Tracing
 
 ## 5. SERVICE PROXY, DISCOVERY & MESH
 
 ### 5.1. [Istio](istio)
 
+### 5.2. [Envoy](https://github.com/nakamasato/envoy-training)
 ### TBD
-- envoy
 - CoreDNS
 - Linkerd
 
