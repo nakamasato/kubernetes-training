@@ -95,6 +95,13 @@ make
         ```
         Warning: resource configmaps/kube-proxy is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
         ```
+    1. kube-proxy
+
+        set `enableProfiling` to true
+
+        ```
+        kubectl -n kube-system get configmap kube-proxy -o yaml  | sed -e 's/enableProfiling: false/enableProfiling: true/' | kubectl apply -f -
+        ```
 
         restart kube-proxy
 
@@ -122,4 +129,4 @@ make
         ```
 ## References
 1. [99% to 99.9% SLO: High Performance Kubernetes Control Plane at Pinterest](https://medium.com/pinterest-engineering/99-to-99-9-slo-high-performance-kubernetes-control-plane-at-pinterest-894bc8a964f9)
-1. [Kubernetesの主要コンポーネントのログレベルを動的に変更する](https://qiita.com/everpeace/items/a12d378c47c3ae30602f) + [](https://zaki-hmkc.hatenablog.com/entry/2022/07/27/002213)
+1. [Kubernetesの主要コンポーネントのログレベルを動的に変更する](https://qiita.com/everpeace/items/a12d378c47c3ae30602f) + [Kubernetes v1.24でServiceAccountのトークンを生成・取得する](https://zaki-hmkc.hatenablog.com/entry/2022/07/27/002213)
