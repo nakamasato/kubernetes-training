@@ -5,6 +5,7 @@
 ![](overview.drawio.svg)
 
 Components:
+
 1. **API Extensions Server**: Create HTTP handlers for CRD.
 1. **API Server**: Manage core API and core Kubernetes components.
 1. **Aggregator Layer**: Proxy the requests sent to the registered extended resource to the *extension API server* that runs in a Pod in the same cluster.
@@ -13,7 +14,7 @@ Components:
 
 ### Prerequisite
 
-- Bash version 4 or later
+1. Bash version 4 or later
     Mac: `brew install bash`
 
     <details><summary>version</summary>
@@ -26,7 +27,7 @@ Components:
 
     </details>
 
-- Openssl: `LibreSSL` is also ok. (`brew install openssl` <- this should also work.)
+1. Openssl: `LibreSSL` is also ok. (`brew install openssl` <- this should also work.)
 
     <details><summary>version</summary>
 
@@ -37,7 +38,7 @@ Components:
 
     </details>
 
-- etcd: `brew install etcd`
+1. etcd: `brew install etcd`
 
     <details><summary>version</summary>
 
