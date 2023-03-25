@@ -12,17 +12,12 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: [ 1.18, 1.19 ]
-    name: test-${{ matrix.go }}
     steps:
+      - uses: actions/checkout@v3
       - name: set up
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go }}
-
-      - uses: actions/checkout@master
+          go-version-file: go.mod
 
       # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
       - name: krew - install

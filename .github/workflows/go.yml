@@ -10,26 +10,18 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: [ 1.18, 1.19 ]
-    name: test-${{ matrix.go }}
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
       - name: setup go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go }}
-      - name: checkout
-        uses: actions/checkout@v3
+          go-version-file: go.mod
       - name: test
         run: go test ./...
         working-directory: contents/kubernetes-operator
 
   golangci-lint:
-    strategy:
-      matrix:
-        go: [ 1.18, 1.19 ]
-    name: golangci-lint-${{ matrix.go }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -37,4 +29,4 @@ jobs:
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
-          go_version: ${{ matrix.go }}
+          go_version_file: go.mod
