@@ -50,7 +50,9 @@ Components:
     ```
 
     </details>
+
 ### Steps
+
 1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
     1. Clone Kubernetes repo.
         ```sh
@@ -63,11 +65,10 @@ Components:
         ```
 1. Run `etcd`. (ref: [etcd](../etcd/))
 
-    start:
-
     ```sh
     etcd
     ```
+
 1. Create certificates.
     ```sh
     ./generate_certificate.sh
@@ -107,6 +108,8 @@ Components:
             -CAcreateserial -out server.crt -days 10000 \
             -extensions v3_ext -extfile csr.conf
             ```
+
+    For more details, please check [Generate Certificates Manually](https://kubernetes.io/docs/tasks/administer-cluster/certificates/)
 
     </details>
 
@@ -387,7 +390,6 @@ When deleting CRD:
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start informer.
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start controllers.
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to wait until CRD informer is synced.
-
 
 ## Functions
 
