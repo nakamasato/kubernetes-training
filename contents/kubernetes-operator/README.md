@@ -135,7 +135,7 @@ To clarify a problem to resolve with a new operator, you can reference existing 
 Considerations:
 
 - Finalizer
-- [Owners and Dependents](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
+- [docs: Owners and Dependents](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/): [example](../kubernetes-features/README.md#owner-references)
 - Reconciliation Loop
     - [operator-sdk] Based on the return value of Reconcile() the reconcile Request may be requeued and the loop may be triggered again: ([Building a Go-based Memcached Operator using the Operator SDK](https://docs.openshift.com/container-platform/4.1/applications/operator_sdk/osdk-getting-started.html#building-memcached-operator-using-osdk_osdk-getting-started))
         ```go

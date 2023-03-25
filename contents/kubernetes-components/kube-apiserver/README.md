@@ -14,22 +14,14 @@ Components:
 ### Prerequisite
 
 - Bash version 4 or later
-    Mac:
-    ```
-    brew install bash
-    ```
+    Mac: `brew install bash`
 
     <details><summary>version</summary>
 
     ```
     bash --version
-
-    GNU bash, version 5.1.16(1)-release (x86_64-apple-darwin21.1.0)
-    Copyright (C) 2020 Free Software Foundation, Inc.
-    License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-
-    This is free software; you are free to change and redistribute it.
-    There is NO WARRANTY, to the extent permitted by law.
+    GNU bash, version 3.2.57(1)-release (arm64-apple-darwin21)
+    Copyright (C) 2007 Free Software Foundation, Inc.
     ```
 
     </details>
@@ -40,7 +32,7 @@ Components:
 
     ```sh
     openssl version
-    LibreSSL 2.8.3
+    OpenSSL 3.1.0 14 Mar 2023 (Library: OpenSSL 3.1.0 14 Mar 2023)
     ```
 
     </details>
@@ -51,10 +43,10 @@ Components:
 
     ```sh
     etcd --version
-    etcd Version: 3.5.2
-    Git SHA: 99018a77b
-    Go Version: go1.17.6
-    Go OS/Arch: darwin/amd64
+    etcd Version: 3.5.7
+    Git SHA: 215b53cf3
+    Go Version: go1.19.5
+    Go OS/Arch: darwin/arm64
     ```
 
     </details>
@@ -66,7 +58,7 @@ Components:
         ```
     1. Build the version you want to use.
         ```sh
-        git checkout release-1.23 # you can choose any
+        git checkout release-1.26 # you can choose any version
         make
         ```
 1. Run `etcd`. (ref: [etcd](../etcd/))
@@ -115,14 +107,23 @@ Components:
 
 1. Run the built binary.
 
+    Set the path:
+
     ```
     PATH_TO_KUBERNETES_DIR=~/repos/kubernetes/kubernetes
     ```
 
+    Check the API server's version:
+
     ```
     ${PATH_TO_KUBERNETES_DIR}/_output/bin/kube-apiserver --version
-    Kubernetes v1.23.7-rc.0.21+dcce2357ffda4b
     ```
+
+    ```
+    Kubernetes v1.26.3-11+9043dd888deae0
+    ```
+
+    Start API server:
 
     ```
     ${PATH_TO_KUBERNETES_DIR}/_output/bin/kube-apiserver --etcd-servers http://localhost:2379 \
@@ -162,11 +163,158 @@ Components:
 1. Check component status. (only `etcd` is healthy.)
     ```
     kubectl get componentstatuses --kubeconfig kubeconfig
+
     Warning: v1 ComponentStatus is deprecated in v1.19+
     NAME                 STATUS      MESSAGE                                                                                        ERROR
-    controller-manager   Unhealthy   Get "https://127.0.0.1:10257/healthz": dial tcp 127.0.0.1:10257: connect: connection refused
     scheduler            Unhealthy   Get "https://127.0.0.1:10259/healthz": dial tcp 127.0.0.1:10259: connect: connection refused
+    controller-manager   Unhealthy   Get "https://127.0.0.1:10257/healthz": dial tcp 127.0.0.1:10257: connect: connection refused
     etcd-0               Healthy     {"health":"true","reason":""}
+    ```
+1. Create service account `default`
+    ```
+    kubectl create sa default --kubeconfig kubeconfig
+    ```
+1. Create a Pod
+    ```
+    kubectl run nginx --image nginx --kubeconfig kubeconfig
+    pod/nginx created
+    ```
+
+    A new pod is created but will always remain Pending, as we don't have kubelet to start a container.
+    ```
+    kubectl get pod --kubeconfig kubeconfig
+    NAME    READY   STATUS    RESTARTS   AGE
+    nginx   0/1     Pending   0          41s
+    ```
+
+1. Read the data from etcd
+
+    ```
+    etcdctl get /registry/pods/default/nginx
+    ```
+
+    <details>
+
+    ```
+    etcdctl get /registry/pods/default/nginx
+    /registry/pods/default/nginx
+    k8s
+
+    v1Pod�
+    �
+    nginxdefault"*$a77f3131-9ce0-4319-a7c2-ea859df720212����Z
+
+    runnginx��
+
+    kubectl-runUpdatev����FieldsV1:�
+    �{"f:metadata":{"f:labels":{".":{},"f:run":{}}},"f:spec":{"f:containers":{"k:{\"name\":\"nginx\"}":{".":{},"f:image":{},"f:imagePullPolicy":{},"f:name":{},"f:resources":{},"f:terminationMessagePath":{},"f:terminationMessagePolicy":{}}},"f:dnsPolicy":{},"f:enableServiceLinks":{},"f:restartPolicy":{},"f:schedulerName":{},"f:securityContext":{},"f:terminationGracePeriodSeconds":{}}}B�
+    �
+    kube-api-access-2f85qk�h
+    "
+
+    �token
+    (&
+
+    kube-root-ca.crt
+    ca.crtca.crt
+    )'
+    %
+            namespace
+    v1metadata.namespace��
+    nginxnginx*BJL
+    kube-api-access-2f85q-/var/run/secrets/kubernetes.io/serviceaccount"2j/dev/termination-logrAlways����FileAlways 2
+                                                            ClusterFirstBdefaultJdefaultRX`hr���default-scheduler�6
+    node.kubernetes.io/not-readyExists"     NoExecute(��8
+    node.kubernetes.io/unreachableExists"   NoExecute(�����PreemptLowerPriority
+    Pending"*2J
+    BestEffortZ"
+    ```
+
+    </details>
+
+    You can decode with https://github.com/jpbetz/auger.
+
+    Clone and build
+
+    ```
+    AUGER_DIR=~/repos/jpbetz/auger
+    mkdir -p $AUGER_DIR
+    git clone https://github.com/jpbetz/auger $AUGER_DIR && cd $AUGER_DIR
+    go build -o anger main.go
+    ```
+
+    ```
+    etcdctl get /registry/pods/default/nginx | $AUGER_DIR/anger decode
+    ```
+
+    <details>
+
+    ```
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      creationTimestamp: "2023-03-25T00:21:26Z"
+      labels:
+        run: nginx
+      name: nginx
+      namespace: default
+      uid: a77f3131-9ce0-4319-a7c2-ea859df72021
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: kube-api-access-2f85q
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      priority: 0
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: default
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoExecute
+        key: node.kubernetes.io/not-ready
+        operator: Exists
+        tolerationSeconds: 300
+      - effect: NoExecute
+        key: node.kubernetes.io/unreachable
+        operator: Exists
+        tolerationSeconds: 300
+      volumes:
+      - name: kube-api-access-2f85q
+        projected:
+          defaultMode: 420
+          sources:
+          - {}
+          - configMap:
+              items:
+              - key: ca.crt
+                path: ca.crt
+              name: kube-root-ca.crt
+          - downwardAPI:
+              items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+                path: namespace
+    status:
+      phase: Pending
+      qosClass: BestEffort
+    ```
+
+    </details>
+
+1. Cleanup
+    ```
+    kubectl delete pod nginx --kubeconfig kubeconfig
     ```
 
 ### Errors
@@ -235,6 +383,18 @@ When deleting CRD:
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start controllers.
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to wait until CRD informer is synced.
 
+
+## Functions
+
+### [Delete](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/store.go#L1038-L1129)
+
+1. Get key
+1. Get obj from the storage
+1. `BeforeDelete`
+1. `finalizeDelete`
+1. `deletionFinalizersForGarbageCollection` -> `updateForGracefulDeletionAndFinalizers`
+1. Delete the obj from the storage
+1. `finalizeDelete`
 ## References
 - [Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
 - [kube-apiserver fails init. receive "--service-account-signing-key-file and --service-account-issuer are required flag" #626](https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/626)

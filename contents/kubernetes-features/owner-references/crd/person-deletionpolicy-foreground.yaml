@@ -1,0 +1,40 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: persons.example.com
+spec:
+  group: example.com
+  names:
+    kind: Person
+    listKind: PersonList
+    plural: persons
+    singular: person
+  scope: Namespaced
+  deletionPolicy: Foreground
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                name:
+                  type: string
+                age:
+                  type: integer
+                address:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                hobbies:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name

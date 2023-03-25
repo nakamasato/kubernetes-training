@@ -38,6 +38,8 @@
     1. [kubernetes-operator](kubernetes-operator)
     1. [kubernetes-scheduler](kubernetes-extensions/kubernetes-scheduler)
     1. [plugins (todo)](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/)
+1. Namespaces
+    1. [hierarchical namespaces (HNC)](https://github.com/kubernetes-sigs/hierarchical-namespaces)
 1. Deloyment Managemet
     1. [Knative](knative)
     1. [Skaffold (todo)](https://skaffold.dev/)

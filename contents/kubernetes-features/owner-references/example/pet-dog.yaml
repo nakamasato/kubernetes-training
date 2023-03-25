@@ -1,0 +1,13 @@
+apiVersion: example.com/v1
+kind: Pet
+metadata:
+  name: dog
+  ownerReferences:
+    - apiVersion: example.com/v1
+      kind: Person
+      name: alice
+      uid: b400d2c2-df7d-4c39-8597-183e7adb75b5
+spec:
+  name: Fido
+  age: 3
+  breed: Golden Retriever
