@@ -30,3 +30,10 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           go_version_file: go.mod
+  codecov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: coverage
+        uses: codecov/codecov-action@v3
