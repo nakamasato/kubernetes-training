@@ -6,11 +6,11 @@ require (
 	github.com/nakamasato/mysql-operator v0.0.5
 	go.uber.org/zap v1.24.0
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/api v0.26.0
-	k8s.io/apimachinery v0.26.0
-	k8s.io/client-go v0.26.0
+	k8s.io/api v0.26.1
+	k8s.io/apimachinery v0.26.1
+	k8s.io/client-go v0.26.1
 	k8s.io/klog/v2 v2.80.1
-	sigs.k8s.io/controller-runtime v0.14.1
+	sigs.k8s.io/controller-runtime v0.14.5
 )
 
 require (
@@ -61,8 +61,8 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/apiextensions-apiserver v0.26.0 // indirect
-	k8s.io/component-base v0.26.0 // indirect
+	k8s.io/apiextensions-apiserver v0.26.1 // indirect
+	k8s.io/component-base v0.26.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
 	k8s.io/utils v0.0.0-20221128185143-99ec85e7a448 // indirect
 	sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2 // indirect
