@@ -5,6 +5,7 @@
 ![](overview.drawio.svg)
 
 Components:
+
 1. **API Extensions Server**: Create HTTP handlers for CRD.
 1. **API Server**: Manage core API and core Kubernetes components.
 1. **Aggregator Layer**: Proxy the requests sent to the registered extended resource to the *extension API server* that runs in a Pod in the same cluster.
@@ -13,7 +14,7 @@ Components:
 
 ### Prerequisite
 
-- Bash version 4 or later
+1. Bash version 4 or later
     Mac: `brew install bash`
 
     <details><summary>version</summary>
@@ -26,7 +27,7 @@ Components:
 
     </details>
 
-- Openssl: `LibreSSL` is also ok. (`brew install openssl` <- this should also work.)
+1. Openssl: `LibreSSL` is also ok. (`brew install openssl` <- this should also work.)
 
     <details><summary>version</summary>
 
@@ -37,7 +38,7 @@ Components:
 
     </details>
 
-- etcd: `brew install etcd`
+1. etcd: `brew install etcd`
 
     <details><summary>version</summary>
 
@@ -50,7 +51,9 @@ Components:
     ```
 
     </details>
+
 ### Steps
+
 1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
     1. Clone Kubernetes repo.
         ```sh
@@ -63,11 +66,10 @@ Components:
         ```
 1. Run `etcd`. (ref: [etcd](../etcd/))
 
-    start:
-
     ```sh
     etcd
     ```
+
 1. Create certificates.
     ```sh
     ./generate_certificate.sh
@@ -107,6 +109,8 @@ Components:
             -CAcreateserial -out server.crt -days 10000 \
             -extensions v3_ext -extfile csr.conf
             ```
+
+    For more details, please check [Generate Certificates Manually](https://kubernetes.io/docs/tasks/administer-cluster/certificates/)
 
     </details>
 
@@ -387,7 +391,6 @@ When deleting CRD:
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start informer.
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to start controllers.
     1. Set `AddPostStartHookOrDie` for `GenericAPIServer` to wait until CRD informer is synced.
-
 
 ## Functions
 
