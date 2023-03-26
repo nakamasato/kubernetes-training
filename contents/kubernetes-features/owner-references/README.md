@@ -1,6 +1,6 @@
 # Owner References
 
-## Example1
+## Example1: Pet -> Person
 
 1. Prepare CRD `Person` and `Pet`
 
@@ -106,9 +106,6 @@
 1. Get Alice's uid and update `ownerReferences` in  `example/pet-dog.yaml`
     ```
     uid=$(kubectl get -f example/person-alice.yaml -o yaml | yq .metadata.uid); echo $uid
-    ```
-
-    ```
     yq e -i ".metadata.ownerReferences[0].uid = \"$uid\"" example/pet-dog.yaml
     ```
 1. Create a `Pet` `dog`
@@ -144,9 +141,6 @@
 1. Get Alice's uid and update `ownerReferences` in  `example/pet-dog.yaml`
     ```
     uid=$(kubectl get -f example/person-alice.yaml -o yaml | yq .metadata.uid); echo $uid
-    ```
-
-    ```
     yq e -i ".metadata.ownerReferences[0].uid = \"$uid\"" example/pet-dog-with-finalizer.yaml
     ```
 1. Create a `Pet` `dog`
@@ -186,9 +180,6 @@
 1. Get Alice's uid and update `ownerReferences` in  `example/pet-dog.yaml`
     ```
     uid=$(kubectl get -f example/person-alice.yaml -o yaml | yq .metadata.uid); echo $uid
-    ```
-
-    ```
     yq e -i ".metadata.ownerReferences[0].uid = \"$uid\"" example/pet-dog-with-finalizer-and-blockownerdeletion.yaml
     ```
 1. Create a `Pet` `dog`
