@@ -8,3 +8,4 @@ kubeconfig
 service-account-key.pem
 service-account.pem
 default.etcd
+contents/kubernetes-components/kube-apiserver/audit.log

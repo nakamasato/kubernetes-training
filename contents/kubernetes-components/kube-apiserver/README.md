@@ -10,9 +10,97 @@ Components:
 1. **API Server**: Manage core API and core Kubernetes components.
 1. **Aggregator Layer**: Proxy the requests sent to the registered extended resource to the *extension API server* that runs in a Pod in the same cluster.
 
-## Run kube-apiserver in local
+## kube-apiserver
 
-### Prerequisite
+### Auditing
+
+https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/
+
+<details><summary>example</summary>
+
+```yaml
+apiVersion: audit.k8s.io/v1 # This is required.
+kind: Policy
+# Don't generate audit events for all requests in RequestReceived stage.
+omitStages:
+  - "RequestReceived"
+rules:
+  # Log pod changes at RequestResponse level
+  - level: RequestResponse
+    resources:
+    - group: ""
+      # Resource "pods" doesn't match requests to any subresource of pods,
+      # which is consistent with the RBAC policy.
+      resources: ["pods"]
+  # Log "pods/log", "pods/status" at Metadata level
+  - level: Metadata
+    resources:
+    - group: ""
+      resources: ["pods/log", "pods/status"]
+
+  # Don't log requests to a configmap called "controller-leader"
+  - level: None
+    resources:
+    - group: ""
+      resources: ["configmaps"]
+      resourceNames: ["controller-leader"]
+
+  # Don't log watch requests by the "system:kube-proxy" on endpoints or services
+  - level: None
+    users: ["system:kube-proxy"]
+    verbs: ["watch"]
+    resources:
+    - group: "" # core API group
+      resources: ["endpoints", "services"]
+
+  # Don't log authenticated requests to certain non-resource URL paths.
+  - level: None
+    userGroups: ["system:authenticated"]
+    nonResourceURLs:
+    - "/api*" # Wildcard matching.
+    - "/version"
+
+  # Log the request body of configmap changes in kube-system.
+  - level: Request
+    resources:
+    - group: "" # core API group
+      resources: ["configmaps"]
+    # This rule only applies to resources in the "kube-system" namespace.
+    # The empty string "" can be used to select non-namespaced resources.
+    namespaces: ["kube-system"]
+
+  # Log configmap and secret changes in all other namespaces at the Metadata level.
+  - level: Metadata
+    resources:
+    - group: "" # core API group
+      resources: ["secrets", "configmaps"]
+
+  # Log all other resources in core and extensions at the Request level.
+  - level: Request
+    resources:
+    - group: "" # core API group
+    - group: "extensions" # Version of group should NOT be included.
+
+  # A catch-all rule to log all other requests at the Metadata level.
+  - level: Metadata
+    # Long-running requests like watches that fall under this rule will not
+    # generate an audit event in RequestReceived.
+    omitStages:
+      - "RequestReceived"
+```
+
+</details>
+
+```
+--audit-policy-file=/etc/kubernetes/audit-policy.yaml \
+--audit-log-path=/var/log/kubernetes/audit/audit.log
+```
+
+
+
+### Run kube-apiserver in local
+
+#### Prerequisite
 
 1. Bash version 4 or later
     Mac: `brew install bash`
@@ -52,7 +140,7 @@ Components:
 
     </details>
 
-### Steps
+#### Steps
 
 1. Build Kubernetes binary (ref: [Build Kubernetes](../README.md#build-kubernetes)).
     1. Clone Kubernetes repo.
@@ -326,7 +414,7 @@ Components:
     kubectl delete pod nginx --kubeconfig kubeconfig
     ```
 
-### Errors
+#### Errors
 
 1. Error1: mkdir /var/run/kubernetes: permission denied
 
@@ -396,12 +484,61 @@ When deleting CRD:
 
 ### [Delete](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/store.go#L1038-L1129)
 
+![](delete.drawio.svg)
+
+
+Return value:
+
+1. runtime.Object
+1. bool
+1. error
+
+Steps:
+
 1. Get key
 1. Get obj from the storage
-1. `BeforeDelete`
-1. `finalizeDelete`
-1. `deletionFinalizersForGarbageCollection` -> `updateForGracefulDeletionAndFinalizers`
-1. Delete the obj from the storage
+1. [BeforeDelete](https://github.com/kubernetes/kubernetes/blob/v1.26.0/staging/src/k8s.io/apiserver/pkg/registry/rest/delete.go#L66-L162): responsible for setting `deletionTimestamp`.
+    1. The return value is
+        1. `graceful` (bool)
+        1. `gracefulPending` (bool)
+        1. `err` (error)
+    1. Case1: if not deleting gracefully -> `false`, `false`, `nil`
+    1. Case2: Update DeletionTimestamp & DeletionGracePeriodSeconds if necessary
+    1. Case3: if `gracefulStrategy.CheckGracefulDelete` is false -> `false`, `false`, `nil`
+1. (If `pendingGraceful` is true, [finalizeDelete](https://github.com/kubernetes/kubernetes/blob/v1.26.0/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/store.go#L1224-L1249). <- this function doesn't modify object.)
+1. [deletionFinalizersForGarbageCollection](https://github.com/kubernetes/kubernetes/blob/v1.26.0/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/store.go#L861-L898)
+    ```go
+    shouldUpdateFinalizers, _ := deletionFinalizersForGarbageCollection(ctx, e, accessor, options)
+    ```
+    1. `deletionFinalizersForGarbageCollection`: Remove `orphan` and `foreground` finalizers if `shouldOrphanDependents` and `shouldDeleteDependents` are not true respectively. if finalizers are updated, return `false`, otherwise `true`.
+
+1. Update `deleteImmediately`:
+    1. if there's pending finalizers -> `false`
+        1. [markAsDeleting](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/store.go#L900-L923) sets the obj's DeletionGracePeriodSeconds to 0, and sets the DeletionTimestamp to "now"
+    1. if GracePeriodSeconds > 0 -> `false`
+    1. not pendingGraceful and not graceful -> `true`
+
+    ```go
+	if graceful || pendingFinalizers || shouldUpdateFinalizers {
+		err, ignoreNotFound, deleteImmediately, out, lastExisting = e.updateForGracefulDeletionAndFinalizers(ctx, name, key, options, preconditions, deleteValidation, obj)
+		// Update the preconditions.ResourceVersion if set since we updated the object.
+		if err == nil && deleteImmediately && preconditions.ResourceVersion != nil {
+			accessor, err = meta.Accessor(out)
+			if err != nil {
+				return out, false, apierrors.NewInternalError(err)
+			}
+			resourceVersion := accessor.GetResourceVersion()
+			preconditions.ResourceVersion = &resourceVersion
+		}
+	}
+    ```
+    1. `updateForGracefulDeletionAndFinalizers`
+1. If `deleteImmediately` is false or if there's err, return. (not delete immediately)
+1. If Dry-run, return.
+1. Finally, Delete the obj from the storage.
+    ```go
+    err := e.Storage.Delete(ctx, key, out, &preconditions, storage.ValidateObjectFunc(deleteValidation), dryrun.IsDryRun(options.DryRun), nil);
+    ```
 1. `finalizeDelete`
 ## References
 - [Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)

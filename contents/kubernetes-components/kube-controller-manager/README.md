@@ -390,6 +390,7 @@ TestCase:
 1. [gabagecollector.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go)
 1. [graph_builder.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L132)
 1. [test/integration/gabagecollector/garbage_collector_test.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/test/integration/garbagecollector/garbage_collector_test.go)
+1. [Enable garbage collection of custom resources](https://github.com/kubernetes/kubernetes/pull/47665)
 
 
 #### 3.2.4. Memo
