@@ -67,6 +67,7 @@ helm uninstall elasticsearch elastic/elasticsearch
 ## Helm basic commands
 
 - `helm ls`: Check releases.
+- `helm template <chart_path>`: Test rendering the chart locally (You can check the resulting yaml without applying)
 - `helm install <NAME>`: Deploy a chart. (Deploy packaged resources to the cluster.)
 
     There are five different ways you can express the chart you want to install:
