@@ -68,15 +68,22 @@ helm uninstall elasticsearch elastic/elasticsearch
 
 - `helm ls`: Check releases.
 - `helm template <chart_path or chart>`: Test rendering the chart locally (You can check the resulting yaml without applying)
+
+    You can pass values via
+    1. flag: `helm template chart --set .cloudSecretManagerType=gcp`
+    1. value file: `helm template chart -f gcp-helm-values.yaml`
+
 - `helm install <NAME>`: Deploy a chart. (Deploy packaged resources to the cluster.)
 
     There are five different ways you can express the chart you want to install:
 
-    1. By chart reference: helm install mymaria example/mariadb
-    2. By path to a packaged chart: helm install mynginx ./nginx-1.2.3.tgz
-    3. By path to an unpacked chart directory: helm install mynginx ./nginx
+    1. By chart reference: `helm install mymaria example/mariadb`
+    2. By path to a packaged chart: `helm install mynginx ./nginx-1.2.3.tgz`
+    3. By path to an unpacked chart directory: `helm install mynginx ./nginx`
     4. By absolute URL: helm install mynginx https://example.com/charts/nginx-1.2.3.tgz
-    5. By chart reference and repo url: helm install --repo https://example.com/charts/ mynginx nginx
+    5. By chart reference and repo url: `helm install --repo https://example.com/charts/ mynginx nginx`
+
+    You can pass values in the same way as `helm template`
 
 - `helm uninstall <NAME>`: Remove a chart. (Remove packaged resources from the cluster.)
 - `helm status <RELEASE_NAME>`
