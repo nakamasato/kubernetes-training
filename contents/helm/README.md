@@ -84,8 +84,10 @@ helm uninstall elasticsearch elastic/elasticsearch
     5. By chart reference and repo url: `helm install --repo https://example.com/charts/ mynginx nginx`
 
     You can pass values in the same way as `helm template`
-
-- `helm uninstall <NAME>`: Remove a chart. (Remove packaged resources from the cluster.)
+- `helm upgrade <RELEASE_NAME> <chart>`
+    Example:
+    1. `helm upgrade mysql-operator-0-1680913123 $HELM_PATH --set cloudSecretManagerType=gcp --set gcpProjectId=$PROJECT_ID `
+- `helm uninstall <RELEASE_NAME>`: Remove a chart. (Remove packaged resources from the cluster.)
 - `helm status <RELEASE_NAME>`
 
 ## Reference
