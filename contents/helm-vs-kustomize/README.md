@@ -115,10 +115,10 @@
     helm package helm-example
     ```
 
-1. Publish the chart. (Create a Github repo for Helm chart repository. https://github.com/nakamasato/helm-charts-repo)
+1. Publish the chart. (Create a Github repo for Helm chart repository. https://github.com/nakamasato/helm-charts)
 
     ```
-    helm repo index ./ --url https://nakamasato.github.io/helm-charts-repo
+    helm repo index ./ --url https://nakamasato.github.io/helm-charts
     ```
 
     This would generate `index.yaml`. Push the `index.yaml` and `helm-example-0.1.0.tgz` to the chart repo.
@@ -126,7 +126,7 @@
 1. Add the repo that is created above.
 
     ```
-    helm repo add nakamasato https://nakamasato.github.io/helm-charts-repo
+    helm repo add nakamasato https://nakamasato.github.io/helm-charts
     helm repo update # update the repository info
     ```
 
