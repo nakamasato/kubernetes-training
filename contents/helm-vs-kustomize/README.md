@@ -117,11 +117,15 @@
 
 1. Publish the chart. (Create a Github repo for Helm chart repository. https://github.com/nakamasato/helm-charts)
 
-    ```
-    helm repo index ./ --url https://nakamasato.github.io/helm-charts
-    ```
+    1. Options1: push package and index to the chart repo.
 
-    This would generate `index.yaml`. Push the `index.yaml` and `helm-example-0.1.0.tgz` to the chart repo.
+        ```
+        helm repo index ./ --url https://nakamasato.github.io/helm-charts
+        ```
+
+        This would generate `index.yaml`. Push the `index.yaml` and `helm-example-0.1.0.tgz` to the chart repo.
+
+    1. Option2: push chart source code + [actions/helm-chart-releaser](https://github.com/marketplace/actions/helm-chart-releaser) (ref: https://helm.sh/docs/howto/chart_releaser_action/) <- [nakamasato/helm-charts](https://github.com/nakamasato/helm-charts) uses this.
 
 1. Add the repo that is created above.
 
