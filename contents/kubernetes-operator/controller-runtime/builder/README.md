@@ -59,9 +59,16 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
 
 ## `For`, `Owns`, and `Watches`: Define what object to watch
 
-1. `For`: only one resource can be configured. (same as `Watches(&source.Kind{Type: apiType}, &handler.EnqueueRequestForObject{})`)
-1. `Owns`: Owns defines types of Objects being *generated* by the ControllerManagedBy, and configures the ControllerManagedBy to respond to create / delete / update events by **reconciling the owner object**. (same as `Watches(&source.Kind{Type: <ForType-forInput>}, &handler.EnqueueRequestForOwner{OwnerType: apiType, IsController: true})`)
-1. `Watches`: Watches exposes the lower-level ControllerManagedBy Watches functions through the builder. Consider using Owns or For instead of Watches directly.
+1. `For`: only one resource can be configured. Same as 
+    ```go
+    Watches(&source.Kind{Type: apiType}, &handler.EnqueueRequestForObject{})
+    ```
+3. `Owns`: Owns defines types of Objects being *generated* by the ControllerManagedBy, and configures the ControllerManagedBy to respond to create / delete / update events by **reconciling the owner object**. Same as the following code:
+    ```go
+    Watches(object, handler.EnqueueRequestForOwner([...], ownerType, OnlyControllerOwner()))
+    ```
+    [EnqueueRequestForOwner](https://github.com/coderanger/controller-runtime/blob/1da1a4b89b30a7019d694b9485b594862867fe10/pkg/handler/enqueue_owner.go#L46): Extract owner object from ownerReferences and enqueue it to the queue.
+3. `Watches`: Watches exposes the lower-level ControllerManagedBy Watches functions through the builder. Consider using Owns or For instead of Watches directly.
 
 ## Convert `client.Object` to `Source`
 
