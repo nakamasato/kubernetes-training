@@ -21,6 +21,7 @@ theme:
 repo_url: https://github.com/nakamasato/kubernetes-training
 markdown_extensions:
   - pymdownx.superfences
+  - pymdownx.magiclink
 extra:
   analytics:
     provider: google
