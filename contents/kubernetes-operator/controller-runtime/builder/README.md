@@ -59,7 +59,7 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
 
 ## `For`, `Owns`, and `Watches`: Define what object to watch
 
-1. `For`: only one resource can be configured. Same as 
+1. `For`: only one resource can be configured. Same as
     ```go
     Watches(&source.Kind{Type: apiType}, &handler.EnqueueRequestForObject{})
     ```
