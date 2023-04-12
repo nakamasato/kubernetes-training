@@ -165,3 +165,7 @@ c := &client{
     mapper: options.Mapper,
 }
 ```
+
+## Tips
+
+1. https://zoetrope.github.io/kubebuilder-training/controller-runtime/client.html: When to use `Patch`? `MergeFrom` vs. `StrategicMergeFrom`
