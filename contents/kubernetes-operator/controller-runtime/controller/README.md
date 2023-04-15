@@ -116,7 +116,5 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 
 ## `Start` func
 
-1. calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L234-L235).
-
-Where is `Start` called?
-1. Called from [manager](../manager/).
+1. Calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L234-L235).
+1. Where is `Start` called? -> Called from [manager](../manager/).

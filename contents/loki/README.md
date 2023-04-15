@@ -81,7 +81,7 @@ https://grafana.com/docs/loki/latest/getting-started/grafana/
 
 By default, data sources for `Loki` and `Prometheus` are set in http://localhost:3000/datasources.
 
-<details>
+<details><summary>details</summary>
 
 ![](docs/grafana-data-sources.png)
 
@@ -112,13 +112,11 @@ By default, data sources for `Loki` and `Prometheus` are set in http://localhost
 
 ### Explore
 
-<details>
-
 ![](docs/grafana-explore.png)
-![](docs/grafana-loki.png)
-![](docs/grafana-prometheus.png)
 
-</details>
+![](docs/grafana-loki.png)
+
+![](docs/grafana-prometheus.png)
 
 ## Log CLI
 

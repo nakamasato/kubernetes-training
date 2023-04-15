@@ -22,6 +22,8 @@ repo_url: https://github.com/nakamasato/kubernetes-training
 markdown_extensions:
   - pymdownx.superfences
   - pymdownx.magiclink
+  - pymdownx.tasklist:
+      custom_checkbox: true
 extra:
   analytics:
     provider: google
