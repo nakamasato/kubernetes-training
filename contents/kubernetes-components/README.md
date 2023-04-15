@@ -91,10 +91,13 @@ make
         ```
         docker exec kind-control-plane curl -s -X PUT -d '5' https://localhost:10250/debug/flags/v --header "Authorization: Bearer $TOKEN" -k
         ```
+
         You might see the following warning:
+
         ```
         Warning: resource configmaps/kube-proxy is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
         ```
+
     1. kube-proxy
 
         set `enableProfiling` to true
@@ -118,6 +121,7 @@ make
         ```
         curl -s -XPUT -d '5' http://localhost:10249/debug/flags/v
         ```
+
     1. kube-controller-manager (enabled by [kubernetes/kubernetes#104571](https://github.com/kubernetes/kubernetes/pull/104571)) 10257
 
         ```

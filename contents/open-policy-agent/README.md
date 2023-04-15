@@ -205,7 +205,7 @@ kubectl delete -f gatekeeper/require-labels
 
 1. No pods are created because any pod is denied. Get the denided object -> [gatekeeper/k8sdenyall/object.json]()
 
-    <details>
+    <details><summary>details</summary>
 
     ```
     kubectl get deploy busybox -o yaml | yq r - 'status.conditions[*].message'
@@ -259,6 +259,7 @@ cd conftest
 #### Deployment
 
 Rules:
+
 - [x] Containers must not run as root
 - [x] Containers must provide app label for pod selector
 - [x] Deployment must have nodeSelector
@@ -286,9 +287,9 @@ Rules:
 
 1. Test the policy
 
-  ```
-  conftest verify
-  ```
+    ```
+    conftest verify
+    ```
 
 - https://hack.nikkei.com/blog/advent20201224/
 - https://qiita.com/tkusumi/items/3f7157d180a932b277d4
@@ -297,21 +298,20 @@ Rules:
 
 1. Run on GKE
 
-https://github.com/open-policy-agent/gatekeeper#running-on-private-gke-cluster-nodes
+    https://github.com/open-policy-agent/gatekeeper#running-on-private-gke-cluster-nodes
 
 # Study steps
 
 - [[Youtube] Deep Dive: Open Policy Agent - Torin Sandall & Tim Hinrichs, Styra (2019/05/23)](https://www.youtube.com/watch?v=n94_FNhuzy4&feature=youtu.be)
 - [[Kubernetes Blog] A Guide to Kubernetes Admission Controllers (2020/03/21)](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/)
-  - `ValidatingAdmissionWebhooks`
-  - `MutatingAdmissionWebhooks`
+    - `ValidatingAdmissionWebhooks`
+    - `MutatingAdmissionWebhooks`
 
-  > We will examine these two admission controllers closely, as they do not implement any policy decision logic themselves. Instead, the respective action is obtained from a REST endpoint (a webhook) of a service running inside the cluster. This approach decouples the admission controller logic from the Kubernetes API server, thus allowing users to implement custom logic to be executed whenever resources are created, updated, or deleted in a Kubernetes cluster.
+    > We will examine these two admission controllers closely, as they do not implement any policy decision logic themselves. Instead, the respective action is obtained from a REST endpoint (a webhook) of a service running inside the cluster. This approach decouples the admission controller logic from the Kubernetes API server, thus allowing users to implement custom logic to be executed whenever resources are created, updated, or deleted in a Kubernetes cluster.
 
 - [EKS Enables Support for Kubernetes Dynamic Admission Controllers (2018/10/12)](https://aws.amazon.com/about-aws/whats-new/2018/10/amazon-eks-enables-support-for-kubernetes-dynamic-admission-cont/)
 
-  - 1.17 ([Platform versions](https://docs.aws.amazon.com/eks/latest/userguide/platform-versions.html)): `NamespaceLifecycle, LimitRanger, ServiceAccount, DefaultStorageClass, ResourceQuota, DefaultTolerationSeconds, NodeRestriction, MutatingAdmissionWebhook, ValidatingAdmissionWebhook, PodSecurityPolicy, TaintNodesByCondition, Priority, StorageObjectInUseProtection, PersistentVolumeClaimResize`
-
+    - 1.17 ([Platform versions](https://docs.aws.amazon.com/eks/latest/userguide/platform-versions.html)): `NamespaceLifecycle, LimitRanger, ServiceAccount, DefaultStorageClass, ResourceQuota, DefaultTolerationSeconds, NodeRestriction, MutatingAdmissionWebhook, ValidatingAdmissionWebhook, PodSecurityPolicy, TaintNodesByCondition, Priority, StorageObjectInUseProtection, PersistentVolumeClaimResize`
 
 - [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
 - [Integrating Open Policy Agent (OPA) With Kubernetes](https://www.magalix.com/blog/integrating-open-policy-agent-opa-with-kubernetes-a-deep-dive-tutorial)

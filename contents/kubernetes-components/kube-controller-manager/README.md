@@ -7,6 +7,7 @@
 **kube-controller-manager** runs built-in controllers.
 
 Entrypoint:
+
 1. [controller-manager.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/controller-manager.go) starts kube-controller-manager with only three lines.
 	```go
 	func main() {
@@ -50,6 +51,7 @@ Entrypoint:
 1. The core function [Run](https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/app/controllermanager.go#L180) calls [StartControllers](https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/app/controllermanager.go#L567) to start the controllers specified by `controllers` (`map[string]InitFunc{}` defined in the previous step)
 
 Each Controller:
+
 1.  `InitFunc` of each controller is defined in [kube-controller-manager/app/core.go](https://github.com/kubernetes/kubernetes/blob/master/cmd/kube-controller-manager/app/core.go). e.g. [startGarbageCollectorController](https://github.com/kubernetes/kubernetes/blob/master/cmd/kube-controller-manager/app/core.go#L508)
 	```go
 	garbageCollector, err := garbagecollector.NewGarbageCollector(
@@ -85,6 +87,7 @@ Each Controller:
 ![](controller.drawio.svg)
 
 Components:
+
 - **Reflector**:
 - **Delta FIFO queue**:
 - [Informer](https://pkg.go.dev/k8s.io/client-go/informers): Monitor Object's event and EventHandler is called for each event (usually add item to WorkQueue in event handlers in a controller).
@@ -167,6 +170,7 @@ type GarbageCollector struct {
 </details>
 
 1. [RestMapper](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/meta#RESTMapper): map resources to kind, and map kind and version to interfaces
+
 ##### 3.2.1.2. [GraphBuilder](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go)
 
 builds a graph caching the dependencies among objects.
@@ -255,12 +259,12 @@ type GraphBuilder struct {
 
 #### 3.2.2. Steps
 
-
 [NewGarbageCollector](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L87):
 
 1. **GarbageCollector** and **GraphBuilder** are initialized
 
 [GarbageCollector.Run()](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L143):
+
 1. Start **gc.dependencyGraphBuilder.Run()** (wait until cache is synced)
 	```go
 	go gc.dependencyGraphBuilder.Run(ctx.Done())
@@ -356,6 +360,7 @@ type GraphBuilder struct {
 
 
 TestCase:
+
 1. [TestCascadingDeletion](https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/test/integration/garbagecollector/garbage_collector_test.go#L454-L538):
 	1. Pod with ownerreference to `toBeDeletedRC` replicationcontroller -> deleted
 	1. Pod with ownerrefrerece to `remainingRC` and `toBeDeletedRC` replicatioincontroller -> remain
@@ -387,6 +392,7 @@ TestCase:
 	</details>
 
 #### 3.2.3. Ref
+
 1. [gabagecollector.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go)
 1. [graph_builder.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L132)
 1. [test/integration/gabagecollector/garbage_collector_test.go](https://github.com/kubernetes/kubernetes/blob/v1.26.0/test/integration/garbagecollector/garbage_collector_test.go)

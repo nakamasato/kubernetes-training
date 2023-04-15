@@ -63,6 +63,7 @@ type SyncingSource interface {
     ```
 
 What's the difference between `Informer` and `Kind`?
+
 1. `Kind` gets informer from `cache.Cache`.
 1. `Informer` needs to be initialized with `cache.Informer` directly.
 1. `Kind` calls `WaitForCacheSync` after adding eventhandler by `AddEventHandler` while `Informer` doesn't.

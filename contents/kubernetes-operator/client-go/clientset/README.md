@@ -3,13 +3,6 @@
 
 ![](clientset-simple.drawio.svg)
 
-
-<details>
-
-![](clientset.drawio.svg)
-
-</details>
-
 ## Usage
 
 ```go
@@ -56,3 +49,7 @@ go run podlist.go
 [Pod Name 7]storage-provisioner
 [Pod Name 8]vpnkit-controller
 ```
+
+## Appendix
+
+![](clientset.drawio.svg)
