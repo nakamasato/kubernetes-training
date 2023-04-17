@@ -9,6 +9,8 @@
 1. [mysql-operator](../databases/mysql-operator)
 1. [terraform-k8s](../terraform-k8s)
 
+And [more](list/README.md)
+
 ## 2. Understand what is Kubernetes operator.
 
 ![](diagram.drawio.svg)
