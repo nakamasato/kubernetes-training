@@ -2,9 +2,11 @@
 
 ## types
 
-### 1. Manager Interface
+### 1. [Manager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L52) Interface
 
 ```go
+// Manager initializes shared dependencies such as Caches and Clients, and provides them to Runnables.
+// A Manager is required to create Controllers.
 type Manager interface {
 	cluster.Cluster
 	Add(Runnable) error
