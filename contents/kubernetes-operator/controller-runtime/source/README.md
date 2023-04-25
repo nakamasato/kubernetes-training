@@ -239,7 +239,7 @@ You can run:
 
     </details>
 
-1. Run your controller or create custom resource manually. You'll see the events related to the CRD.
+1. Create custom resource manually. You'll see the events related to the CRD.
     ```
     kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/samples/mysql_v1alpha1_mysqluser.yaml
     ```
