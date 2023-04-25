@@ -72,11 +72,28 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 
 1. `Manager` and `Reconciler` need to be prepared.
 1. Call `NewControllerManagedBy(mgr)` and `Complete(r)` with the manager and reconciler.
-1. `Builer.build` calls `bldr.doController` to create a controller with `Controller.New`.
-	1. `Manager.SetFields` is passed to `ctrl.SetFields`
-	1. `workqueue.NewNamedRateLimitingQueue` is set to `ctrl.MakeQueue`
-	1. `Reconciler` is set to `ctrl.Do`
-	1. The created controller is set to `bldr.ctrl`
+1. `Builer.build` calls `bldr.doController` to create a controller with [Controller.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L88).
+	1. Inject dependencies to reconciler with `Manager.SetFields(reconciler)` ([ref](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L138))
+	1. Inititialize Controller
+		```go
+		&controller.Controller{
+			Do: options.Reconciler,
+			MakeQueue: func() workqueue.RateLimitingInterface {
+				return workqueue.NewNamedRateLimitingQueue(options.RateLimiter, name)
+			},
+			MaxConcurrentReconciles: options.MaxConcurrentReconciles,
+			CacheSyncTimeout:        options.CacheSyncTimeout,
+			SetFields:               mgr.SetFields,
+			Name:                    name,
+			LogConstructor:          options.LogConstructor,
+			RecoverPanic:            options.RecoverPanic,
+		}
+		```
+		1. `Manager.SetFields` is passed to `ctrl.SetFields`
+		1. `workqueue.NewNamedRateLimitingQueue` is set to `ctrl.MakeQueue`
+		1. `Reconciler` is set to `ctrl.Do`
+	1. Register the controller to manager with `mgr.Add(controller)` ([ref](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L95))
+	1. The created controller is set to `bldr.ctrl` ([ref](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L353))
 1. `Builder.build` also calls `bldr.doWatch`
 	1. `Kind` is created for `For` and `Owns`.
 	1. `EventHandler` is created.
@@ -116,7 +133,5 @@ func New(name string, mgr manager.Manager, options Options) (Controller, error) 
 
 ## `Start` func
 
-1. calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L234-L235).
-
-Where is `Start` called?
-1. Called from [manager](../manager/).
+1. Calls `processNextWorkItem` until it returns `false` [here](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L234-L235).
+1. Where is `Start` called? -> Called from [manager](../manager/).
