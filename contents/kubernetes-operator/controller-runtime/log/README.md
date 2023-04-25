@@ -1,4 +1,4 @@
-# [log (controller-runtime)](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/log)
+# [log](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/log)
 
 Package log contains utilities for fetching a new logger when one is not already available.
 

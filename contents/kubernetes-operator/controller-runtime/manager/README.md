@@ -1,5 +1,7 @@
 # [Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager)
 
+![](diagram.drawio.svg)
+
 ## types
 
 ### 1. [Manager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L52) Interface
@@ -77,6 +79,13 @@ type runnableGroup struct {
 }
 ```
 
+types of runnables:
+
+1. `Webhooks`
+1. `Caches`
+1. `LeaderElection`
+1. `Others`
+
 ## How `Manager` is initialized by [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L336)
 
 ### 1. Set default values for Options fields wiht [setOptionsDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L571)
@@ -140,6 +149,7 @@ options = setOptionsDefaults(options)
 		recorderProvider:              recorderProvider,
 	}
     ```
+
 ### 3. Bind a Controller to the Manager
 
 Bind a Controller to the Manager using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L66)).
@@ -156,23 +166,38 @@ Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtim
 
 You can also check [Builder](../builder) and [Internal process of adding a Controller to a Manager](#internal-process-of-adding-a-controller-to-a-manager)
 
+
 ### 4. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
+
 ```go
-err := cm.runnables.Webhooks.Start(cm.internalCtx);
+// (1) Add the cluster runnable.
+if err := cm.add(cm.cluster); err != nil {
 ...
 
-err := cm.runnables.Caches.Start(cm.internalCtx);
+// (2) First start any webhook servers
+if err := cm.runnables.Webhooks.Start(cm.internalCtx); err != nil {
 ...
 
-err := cm.runnables.Others.Start(cm.internalCtx);
+// (3) Start and wait for caches.
+if err := cm.runnables.Caches.Start(cm.internalCtx); err != nil {
+...
+
+// (4) Start the non-leaderelection Runnables after the cache has synced.
+if err := cm.runnables.Others.Start(cm.internalCtx); err != nil {
+
+// (5) Start the leader election and all required runnables.
+if err := cm.startLeaderElection(ctx); err != nil {
+...
+if err := cm.startLeaderElectionRunnables(); err != nil {
 ...
 ```
-1. Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
+
+Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
 
 ## Internal process of adding a `Controller` to a `Manager`
 
-1. `Manager.Add(Runnable)`: gets lock and calls `add(runnable)`.
-    1. `cm.SetFields(r)`
+1. `controllerManager.Add(Runnable)`: gets lock and calls `add(runnable)`.
+    1. [cm.SetFields(r)](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L202)
         ```go
         if err := cm.cluster.SetFields(i); err != nil {
             return err
@@ -187,7 +212,7 @@ err := cm.runnables.Others.Start(cm.internalCtx);
             return err
         }
         ```
-        1. [cluster.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/internal.go#L67) set dependencies on the object that implements the [inject](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.3/pkg/runtime/inject) interface. Specifically set the following cluster's field to the runnable (controller)
+        1. [cluster.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/internal.go#L67) set dependencies on the object that implements the [inject](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/runtime/inject) interface. Specifically set the following cluster's field to the runnable (controller)
             1. `config` (`inject.ConfigInto(c.config, i)`)
             1. `client` (`inject.ClientInto(c.client, i)`)
             1. `apiReader` (`inject.APIReaderInto(c.apiReader, i)`)
@@ -196,7 +221,7 @@ err := cm.runnables.Others.Start(cm.internalCtx);
             1. `mapper` (`inject.MapperInto(c.mapper, i)`)
         1. `cm.SetFields` is set to `controller.SetFields` via `InjectorInto`. (details: [inject](../inject/)) <- `controller.SetFields` will be used for source, event handler and predicates in [Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L140).
         1. `StopChannelInto` and `Logger`.
-    1. `cm.runnables.Add(r)`
+    1. [cm.runnables.Add(r)](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/runnable_group.go#L53)
         ```go
         type runnables struct {
             Webhooks       *runnableGroup
@@ -209,13 +234,13 @@ err := cm.runnables.Others.Start(cm.internalCtx);
         ```go
         func (r *runnables) Add(fn Runnable) error {
             switch runnable := fn.(type) {
-            case hasCache:
+            case hasCache: // check if `GetCache() exists
                 return r.Caches.Add(fn, func(ctx context.Context) bool {
                     return runnable.GetCache().WaitForCacheSync(ctx)
                 })
-            case *webhook.Server:
+            case *webhook.Server: // check if webhook.Server type
                 return r.Webhooks.Add(fn, nil)
-            case LeaderElectionRunnable:
+            case LeaderElectionRunnable: // check if `NeedLeaderElection() exists
                 if !runnable.NeedLeaderElection() {
                     return r.Others.Add(fn, nil)
                 }
