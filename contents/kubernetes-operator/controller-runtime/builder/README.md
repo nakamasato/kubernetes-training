@@ -1,5 +1,20 @@
 # builder
 
+## Overview
+
+![](overview.drawio.svg)
+
+The main role of Builder is:
+
+1. Create a Controller from the given Reconciler
+1. Configure target resources for the controller
+1. Register the controller to the Manager
+
+About how the registered controllers are triggered, you can study in [Manager](../manager/). The controller registered to the manager by Builder will be in **runnables.Others** in Manager object, which will be started by `Manager.Start()`.
+
+![](../manager/diagram.drawio.svg)
+
+
 ## Types
 
 ### [Builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L54)
@@ -17,6 +32,44 @@ type Builder struct {
 	name             string
 }
 ```
+
+## `ControllerManagedBy`: Initialize Builder with a Manager
+
+Initialize a Builder with the specified manager.
+
+```go
+func ControllerManagedBy(m manager.Manager) *Builder {
+ return &Builder{mgr: m}
+}
+```
+
+## [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L82), [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L106), and [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L127): Define what object to watch
+
+![](for-owns-watches.drawio.svg)
+
+1. `For(object client.Object, opts ...ForOption) *Builder`: only one resource can be configured. Same as
+    ```go
+    Watches(&source.Kind{Type: apiType}, &handler.EnqueueRequestForObject{})
+    ```
+3. `Owns(object client.Object, opts ...OwnsOption) *Builder`: Owns defines types of Objects being *generated* by the ControllerManagedBy, and configures the ControllerManagedBy to respond to create / delete / update events by **reconciling the owner object**. Same as the following code:
+    ```go
+    Watches(object, handler.EnqueueRequestForOwner([...], ownerType, OnlyControllerOwner()))
+    ```
+    [EnqueueRequestForOwner](https://github.com/coderanger/controller-runtime/blob/1da1a4b89b30a7019d694b9485b594862867fe10/pkg/handler/enqueue_owner.go#L46): Extract owner object from ownerReferences and enqueue it to the queue.
+3. `Watches(src source.Source, eventhandler handler.EventHandler, opts ...WatchesOption) *Builder`: Watches exposes the lower-level ControllerManagedBy Watches functions through the builder. Consider using Owns or For instead of Watches directly.
+
+
+Example:
+
+```go
+err = builder.
+  ControllerManagedBy(mgr).  // Create the ControllerManagedBy
+  For(&alpha1v1.Foo{}). // Foo is the Application API
+  Owns(&corev1.Pod{}).       // Foo owns Pods created by it
+  Complete(&FooReconciler{})
+```
+
+![](for-owns-example.drawio.svg)
 
 ## `Complete`: Receive reconciler and build a controller
 
@@ -56,19 +109,6 @@ func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, erro
     1. the controller is added to `manager.runnables.Others` by `Manager.Add(Runnable)` in `newController`. ([controller](../controller/README.md#how-controller-is-used))
 1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L196) to start watching the target resources configured by `For`, `Owns`, and `Watches`.
     1. The actual implementation of `Watch` function is in the [controller](../controller)
-
-## `For`, `Owns`, and `Watches`: Define what object to watch
-
-1. `For`: only one resource can be configured. Same as
-    ```go
-    Watches(&source.Kind{Type: apiType}, &handler.EnqueueRequestForObject{})
-    ```
-3. `Owns`: Owns defines types of Objects being *generated* by the ControllerManagedBy, and configures the ControllerManagedBy to respond to create / delete / update events by **reconciling the owner object**. Same as the following code:
-    ```go
-    Watches(object, handler.EnqueueRequestForOwner([...], ownerType, OnlyControllerOwner()))
-    ```
-    [EnqueueRequestForOwner](https://github.com/coderanger/controller-runtime/blob/1da1a4b89b30a7019d694b9485b594862867fe10/pkg/handler/enqueue_owner.go#L46): Extract owner object from ownerReferences and enqueue it to the queue.
-3. `Watches`: Watches exposes the lower-level ControllerManagedBy Watches functions through the builder. Consider using Owns or For instead of Watches directly.
 
 ## Convert `client.Object` to `Source`
 

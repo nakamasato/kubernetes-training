@@ -2,6 +2,12 @@
 
 ![](diagram.drawio.svg)
 
+The main role of Manager is
+1. Manage the lifecycle of a set of controllers (registration, start and stop)
+1. Provide the shared resources (Kubernetes API server client, cache, etc.)
+
+The registration of a controller is done by [Builder](../builder/).
+
 ## types
 
 ### 1. [Manager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L52) Interface
