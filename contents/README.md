@@ -44,8 +44,14 @@
     1. [Knative](knative)
     1. [Skaffold (todo)](https://skaffold.dev/)
 1. Networking
-    1. [traefik](traefik)
-    1. [ingress-nginx-controller](ingress-nginx-controller)
+    1. [Kubernetes Gateway API](kubernetes-gateway-api)
+        1.  Envoy Gateway
+        2.  Istio
+        3.  Kong
+        4.  NGINX Kubernetes Gateway
+        1. [traefik](traefik)
+    1. Ingress
+        1. [ingress-nginx-controller](ingress-nginx-controller)
 1. Middleware (Operator)
     1. [strimzi](strimzi)
     1. [eck](eck)
