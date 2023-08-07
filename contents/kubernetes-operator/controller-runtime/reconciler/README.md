@@ -1,6 +1,10 @@
 # [Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)
 
+![](diagram.drawio.svg)
+
 Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)). A Reconciler implements a function which takes a reconcile Request containing the name and namespace of the object to reconcile, reconciles the object, and returns a Response or an error indicating whether to requeue for a second round of processing.
+
+As you can see in the diagram above, a Reconciler is part of a Controller. A Controller has a function to watch changes of the target resources, put change events into the queue, and call **Reconcile** function with an queue item, and requeue the item if necessary.
 
 
 ## Types
