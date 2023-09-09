@@ -54,7 +54,7 @@ func main() {
 
 	// Set a mapper
 	mapper, err := func(c *rest.Config) (meta.RESTMapper, error) {
-		return apiutil.NewDynamicRESTMapper(c)
+		return apiutil.NewDynamicRESTMapper(c, nil)
 	}(cfg)
 	if err != nil {
 		log.Error(err, "")
