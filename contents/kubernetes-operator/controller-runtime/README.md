@@ -65,7 +65,7 @@ List of components:
 1 [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
 
 1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
-    1. https://github.com/kubernetes-sigs/controller-runtime/pull/2120
+    1. [⚠️ Refactor source/handler/predicate packages to remove dep injection #2120](https://github.com/kubernetes-sigs/controller-runtime/pull/2120)
 
         ```diff
         -       kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
@@ -77,7 +77,7 @@ List of components:
         ```
 
 1. [v0.16.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.16.0)
-    1. https://github.com/kubernetes-sigs/controller-runtime/pull/2407
+    1. [⚠ Introduce Metrics Options struct & secure metrics serving #2407](https://github.com/kubernetes-sigs/controller-runtime/pull/2407)
 
         ```diff
         import (
@@ -87,4 +87,4 @@ List of components:
         + Metrics: metricsserver.Options{BindAddress: metricsAddr},
         ```
 
-    1. https://github.com/kubernetes-sigs/controller-runtime/pull/2422
+    1. [⚠ Remove deprecated manager, webhook and cluster options #2422](https://github.com/kubernetes-sigs/controller-runtime/pull/2422)
