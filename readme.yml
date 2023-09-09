@@ -64,7 +64,7 @@ versions:
     repoUrl: https://github.com/open-policy-agent/conftest
     category: CI/CD
   - name: Istio
-    version: 1.12.2
+    version: 1.18.2
     repoUrl: https://github.com/istio/istio
     category: Service Proxy, Discovery, and, Mesh
   - name: Postgres Operator
