@@ -56,8 +56,35 @@ List of components:
 1. [handler](handler)
 
 ## Examples
+
 1. [example-controller](example-controller)
 1. envtest
 
 ## Memo
-- [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
+
+1 [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
+
+1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
+    1. [⚠️ Refactor source/handler/predicate packages to remove dep injection #2120](https://github.com/kubernetes-sigs/controller-runtime/pull/2120)
+
+        ```diff
+        -       kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
+        -       kindWithCacheMysql := source.NewKindWithCache(mysql, cache)
+        -       kindWithCachesecret := source.NewKindWithCache(secret, cache)
+        +       kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
+        +       kindWithCacheMysql := source.Kind(cache, mysql)
+        +       kindWithCachesecret := source.Kind(cache, secret)
+        ```
+
+1. [v0.16.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.16.0)
+    1. [⚠ Introduce Metrics Options struct & secure metrics serving #2407](https://github.com/kubernetes-sigs/controller-runtime/pull/2407)
+
+        ```diff
+        import (
+        + metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+        )
+        - MetricsBindAddress: metricsAddr
+        + Metrics: metricsserver.Options{BindAddress: metricsAddr},
+        ```
+
+    1. [⚠ Remove deprecated manager, webhook and cluster options #2422](https://github.com/kubernetes-sigs/controller-runtime/pull/2422)
