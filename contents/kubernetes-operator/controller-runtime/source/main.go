@@ -82,8 +82,8 @@ func main() {
 	}()
 	log.Info("cache is started")
 
-	kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
-	kindWithCachePod := source.NewKindWithCache(pod, cache)
+	kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
+	kindWithCachePod := source.Kind(cache, pod)
 
 	// Prepare queue and eventHandler
 	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
