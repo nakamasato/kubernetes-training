@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/nakamasato/mysql-operator v0.3.0
-	go.uber.org/zap v1.25.0
+	go.uber.org/zap v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.26.3
