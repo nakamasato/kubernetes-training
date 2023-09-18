@@ -7,7 +7,7 @@ on:
     branches:
       - main
   pull_request:
-    
+
 
 env:
   BRANCH_NAME: update-date-in-readme
@@ -26,12 +26,15 @@ jobs:
       - name: update versions in readme.yml
         run: |
           argocd_version=$(kubectl kustomize contents/argocd/setup |  yq 'select(.kind == "Deployment").spec.template.spec.containers[] | select(.name == "argocd-server").image' | sed 's/.*:\(.*\)/\1/')
+          echo $argocd_version
           yq -i "(.versions[] | select(.name == \"ArgoCD\").version) = \"$argocd_version\"" readme.yml
 
           strimzi_version=$(kubectl kustomize contents/strimzi/cluster-operator/overlays/kafka/ | yq 'select(.kind == "Deployment").spec.template.spec.containers[] | select(.name == "strimzi-cluster-operator").image' | sed 's/.*:\(.*\)/\1/')
+          echo $strimzi_version
           yq -i "(.versions[] | select(.name == \"Strimzi\").version) = \"$strimzi_version\"" readme.yml
 
           prometheus_operator_version=$(kubectl kustomize contents/prometheus-operator/  | yq 'select(.kind == "Deployment").spec.template.spec.containers[] | select(.name == "prometheus-operator").image' | sed 's/.*:\(.*\)/\1/')
+          echo $prometheus_operator_version
           yq -i "(.versions[] | select(.name == \"Prometheus-Operator\").version) = \"$prometheus_operator_version\"" readme.yml
 
       - name: set up
