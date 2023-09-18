@@ -1,5 +1,5 @@
 namespace: kafka
-bases:
+resources:
   - ../../base/strimzi-0.24.0
 patches: # to update namespace
   - cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
