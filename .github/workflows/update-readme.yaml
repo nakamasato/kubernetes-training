@@ -23,7 +23,7 @@ jobs:
 
       - name: update versions in readme.yml
         run: |
-          argocd_version=$(yq '.bases[0]' contents/argocd/setup/kustomization.yaml | sed 's/.*?ref=\(.*\)/\1/')
+          argocd_version=$(kubectl kustomize contents/argocd/setup |  yq 'select(.kind == "Deployment").spec.template.spec.containers[] | select(.name == "argocd-server").image' | sed 's/.*:\(.*\)/\1/')
           yq -i "(.versions[] | select(.name == \"ArgoCD\").version) = \"$argocd_version\"" readme.yml
 
           strimzi_version=$(kubectl kustomize contents/strimzi/cluster-operator/overlays/kafka/ | yq 'select(.kind == "Deployment").spec.template.spec.containers[] | select(.name == "strimzi-cluster-operator").image' | sed 's/.*:\(.*\)/\1/')
