@@ -21,7 +21,7 @@
 - Kind: [v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)
 - Ingress Nginx Controller: [controller-v1.7.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.7.0)
 - Conftest: [v0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0)
-- Istio: [1.12.2](https://github.com/istio/istio/releases/tag/1.12.2)
+- Istio: [1.18.2](https://github.com/istio/istio/releases/tag/1.18.2)
 - Postgres Operator: [v1.7.1](https://github.com/zalando/postgres-operator/releases/tag/v1.7.1)
 - KNative: [](https://github.com/knative/serving)
 - Skaffold: [v1.39.1](https://github.com/GoogleContainerTools/skaffold/releases/tag/v1.39.1)
