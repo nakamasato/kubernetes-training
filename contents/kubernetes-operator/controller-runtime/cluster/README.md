@@ -132,7 +132,7 @@ type cluster struct {
 |name|value|where to use|
 |---|---|---|
 |Scheme|scheme.Scheme||
-|MapperProvider|`func(c *rest.Config) (meta.RESTMapper, error) {return apiutil.NewDynamicRESTMapper(c)}`||
+|MapperProvider|`func(c *rest.Config) (meta.RESTMapper, error) {return apiutil.NewDynamicRESTMapper(c, nil)}`||
 |NewClient|DefaultNewClient|
 |NewCache|cache.New|
 |newRecorderProvider|intrec.NewProvider|
@@ -143,7 +143,7 @@ type cluster struct {
 1. MapperProvider
     ```go
     options.MapperProvider = func(c *rest.Config) (meta.RESTMapper, error) {
-		return apiutil.NewDynamicRESTMapper(c)
+		return apiutil.NewDynamicRESTMapper(c, nil)
 	}
     ```
 1. `options.NewClient = DefaultNewClient`

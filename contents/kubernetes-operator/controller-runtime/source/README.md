@@ -25,7 +25,7 @@ type SyncingSource interface {
 
 ## Implementation: [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79), [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102), [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L207-L226), [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L338-L341)
 
-1. [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79): Just a wrapper of `Kind` without `InjectCache`. NewKindWithCache creates a Source without `InjectCache`, so that it is **assured that the given cache is used and not overwritten**.
+1. ~~[kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79): Just a wrapper of `Kind` without `InjectCache`. NewKindWithCache creates a Source without `InjectCache`, so that it is **assured that the given cache is used and not overwritten**.~~ -> Already removed in [Refactor source/handler/predicate packages to remove dep injection](https://github.com/kubernetes-sigs/controller-runtime/pull/2120) (from [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0))
     ```go
     type kindWithCache struct {
     	kind Kind
@@ -170,9 +170,9 @@ if you want to check events of specific resource you can set by the following.
 		}
 	}()
     ```
-1. Create `kindWithCache` for the target resource.
+1. Create `Kind` for the target resource.
     ```go
-    kindWithCache := source.NewKindWithCache(mysqluser, cache)
+    kindWithCache := source.Kind(cache, mysqluser)
     ```
 1. Prepare `workqueue` and `eventHandler`.
     ```go
