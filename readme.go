@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/nakamasato/kubernetes-training/doc"
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 func main() {
