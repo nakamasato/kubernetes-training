@@ -54,7 +54,7 @@ func main() {
 
 	// Set a mapper
 	mapper, err := func(c *rest.Config) (meta.RESTMapper, error) {
-		return apiutil.NewDynamicRESTMapper(c)
+		return apiutil.NewDynamicRESTMapper(c, nil)
 	}(cfg)
 	if err != nil {
 		log.Error(err, "")
@@ -82,22 +82,22 @@ func main() {
 	}()
 	log.Info("cache is started")
 
-	kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
-	kindWithCachePod := source.NewKindWithCache(pod, cache)
+	kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
+	kindWithCachePod := source.Kind(cache, pod)
 
 	// Prepare queue and eventHandler
 	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
 
 	eventHandler := handler.Funcs{
-		CreateFunc: func(e event.CreateEvent, q workqueue.RateLimitingInterface) {
+		CreateFunc: func(ctx context.Context, e event.CreateEvent, q workqueue.RateLimitingInterface) {
 			log.Info("CreateFunc is called", "object", e.Object.GetName())
 			queue.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
 		},
-		UpdateFunc: func(e event.UpdateEvent, q workqueue.RateLimitingInterface) {
+		UpdateFunc: func(ctx context.Context, e event.UpdateEvent, q workqueue.RateLimitingInterface) {
 			log.Info("UpdateFunc is called", "objectNew", e.ObjectNew.GetName(), "objectOld", e.ObjectOld.GetName())
 			queue.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
 		},
-		DeleteFunc: func(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
+		DeleteFunc: func(ctx context.Context, e event.DeleteEvent, q workqueue.RateLimitingInterface) {
 			log.Info("DeleteFunc is called", "object", e.Object.GetName())
 			queue.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
 		},
