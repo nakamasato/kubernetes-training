@@ -82,8 +82,8 @@ func main() {
 	}()
 	log.Info("cache is started")
 
-	kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
-	kindWithCachePod := source.Kind(cache, pod)
+	kindMysqlUser := source.Kind(cache, mysqluser)
+	kindPod := source.Kind(cache, pod)
 
 	// Prepare queue and eventHandler
 	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
@@ -104,21 +104,21 @@ func main() {
 	}
 
 	// Start Source
-	if err := kindWithCacheMysqlUser.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+	if err := kindMysqlUser.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
-	if err := kindWithCachePod.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+	if err := kindPod.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
 
 	// Wait for cache
-	if err := kindWithCacheMysqlUser.WaitForSync(ctx); err != nil {
+	if err := kindMysqlUser.WaitForSync(ctx); err != nil {
 		log.Error(err, "")
 	}
-	if err := kindWithCachePod.WaitForSync(ctx); err != nil {
+	if err := kindPod.WaitForSync(ctx); err != nil {
 		log.Error(err, "")
 	}
-	log.Info("kindWithCache is ready")
+	log.Info("kind is ready")
 
 	for {
 		item, shutdown := queue.Get()
