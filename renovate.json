@@ -2,13 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
-  ]
+  ],
   "packageRules": [
     {
       "excludeRepositories": ["contents/helm-vs-kustomize/kustomize-example/overlays/prod/kustomization.yaml"],
       "enabled": false
     }
-  ]
+  ],
   "automerge": true,
   "automergeStrategy": "squash"
 }
