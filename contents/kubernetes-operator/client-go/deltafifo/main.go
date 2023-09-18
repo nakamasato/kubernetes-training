@@ -37,6 +37,7 @@ func main() {
 
 	// Informer handleDeltas Pop()
 	// https://github.com/kubernetes/client-go/blob/ee1a5aaf793a9ace9c433f5fb26a19058ed5f37c/tools/cache/controller.go#L182-L195
+	// cannot use process (value of type func(obj interface{}) error) as "k8s.io/client-go/tools/cache".PopProcessFunc value in argument to fifo.Pop
 	fifo.Pop(process)
 }
 
@@ -67,7 +68,8 @@ func newPodWithContainer() *corev1.Pod {
 	}
 }
 
-func process(obj interface{}) error { // type PopProcessFunc func(interface{}) error
+// https://github.com/kubernetes/client-go/blame/08f892964c345b3d94d78992b4e924cf9fa7f98a/tools/cache/fifo.go#L28
+func process(obj interface{}, isInInitialList bool) error { // type PopProcessFunc func(obj interface{}, isInInitialList bool) error
 	if deltas, ok := obj.(cache.Deltas); ok {
 		return processDeltas(deltas)
 	}

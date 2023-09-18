@@ -89,15 +89,15 @@ func main() {
 	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
 
 	eventHandler := handler.Funcs{
-		CreateFunc: func(e event.CreateEvent, q workqueue.RateLimitingInterface) {
+		CreateFunc: func(ctx context.Context, e event.CreateEvent, q workqueue.RateLimitingInterface) {
 			log.Info("CreateFunc is called", "object", e.Object.GetName())
 			queue.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
 		},
-		UpdateFunc: func(e event.UpdateEvent, q workqueue.RateLimitingInterface) {
+		UpdateFunc: func(ctx context.Context, e event.UpdateEvent, q workqueue.RateLimitingInterface) {
 			log.Info("UpdateFunc is called", "objectNew", e.ObjectNew.GetName(), "objectOld", e.ObjectOld.GetName())
 			queue.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
 		},
-		DeleteFunc: func(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
+		DeleteFunc: func(ctx context.Context, e event.DeleteEvent, q workqueue.RateLimitingInterface) {
 			log.Info("DeleteFunc is called", "object", e.Object.GetName())
 			queue.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
 		},

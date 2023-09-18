@@ -64,3 +64,11 @@ if err != nil {
 	panic(err)
 }
 ```
+
+## Changes
+
+1. [Allow passing a custom webhook server controller-runtime#2293](https://github.com/kubernetes-sigs/controller-runtime/pull/2293) `webhook.Server` `struct` was changed to `interface`.
+	```diff
+	- hookServer := &Server{Port: 8443}
+	+ hookServer := NewServer(Options{Port: 8443})
+	```
