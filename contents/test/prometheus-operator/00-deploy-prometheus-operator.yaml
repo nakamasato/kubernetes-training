@@ -2,8 +2,8 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 delete:
 commands:
-  - command: kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml --namespace=default
+  - command: kubectl delete -f ../../prometheus-operator/install
     namespaced: true
     ignoreFailure: true
-  - command: kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml --namespace=default
+  - command: kubectl create -k ../../prometheus-operator/install
     namespaced: true # deploy to default namespace
