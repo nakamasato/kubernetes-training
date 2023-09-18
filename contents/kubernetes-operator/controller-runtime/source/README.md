@@ -23,7 +23,7 @@ type SyncingSource interface {
 }
 ```
 
-## Implementation: [kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79), [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102), [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L207-L226), [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L338-L341)
+## Implementations
 
 1. ~~[kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79): Just a wrapper of `Kind` without `InjectCache`. NewKindWithCache creates a Source without `InjectCache`, so that it is **assured that the given cache is used and not overwritten**.~~ -> Already removed in [Refactor source/handler/predicate packages to remove dep injection](https://github.com/kubernetes-sigs/controller-runtime/pull/2120) (from [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0))
     ```go
@@ -32,7 +32,7 @@ type SyncingSource interface {
     }
     ```
     `Kind` has `InjectCache` while `kindWithCache` doesn't.
-1. [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102): Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
+1. ~~[Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102)~~ -> [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.16.0/pkg/internal/source/kind.go#L20-L31) (Moved to `pkg/internal/source/kind`): Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
     ```go
     type Kind struct {
         Type client.Object
@@ -41,19 +41,16 @@ type SyncingSource interface {
         startCancel func()
     }
     ```
-    1. `Kind` has `InjectCache` while `kindWithCache` doesn't.
-    1. This is used by default if you build a controller with [builder](../builder/README.md#-convert-client.Object-to-source).
+    1. ~~`Kind` has `InjectCache` while `kindWithCache` doesn't.~~
+    1. ~~This is used by default if you build a controller with [builder](../builder/README.md#-convert-client.Object-to-source).~~
         ```go
         src := &source.Kind{Type: typeForSrc}
         ```
-    1. The cache is injected in [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L130) by [inject](../inject) feature.
+    1. ~~The cache is injected in [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L130) by [inject](../inject) feature~~ -> Changed to provide cache explicitly with the initialization method [`func Kind(cache cache.Cache, object client.Object) SyncingSource`](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.16.0/pkg/source/source.go#L61).
         ```go
-        // Inject Cache into arguments
-        if err := c.SetFields(src); err != nil {
-            return err
-        }
+        source.Kind(mgr.GetCache(), &corev1.Pod{})
         ```
-1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L207-L226): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
+1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.16.0/pkg/source/source.go#L70-L86): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
 1. [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L338-L341): Informer is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
     ```go
     type Informer struct {
@@ -172,7 +169,7 @@ if you want to check events of specific resource you can set by the following.
     ```
 1. Create `Kind` for the target resource.
     ```go
-    kindWithCache := source.Kind(cache, mysqluser)
+    kind := source.Kind(cache, mysqluser)
     ```
 1. Prepare `workqueue` and `eventHandler`.
     ```go
@@ -192,9 +189,9 @@ if you want to check events of specific resource you can set by the following.
 		},
 	}
     ```
-1. Start `kindWithCache` with the prepared `eventHandler` and `queue`.
+1. Start `kind` with the prepared `eventHandler` and `queue`.
     ```go
-	if err := kindWithCache.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+	if err := kind.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
     ```
@@ -205,7 +202,7 @@ You can run:
     ```
     kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/crd/bases/mysql.nakamasato.com_mysqlusers.yaml
     ```
-1. Run the `kindWithCache`
+1. Run the `kind`
     ```
     go run main.go
     ```
