@@ -18,8 +18,19 @@ About [Prometheus](../prometheus)
 1. Install Prometheus operator in `default` namespace.
 
     ```
+    kubectl apply -k install
+    ```
+
+
+    <details>
+
+    If you want to install the latest version
+
+    ```
     kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
     ```
+
+    </details>
 
     <details><summary>This command creates the following resources:</summary>
 
@@ -63,7 +74,7 @@ kubectl apply -f example-app-with-service-monitor
 kubectl port-forward -n monitoring svc/prometheus-operated 9090:9090
 ```
 
-Open http://localhost:9090/targets:
+Open http://localhost:9090/targets
 
 ![](docs/service-monitor-target.png)
 
@@ -277,7 +288,7 @@ metric_relabel_configs: []
 kubectl delete -f example-app-with-pod-monitor
 kubectl delete -f example-app-with-service-monitor
 kubectl delete -k .
-kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+kubectl delete -k install
 kubectl delete ns monitoring
 ```
 ## Important Configurations
