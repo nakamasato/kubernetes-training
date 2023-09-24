@@ -12,7 +12,7 @@ theme:
         icon: material/toggle-switch
         name: Switch to light mode
       primary: blue grey
-  features:
+  features: # https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation
     - header.autohide
     - navigation.indexes
     - navigation.instant # clicks on all internal links will be intercepted and dispatched via XHR without fully reloading the page.
