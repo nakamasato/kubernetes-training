@@ -17,10 +17,128 @@ Istio uses [Envoy](https://www.envoyproxy.io/), *AN OPEN SOURCE EDGE AND SERVICE
 
 CRDs and their roles
 
-1. `DestinationRule`
-1. `Gateway` (Istio)
-1. `Gateway` (Networking)
-1. `VirtualService`
+1. [VirtualService](https://istio.io/latest/docs/concepts/traffic-management/#virtual-services): along with destination rules, the key building blocks of Istio’s traffic routing functionality (e.g. routing to a specific version based on the request header, A/B testing, Canary release). `hosts`, `http`([match](https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPMatchRequest) and `route`)
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: bookinfo
+    spec:
+      hosts:
+        - bookinfo.com # can be ip address, DNS, kubernetes service short name
+      http:
+      - match:
+        - uri:
+            prefix: /reviews
+        route:
+        - destination:
+            host: reviews
+      - match:
+        - uri:
+            prefix: /ratings
+        route:
+        - destination:
+            host: ratings
+    ```
+
+    </details>
+
+    <details><summary>example with weight (A/B testing and canary rollouts)</summary>
+
+    ```yaml
+    spec:
+      hosts:
+      - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 75
+        - destination:
+            host: reviews
+            subset: v2
+          weight: 25
+    ```
+
+    </details>
+
+1. [DestinationRule](https://istio.io/latest/docs/concepts/traffic-management/#destination-rules): use destination rules to configure what happens to traffic for that destination. Destination rules are applied **after** virtual service routing rules are evaluated. specify named service **`subsets`** (Ref [Destination Rule](https://istio.io/latest/docs/reference/config/networking/destination-rule/))
+
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: my-destination-rule
+    spec:
+      host: my-svc
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v1
+      - name: v2
+        labels:
+          version: v2
+        trafficPolicy:
+          loadBalancer:
+            simple: ROUND_ROBIN
+      - name: v3
+        labels:
+          version: v3
+    ```
+
+    </details>
+
+1. [Gateway](https://istio.io/latest/docs/concepts/traffic-management/#gateways) (Istio): manage inbound and outbound traffic for your mesh. Gateway configurations are applied to standalone Envoy proxies that are running at the edge of the mesh, rather than sidecar Envoy proxies running alongside your service workloads. Istio provides some preconfigured gateway proxy deployments (`istio-ingressgateway` and `istio-egressgateway`). **You also need to bind the gateway to a virtual service.**
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: ext-host-gwy
+    spec:
+      selector:
+        app: my-gateway-controller
+      servers:
+      - port:
+          number: 443
+          name: https
+          protocol: HTTPS
+        hosts:
+        - ext-host.example.com
+        tls:
+          mode: SIMPLE
+          credentialName: ext-host-cert
+    ```
+
+    specify routing
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: virtual-svc
+    spec:
+      hosts:
+      - ext-host.example.com
+      gateways:
+      - ext-host-gwy
+    ```
+
+    </details>
+1 [ServiceEntry](https://istio.io/latest/docs/concepts/traffic-management/#service-entries): Configuring service entries allows you to **manage traffic for services running outside of the mesh.** (ref: [Service Entry](https://istio.io/latest/docs/reference/config/networking/service-entry/))
+1. [Sidecar](https://istio.io/latest/docs/concepts/traffic-management/#sidecars)
+1. `Gateway` (Kubernetes Gateway API): To overcome Ingress's shortcomings with a standard Kubernetes API (beta). You can consider migration of ingress traffic from Kubernetes Ignress or Gateway/VirtualService to the new Gateway API. (e.g. **Istio Implementation of the Gateway API**) Ref: [Getting started with the Kubernetes Gateway API](https://istio.io/latest/blog/2022/getting-started-gtwapi/)
+    Configure with **Gateway** in `gateway.networking.k8s.io/v1beta1` and `HTTPRoute`
+
 
 ## [Getting Started](https://istio.io/latest/docs/setup/getting-started/)
 
