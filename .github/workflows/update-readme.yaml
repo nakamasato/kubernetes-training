@@ -29,7 +29,7 @@ jobs:
       - name: set up
         uses: actions/setup-go@v4
         with:
-          go-version: ^1.18
+          go-version-file: go.mod
 
       - name: update readme
         run: go run readme.go
