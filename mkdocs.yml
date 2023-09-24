@@ -12,12 +12,68 @@ theme:
         icon: material/toggle-switch
         name: Switch to light mode
       primary: blue grey
-  features:
+  features: # https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation
     - header.autohide
     - navigation.indexes
     - navigation.instant # clicks on all internal links will be intercepted and dispatched via XHR without fully reloading the page.
+    - navigation.sections
+    # - navigation.tabs
+    # - toc.integrate
+    # - navigation.expand
     - toc.follow # the sidebar is automatically scrolled so that the active anchor is always visible.
     - navigation.tracking # the URL in the address bar is automatically updated with the active anchor as highlighted in the table of contents
+    - navigation.top
+
+# nav:
+#   - Table Of Contents: README.md
+#   # - 1. CONTAINERIZATION:
+#   #   - todo
+#   - 2. CI/CD:
+#     - ArgoCD: argocd
+#     - Conftest: open-policy-agent/#conftest
+#   - 3. ORCHESTRATION & APPLICATION DEFINITION:
+#     - Kubernetes Components: kubernetes-components
+#     - Kubernetes Extensions: kubernetes-extensions
+#     - Kubernetes Features: kubernetes-features
+#     - Kubernetes Tools: kubernetes-tools
+#     - Kubernetes Practices:
+#       - Kubernetes The Hard Way: kubernetes-the-hard-way
+#     - Kubernetes Operator Study Journey: kubernetes-operator
+#     - Kubernetes Operators:
+#       - Prometheus Operator: prometheus-operator
+#       - Postgres Operator: databases/postgres-operator
+#       - Strimzi: strimzi
+#       - ArgoCD: argocd
+#       - Grafana Operator: grafana-operator
+#       - Mysql Operator: databases/mysql-operator
+#       - terraform-k8s: terraform-k8s
+
+#   - 4. OBSERVABILITY & ANALYTICS:
+#     - Prometheus: prometheus
+#     - Prometheus Operator: prometheus-operator
+#     - Grafana: grafana
+#     - Grafana Operator: grafana-operator
+#     - Grafana Loki: loki
+#     - Grafana Tempo: tempo
+#   - 5. SERVICE PROXY, DISCOVERY & MESH:
+#     - Istio: istio
+#     # - Envoy:
+#   - 6. NETWORKING, POLICY & SECURITY:
+#     - Open Policy Agent: open-policy-agent
+#     - Traefik: traefik
+#     - Ingress Nginx Controller: ingress-nginx-controller
+#   - 7. DISTRIBUTED DATABASE & STORAGE:
+#     - etcd: kubernetes-components/etcd
+#     - Mysql Operator: databases/mysql-operator
+#     - Postgres Operator: databases/postgres-operator
+#   # - 8. STREAMING & MESSAGING:
+#   #   - Kubernetes: section/page-n.md
+#   # - 9. CONTAINER REGISTRY & RUNTIME:
+#   #   - Kubernetes: section/page-n.md
+#   # - 10. SOFTWARE DISTRIBUTION:
+#   #   - Kubernetes: section/page-n.md
+
+
 repo_url: https://github.com/nakamasato/kubernetes-training
 markdown_extensions:
   - pymdownx.superfences

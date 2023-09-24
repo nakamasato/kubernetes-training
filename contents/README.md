@@ -20,72 +20,7 @@
 
 # Contents
 
-1. Kubernetes Cluster
-    1. [kubernetes-the-hard-way](kubernetes-the-hard-way)
-    1. [Kubeadm in local](kubeadm-local)
-    1. [kind](local-cluster/kind)
-1. [Kubernetes Features](kubernetes-features)
-    1. [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
-    1. [amazon-eks-workshop](eksworkshop)
-1. Kubernetes Components
-    1. [kubernetes-scheduler](kubernetes-components/kubernetes-scheduler)
-    1. [etcd](kubernetes-components/etcd)
-    1. [kube-apiserver](kubernetes-components/kube-apiserver)
-    1. [kube-controller-manager](kubernetes-components/kube-controller-manager)
-    1. kube-proxy
-    1. kubelet
-1. Kubernetes Extensions
-    1. [kubernetes-operator](kubernetes-operator)
-    1. [kubernetes-scheduler](kubernetes-extensions/kubernetes-scheduler)
-    1. [plugins (todo)](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/)
-1. Namespaces
-    1. [hierarchical namespaces (HNC)](https://github.com/kubernetes-sigs/hierarchical-namespaces)
-1. Deloyment Managemet
-    1. [Knative](knative)
-    1. [Skaffold (todo)](https://skaffold.dev/)
-1. Networking
-    1. [Kubernetes Gateway API](kubernetes-gateway-api)
-        1.  Envoy Gateway
-        2.  Istio
-        3.  Kong
-        4.  NGINX Kubernetes Gateway
-        1. [traefik](traefik)
-    1. Ingress
-        1. [ingress-nginx-controller](ingress-nginx-controller)
-1. Middleware (Operator)
-    1. [strimzi](strimzi)
-    1. [eck](eck)
-1. Service Proxy, Discovery, and, Mesh
-    1. [istio](istio)
-1. Monitoring
-    1. [Prometheus](prometheus)
-    1. [Prometheus Operator](prometheus-operator)
-    1. [Thanos (todo)] https://thanos.io/
-    1. [Grafana](grafana)
-    1. [Grafana Operator](grafana-operator)
-    1. [Grafana Loki](loki)
-    1. [Grafana Tempo](tempo)
-    1. [Jaeger (todo)] https://www.jaegertracing.io/
-1. Security
-    1. [open-policy-agent](open-policy-agent)
-    1. [Cert Manager](cert-manager)
-1. Yaml Management
-    1. [Helm](helm)
-    1. [Helm vs Kustomize](helm-vs-kustomize)
-1. CI/CD
-    1. [Conftest](open-policy-agent/conftest)
-    1. [ArgoCD](argocd)
-    1. Kyverno https://kyverno.io/
-    1. Polaris https://www.fairwinds.com/polaris
-1. Machine Learning
-    1. [kubeflow](https://github.com/nakamasato/kubeflow-training)
-1. [Databases](databases)
-    1. [Vitess] https://github.com/vitessio/vitess
-    1. [TiDB] https://github.com/pingcap/tidb
-    1. [TimescaleDB] https://github.com/timescale/timescaledb-kubernetes
-    1. [mysql-operator](databases/mysql-operator)
-    1. [postgres-operator](databases/postgres-operator)
-# Cloud Native Trail Map
+Contents are organized based on Cloud Native Trail Map:
 
 - https://github.com/cncf/trailmap
 - https://www.cncf.io/blog/2018/03/08/introducing-the-cloud-native-landscape-2-0-interactive-edition/
@@ -95,194 +30,131 @@
 ## 1. CONTAINERIZATION
 
 1. [Containers 101: attach vs. exec - what's the difference?](https://iximiuz.com/en/posts/containers-101-attach-vs-exec/)
+
 ## 2. CI/CD
 
-### 2.1 [ArgoCD](argocd)
+1. [ArgoCD](argocd)
+1. [Conftest](open-policy-agent/conftest)
+1. Kyverno: https://kyverno.io/
+1. Polaris: https://www.fairwinds.com/polaris
+
 ## 3. ORCHESTRATION & APPLICATION DEFINITION
 
-### 3.1 Kubernetes
+1. Kubernetes
+    1. Useful Commands
 
-#### Useful Commands
-
-- DNS
-    ```
-    kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
-    kubectl exec -i -t dnsutils -- nslookup kubernetes.default
-    ```
-- [Debug with ephemeral containers](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/#ephemeral-container-example) (alpha in 1.22, beta in 1.23)
-    ```
-    kubectl run ephemeral-demo --image=k8s.gcr.io/pause:3.1 --restart=Never
-    kubectl debug -it ephemeral-demo --image=busybox --target=ephemeral-demo
-    ```
-- Create pod with busyboxy-curl
-    ```
-    kubectl run -it --rm=true busybox --image=yauritux/busybox-curl --restart=Never
-    ```
-
-#### Set up Kubernetes Cluster with kubeadm (local)
-
-[kubeadm-local](kubeadm-local)
-#### Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
-
-[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
-
-#### Kubernetes Components
-
-1. [kubernetes-scheduler](kubernetes-components/kubernetes-scheduler)
-1. [etcd](kubernetes-components/etcd)
-1. kube-apiserver
-1. kube-controller-manager
-1. kube-proxy
-1. kubelet
-
-#### [More Practices of Applications on Kubernetes](PRACTICE.md)
-
-### 3.2 [Helm](helm)
-
-1. Create Helm chart.
-
-    ```
-    helm create <chart-name e.g. helm-example>
-    ```
-
-1. Update files under `templates` and `values.yaml`
-1. Test apply.
-
-    ```
-    helm install helm-example --debug ./helm-example
-    ```
-
-1. Make a package.
-
-    ```
-    helm package helm-example
-    ```
-
-1. Create repository and set index.
-
-    ```
-    helm repo index ./ --url https://nakamasato.github.io/helm-charts-repo
-    ```
-
-1. Install a chart.
-
-    ```
-    helm repo add nakamasato https://nakamasato.github.io/helm-charts-repo
-    helm repo update # update the repository info
-    helm install example-from-my-repo nakamasato/helm-example
-    ```
+        - DNS
+            ```
+            kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+            kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+            ```
+        - [Debug with ephemeral containers](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/#ephemeral-container-example) (alpha in 1.22, beta in 1.23)
+            ```
+            kubectl run ephemeral-demo --image=k8s.gcr.io/pause:3.1 --restart=Never
+            kubectl debug -it ephemeral-demo --image=busybox --target=ephemeral-demo
+            ```
+        - Create pod with busyboxy-curl
+            ```
+            kubectl run -it --rm=true busybox --image=yauritux/busybox-curl --restart=Never
+            ```
+    1. Kubernetes Cluster
+        1. [local cluster](local-cluster): kind, minikube, Docker Desktop
+        1. [kubeadm-local](kubeadm-local): Set up Kubernetes Cluster with kubeadm (local)
+        1. [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way): Set up Kubernetes Cluster on GCP (kubernetes-the-hard-way)
+    1. Kubernetes Components
+        1. [kubernetes-scheduler](kubernetes-components/kubernetes-scheduler)
+        1. [etcd](kubernetes-components/etcd)
+        1. [kube-apiserver](kubernetes-components/kube-apiserver)
+        1. [kube-controller-manager](kubernetes-components/kube-controller-manager)
+        1. [kube-proxy](kubernetes-components/kube-proxy)
+        1. [kubelet](kubernetes-components/kubelet)
+    1. [Kubernetes Operator](kubernetes-operator)
+        1. [client-go](kubernetes-operator/client-go/)
+        1. [apimachinery](kubernetes-operator/apimachinery)
+        1. [controller-runtime](kubernetes-operator/controller-runtime/)
+    1. [More Practices of Applications on Kubernetes](PRACTICE.md)
+    1. [Kubernetes Features](kubernetes-features)
+        1. [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
+        1. [amazon-eks-workshop](eksworkshop)
+    1. Kubernetes Extensions
+        1. [kubernetes-operator](kubernetes-operator)
+        1. [kubernetes-scheduler](kubernetes-extensions/kubernetes-scheduler)
+        1. [plugins (todo)](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/)
+    1. Namespaces
+        1. [hierarchical namespaces (HNC)](https://github.com/kubernetes-sigs/hierarchical-namespaces)
+    1. Deloyment Managemet
+        1. [Knative](knative)
+        1. Skaffold: https://skaffold.dev/ (ToDo)
+    1. Middleware (Operator)
+        1. [strimzi](strimzi)
+        1. [eck](eck)
+    1. Security
+        1. [Cert Manager](cert-manager)
+    1. Machine Learning
+        1. [kubeflow](https://github.com/nakamasato/kubeflow-training)
+1. [Helm](helm)
+    1. [Helm vs Kustomize](helm-vs-kustomize)
 
 ## 4. OBSERVABILITY & ANALYTICS
 
-### 4.1. [Prometheus](prometheus)
-
-![](prometheus/prometheus.drawio.svg)
-### 4.2. [Prometheus Operator](prometheus-operator)
-
-### 4.3. [Opentelemetry & Jaeger](https://github.com/nakamasato/golang-training/tree/main/pragmatic-cases/opentelemetry)
-### TBD
-- fluentd
+1. [Prometheus](prometheus)
+    1. [Prometheus Operator](prometheus-operator)
+1. Jaeger: https://www.jaegertracing.io/
+    1. [Opentelemetry & Jaeger](https://github.com/nakamasato/golang-training/tree/main/pragmatic-cases/opentelemetry)
+1. Opentelemetry (ToDo)
+1. fluentd (ToDo)
+1. [Thanos (todo)] https://thanos.io/
+1. [Grafana](grafana)
+1. [Grafana Operator](grafana-operator)
+1. [Grafana Loki](loki)
+1. [Grafana Tempo](tempo)
 
 ## 5. SERVICE PROXY, DISCOVERY & MESH
 
-### 5.1. [Istio](istio)
-
-### 5.2. [Envoy](https://github.com/nakamasato/envoy-training)
-### TBD
-- CoreDNS
-- Linkerd
+1. [Istio](istio)
+1. [Envoy](https://github.com/nakamasato/envoy-training)
+1. CoreDNS (ToDo)
+1. Linkerd (ToDo)
 
 ## 6. NETWORKING, POLICY & SECURITY
 
-### 6.1 [Open Policy Agent](open-policy-agent)
-
-### [gatekeeper](https://github.com/open-policy-agent/gatekeeper)
-
-1. Install gatekeeper
-
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml
-    ```
-
-1. Create `ConstraintTemplate`
-1. Create custom policy defined in the previous step.
-
-### [conftest](https://github.com/open-policy-agent/conftest)
-
-1. Write policy in `policy` directory.
-
-    ```rego
-    deny[msg] {
-      input.kind = "Deployment"
-      not input.spec.template.spec.nodeSelector
-      msg = "Deployment must have nodeSelector"
-    }
-    ```
-
-1. Write tests in the same directory.
-
-    ```rego
-    test_no_nodeSelector {
-      deny["Deployment must have nodeSelector"] with input as
-      {
-        "kind": "Deployment",
-        "spec": {
-          "template": {
-            "spec": {
-              "containers": [
-              ],
-            }
-          }
-        }
-      }
-    }
-    ```
-
-1. Run test.
-
-    ```
-    conftest verify
-
-    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
-    ```
-
-1. Validate a manifest file.
-
-    ```
-    conftest test manifests/valid/deployment.yaml
-
-    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
-    ```
-
-### TBD
-- CNI
-- falco
+1. [Open Policy Agent](open-policy-agent)
+    1. [gatekeeper](open-policy-agent/README.md#gatekeeper)
+    1. [conftest](open-policy-agent/README.md#conftest)
+1. CNI (ToDo)
+1. falco (ToDo)
+1. [Kubernetes Gateway API](kubernetes-gateway-api)
+    1.  Envoy Gateway
+    2.  Istio
+    3.  Kong
+    4.  NGINX Kubernetes Gateway
+    1. [traefik](traefik)
+1. Ingress
+    1. [ingress-nginx-controller](ingress-nginx-controller)
 
 ## 7. DISTRIBUTED DATABASE & STORAGE
 
-### 7.1. [etcd](kubernetes-components/etcd)
-### TBD
-- [Vitess](https://github.com/vitessio/vitess)
-- Rook
-- [TiDB](https://github.com/pingcap/tidb)
-- [TimescaleDB](https://github.com/timescale/timescaledb-kubernetes)
-
+1. [etcd](kubernetes-components/etcd)
+1. Vitess: https://github.com/vitessio/vitess (ToDo)
+1. Rook: https://rook.io/ (ToDo)
+1. TiDB: https://github.com/pingcap/tidb (ToDo)
+1. TimescaleDB: https://github.com/timescale/timescaledb-kubernetes (ToDo)
+1. Others: [Databases](databases)
+    1. [mysql-operator](databases/mysql-operator)
+    1. [postgres-operator](databases/postgres-operator)
 ## 8. STREAMING & MESSAGING
 
-### TBD
-- gRPC
-- NATS
-- cloudevents
+1. gRPC: https://grpc.io/ (ToDo)
+1. NATS: https://nats.io/ (ToDo)
+1. cloudevents: https://cloudevents.io/ (ToDo)
 
 ## 9. CONTAINER REGISTRY & RUNTIME
 
-### TBD
-- containerd
-- harbor
-- cri-o
+1. containerd: https://containerd.io/ (ToDo)
+1. harbor: https://goharbor.io/ (ToDo)
+1. cri-o: https://cri-o.io/ (ToDo)
 
 ## 10. SOFTWARE DISTRIBUTION
 
-### TBD
-- TUF
-- notaru
+1. The Update Framework: https://theupdateframework.io/ (ToDo)
+1. Notary: https://notaryproject.dev/ (ToDo)
