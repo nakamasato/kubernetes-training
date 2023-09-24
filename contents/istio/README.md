@@ -17,10 +17,128 @@ Istio uses [Envoy](https://www.envoyproxy.io/), *AN OPEN SOURCE EDGE AND SERVICE
 
 CRDs and their roles
 
-1. `DestinationRule`
-1. `Gateway` (Istio)
-1. `Gateway` (Networking)
-1. `VirtualService`
+1. [VirtualService](https://istio.io/latest/docs/concepts/traffic-management/#virtual-services): along with destination rules, the key building blocks of Istio’s traffic routing functionality (e.g. routing to a specific version based on the request header, A/B testing, Canary release). `hosts`, `http`([match](https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPMatchRequest) and `route`)
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: bookinfo
+    spec:
+      hosts:
+        - bookinfo.com # can be ip address, DNS, kubernetes service short name
+      http:
+      - match:
+        - uri:
+            prefix: /reviews
+        route:
+        - destination:
+            host: reviews
+      - match:
+        - uri:
+            prefix: /ratings
+        route:
+        - destination:
+            host: ratings
+    ```
+
+    </details>
+
+    <details><summary>example with weight (A/B testing and canary rollouts)</summary>
+
+    ```yaml
+    spec:
+      hosts:
+      - reviews
+      http:
+      - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 75
+        - destination:
+            host: reviews
+            subset: v2
+          weight: 25
+    ```
+
+    </details>
+
+1. [DestinationRule](https://istio.io/latest/docs/concepts/traffic-management/#destination-rules): use destination rules to configure what happens to traffic for that destination. Destination rules are applied **after** virtual service routing rules are evaluated. specify named service **`subsets`** (Ref [Destination Rule](https://istio.io/latest/docs/reference/config/networking/destination-rule/))
+
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: DestinationRule
+    metadata:
+      name: my-destination-rule
+    spec:
+      host: my-svc
+      trafficPolicy:
+        loadBalancer:
+          simple: RANDOM
+      subsets:
+      - name: v1
+        labels:
+          version: v1
+      - name: v2
+        labels:
+          version: v2
+        trafficPolicy:
+          loadBalancer:
+            simple: ROUND_ROBIN
+      - name: v3
+        labels:
+          version: v3
+    ```
+
+    </details>
+
+1. [Gateway](https://istio.io/latest/docs/concepts/traffic-management/#gateways) (Istio): manage inbound and outbound traffic for your mesh. Gateway configurations are applied to standalone Envoy proxies that are running at the edge of the mesh, rather than sidecar Envoy proxies running alongside your service workloads. Istio provides some preconfigured gateway proxy deployments (`istio-ingressgateway` and `istio-egressgateway`). **You also need to bind the gateway to a virtual service.**
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+      name: ext-host-gwy
+    spec:
+      selector:
+        app: my-gateway-controller
+      servers:
+      - port:
+          number: 443
+          name: https
+          protocol: HTTPS
+        hosts:
+        - ext-host.example.com
+        tls:
+          mode: SIMPLE
+          credentialName: ext-host-cert
+    ```
+
+    specify routing
+
+    ```yaml
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: virtual-svc
+    spec:
+      hosts:
+      - ext-host.example.com
+      gateways:
+      - ext-host-gwy
+    ```
+
+    </details>
+1 [ServiceEntry](https://istio.io/latest/docs/concepts/traffic-management/#service-entries): Configuring service entries allows you to **manage traffic for services running outside of the mesh.** (ref: [Service Entry](https://istio.io/latest/docs/reference/config/networking/service-entry/))
+1. [Sidecar](https://istio.io/latest/docs/concepts/traffic-management/#sidecars)
+1. `Gateway` (Kubernetes Gateway API): To overcome Ingress's shortcomings with a standard Kubernetes API (beta). You can consider migration of ingress traffic from Kubernetes Ignress or Gateway/VirtualService to the new Gateway API. (e.g. **Istio Implementation of the Gateway API**) Ref: [Getting started with the Kubernetes Gateway API](https://istio.io/latest/blog/2022/getting-started-gtwapi/)
+    Configure with **Gateway** in `gateway.networking.k8s.io/v1beta1` and `HTTPRoute`
+
 
 ## [Getting Started](https://istio.io/latest/docs/setup/getting-started/)
 
@@ -28,10 +146,10 @@ CRDs and their roles
 
 **If you test on your local cluster, pleasee use docker-desktop, minikube, or kind.**
 
-1. `kind`: Istio Gateway might not work
+1. [kind](../local-cluster/kind): Istio Gateway might not work
 
     ```
-    kind create cluster --config=kind-config.yaml
+    kind create cluster --config=../local-cluster/kind/cluster-with-port-mapping.yaml
     ```
 1. `minikube`: Confirmed everything works
     ```
@@ -43,8 +161,9 @@ CRDs and their roles
 1. Install `istioctl` (you can skip this step if you already installed `istioctl`)
 
     ```
-    curl -L https://istio.io/downloadIstio | sh -
-    export PATH="$PATH:/Users/m.naka/repos/nakamasato/kubernetes-training/contents/istio/istio-1.18.2/bin"
+    ISTIO_VERSION=1.19.0
+    curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
+    export PATH="$PATH:/$PWD/istio-${ISTIO_VERSION}/bin"
     ```
 
     Check istioctl version
@@ -52,7 +171,7 @@ CRDs and their roles
     ```
     istioctl version
     no ready Istio pods in "istio-system"
-    1.18.2
+    1.19.0
     ```
 
 1. Install istio
@@ -107,7 +226,7 @@ CRDs and their roles
 1. Deploy sample app
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/platform/kube/bookinfo.yaml
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/platform/kube/bookinfo.yaml
     ```
 
     Deployed resources:
@@ -167,7 +286,7 @@ CRDs and their roles
 1. Istio Gateway (`Gateway` and `VirtualService` (`networking.istio.io/v1alpha3`))
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/networking/bookinfo-gateway.yaml
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml
     ```
 
     <details><summary>yaml details</summary>
@@ -221,7 +340,7 @@ CRDs and their roles
 
     </details>
 
-    Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1beta1`)
+    Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1beta1`)
 
 1. Check
     ```
@@ -270,7 +389,7 @@ CRDs and their roles
 
     ![](docs/sample-app.png)
 
-    TODO: You might not be able to open it when `EXTERNAL-IP` is `<pending>`.
+    TODO: You might not be able to open it when `EXTERNAL-IP` is `<pending>` (this happens when using `kind`).
 
 ### [Define the service versions](https://istio.io/latest/docs/examples/bookinfo/#define-the-service-versions)
 
@@ -280,7 +399,7 @@ Before you can use Istio to control the Bookinfo version routing, you need to de
 Create `DestinationRule` for each service `productpage`, `reviews`, `ratings` and `details`.
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/networking/destination-rule-all.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/destination-rule-all.yaml
 ```
 
 ```yaml
@@ -326,7 +445,7 @@ For more details, please check https://github.com/kubernetes-sigs/gateway-api
 #### Route to version 1
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/networking/virtual-service-all-v1.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/virtual-service-all-v1.yaml
 ```
 
 ```yaml
@@ -351,7 +470,7 @@ spec:
 > Istio also supports routing based on strongly authenticated JWT on ingress gateway, refer to the JWT claim based routing for more details.
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
 ```
 
 ```yaml
@@ -391,7 +510,7 @@ What's done?
 1. Install [kiali](https://istio.io/latest/docs/ops/integrations/kiali/) dashboard
 
     ```
-    for f in https://raw.githubusercontent.com/istio/istio/release-1.18/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl apply -f $f; done
+    for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl apply -f $f; done
     kubectl rollout status deployment/kiali -n istio-system
     ```
 
@@ -408,9 +527,9 @@ What's done?
 ### Cleanup
 
 ```bash
-for f in https://raw.githubusercontent.com/istio/istio/release-1.18/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/networking/bookinfo-gateway.yaml # delete gateway
-kubectl delete -f kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.18/samples/bookinfo/platform/kube/bookinfo.yaml # delete application
+for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml # delete gateway
+kubectl delete -f kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/platform/kube/bookinfo.yaml # delete application
 istioctl manifest generate --set profile=demo | kubectl delete --ignore-not-found=true -f - # delete istio
 istioctl tag remove default
 ```

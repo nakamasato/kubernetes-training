@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/nakamasato/kubernetes-training/doc"
 	yaml "gopkg.in/yaml.v3"
@@ -11,35 +12,38 @@ import (
 
 func main() {
 
-    f, err := os.Open("readme.yml")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer f.Close()
+	f, err := os.Open("readme.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
 
-    d := yaml.NewDecoder(f)
+	d := yaml.NewDecoder(f)
 
-    var m map[string][]Version
+	var m map[string][]Version
 
-    if err := d.Decode(&m); err != nil {
-        log.Fatal(err)
-    }
+	if err := d.Decode(&m); err != nil {
+		log.Fatal(err)
+	}
 
 	generateReadme(m["versions"], "README.md")
+
+	updateVersionInReadme(m["versions"], "contents/README.md")
 }
 
 type Version struct {
-	Name string `yaml:"name"`
-	Version string `yaml:"version"`
-	RepoUrl string `yaml:"repoUrl"`
+	Name     string `yaml:"name"`
+	Version  string `yaml:"version"`
+	RepoUrl  string `yaml:"repoUrl"`
 	Category string `yaml:"category"`
-	ToDo bool `yaml:"todo"`
+	ToDo     bool   `yaml:"todo"`
+	Dir string `yaml:"dir"`
 }
 
 func (v Version) getReleaseUrl() string {
-	if (v.Version == "") {
+	if v.Version == "" {
 		return v.RepoUrl
-	} else if (v.Version == "latest") {
+	} else if v.Version == "latest" {
 		return v.RepoUrl + "/releases"
 	} else {
 		return v.RepoUrl + "/releases/tag/" + v.Version
@@ -47,7 +51,7 @@ func (v Version) getReleaseUrl() string {
 }
 
 func (v Version) getToDoString() string {
-	if (v.ToDo) {
+	if v.ToDo {
 		return "(ToDo)"
 	} else {
 		return ""
@@ -91,5 +95,37 @@ func generateReadme(versions []Version, filename string) {
 	err := book.Export(filename)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func updateVersionInReadme(versions []Version, filename string) {
+	input, err := os.ReadFile(filename)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for _, version := range versions {
+		for i, line := range lines {
+			if strings.Contains(line, "Contents") { // not update Contents
+				break
+			}
+			if strings.Contains(line, fmt.Sprintf("1. %s:", version.Name)) {
+				lines[i] = fmt.Sprintf(
+					"1. %s: [%s](%s)%s",
+					version.Name,
+					version.Version,
+					version.getReleaseUrl(),
+					version.getToDoString(),
+				)
+				break
+			}
+		}
+	}
+	output := strings.Join(lines, "\n")
+	err = os.WriteFile(filename, []byte(output), 0644)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }

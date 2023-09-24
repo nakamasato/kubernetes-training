@@ -22,10 +22,12 @@ versions:
     version: v0.43.1
     repoUrl: https://github.com/prometheus-operator/prometheus-operator
     category: Monitoring
+    dir: prometheus-operator
   - name: Prometheus
     version: "latest"
     repoUrl: https://github.com/prometheus/prometheus
     category: Monitoring
+    dir: prometheus
   - name: Grafana
     version: "latest"
     repoUrl: https://github.com/grafana/grafana
@@ -64,7 +66,7 @@ versions:
     repoUrl: https://github.com/open-policy-agent/conftest
     category: CI/CD
   - name: Istio
-    version: 1.18.2
+    version: 1.19.0
     repoUrl: https://github.com/istio/istio
     category: Service Proxy, Discovery, and, Mesh
   - name: Postgres Operator
@@ -82,6 +84,7 @@ versions:
     version: null
     repoUrl: https://github.com/elastic/cloud-on-k8s
     category: Middleware (Operator)
+    dir: eck
   - name: Kyverno
     version: null
     repoUrl: https://github.com/kyverno/kyverno

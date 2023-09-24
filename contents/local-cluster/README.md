@@ -1,5 +1,5 @@
 # Local Kubernetes
 
 - Docker for Mac
-- Minikube
+- [Minikube](minikube)
 - [kind](kind)
