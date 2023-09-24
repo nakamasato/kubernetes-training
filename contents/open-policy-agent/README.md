@@ -70,9 +70,15 @@ localhost:8181/v1/data/subordinates
 }
 ```
 
-## Gatekeeper
+## [Gatekeeper](https://github.com/open-policy-agent/gatekeeper)
 
-https://github.com/open-policy-agent/gatekeeper
+Overview
+
+1. Install gatekeeper
+1. Create `ConstraintTemplate`
+1. Create custom policy defined in the previous step.
+
+Steps
 
 1. Install
 
@@ -239,9 +245,7 @@ kubectl delete -f gatekeeper/require-labels
     - The object tested on play ground: `input.object`
     - The object you need to write in `ConstraintTemplate`: `input.review.object`
 
-## Conftest
-
-https://github.com/open-policy-agent/conftest
+## [Conftest](https://github.com/open-policy-agent/conftest)
 
 install
 
@@ -249,6 +253,53 @@ install
 brew tap instrumenta/instrumenta
 brew install conftest
 ```
+
+### Getting Started
+
+1. Write policy in `policy` directory.
+
+    ```rego
+    deny[msg] {
+      input.kind = "Deployment"
+      not input.spec.template.spec.nodeSelector
+      msg = "Deployment must have nodeSelector"
+    }
+    ```
+
+1. Write tests in the same directory.
+
+    ```rego
+    test_no_nodeSelector {
+      deny["Deployment must have nodeSelector"] with input as
+      {
+        "kind": "Deployment",
+        "spec": {
+          "template": {
+            "spec": {
+              "containers": [
+              ],
+            }
+          }
+        }
+      }
+    }
+    ```
+
+1. Run test.
+
+    ```
+    conftest verify
+
+    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
+    ```
+
+1. Validate a manifest file.
+
+    ```
+    conftest test manifests/valid/deployment.yaml
+
+    1 tests, 1 passed, 0 warnings, 0 failures, 0 exceptions
+    ```
 
 ### Example
 
