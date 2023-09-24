@@ -14,7 +14,7 @@
 1. Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1) (released on 2021-05-28)
 1. Ingress Nginx Controller: [v0.48.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v0.48.1) (released on 2021-07-15)
 1. Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
-1. Istio: [1.12.2](https://github.com/istio/istio/releases/tag/1.12.2) (released on 2022-01-19)
+1. Istio: [1.18.2](https://github.com/istio/istio/releases/tag/1.18.2) (released on 2023-07-26)
 1. PostgresOperator: [v1.7.1](https://github.com/zalando/postgres-operator/releases/tag/v1.7.1) (released on 2021-11-04)
 1. Cert Manager: [v1.7.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.7.1) (released on 2022-02-05)
 
