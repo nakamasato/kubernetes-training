@@ -22,10 +22,12 @@ versions:
     version: v0.43.1
     repoUrl: https://github.com/prometheus-operator/prometheus-operator
     category: Monitoring
+    dir: prometheus-operator
   - name: Prometheus
     version: "latest"
     repoUrl: https://github.com/prometheus/prometheus
     category: Monitoring
+    dir: prometheus
   - name: Grafana
     version: "latest"
     repoUrl: https://github.com/grafana/grafana
@@ -82,6 +84,7 @@ versions:
     version: null
     repoUrl: https://github.com/elastic/cloud-on-k8s
     category: Middleware (Operator)
+    dir: eck
   - name: Kyverno
     version: null
     repoUrl: https://github.com/kyverno/kyverno

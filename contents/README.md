@@ -2,19 +2,19 @@
 
 # Versions
 
-1. Kubernetes: [v1.21.2](https://github.com/kubernetes/kubernetes/releases/tag/v1.21.2) (released on 2021-06-18)
+1. Kubernetes: [v1.25.3](https://github.com/kubernetes/kubernetes/releases/tag/v1.25.3)
 1. kustomize: [v4.2.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.2.0) (released on 2021-07-02)
-1. Helm: [3.6.3](https://github.com/helm/helm/releases/tag/v3.6.3) (released on 2021-07-15)
+1. Helm: [v3.11.2](https://github.com/helm/helm/releases/tag/v3.11.2)
 1. Traefik: [v2.9.0](https://github.com/traefik/traefik/releases/tag/v2.9.0)
-1. ArgoCD: [v2.2.3](https://github.com/argoproj/argo-cd/releases/tag/v2.2.3) (released on 2022-01-19)
-1. Prometheus-Operator: [v0.53.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.53.1) (released on 2021-12-20)
-1. Prometheus: Latest
-1. Grafana: Latest
-1. Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0) (released on 2021-06-24)
-1. Kind: [v0.11.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1) (released on 2021-05-28)
-1. Ingress Nginx Controller: [v0.48.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v0.48.1) (released on 2021-07-15)
-1. Conftest: [0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0) (released on 2021-05-08)
-1. Istio: [1.18.2](https://github.com/istio/istio/releases/tag/1.18.2) (released on 2023-07-26)
+1. ArgoCD: [v2.8.4](https://github.com/argoproj/argo-cd/releases/tag/v2.8.4)
+1. Prometheus-Operator: [v0.43.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.43.1)
+1. Prometheus: [latest](https://github.com/prometheus/prometheus/releases)
+1. Grafana: [latest](https://github.com/grafana/grafana/releases)
+1. Strimzi: [0.24.0](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.24.0)
+1. Kind: [v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)
+1. Ingress Nginx Controller: [controller-v1.7.0](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.7.0)
+1. Conftest: [v0.25.0](https://github.com/open-policy-agent/conftest/releases/tag/v0.25.0)
+1. Istio: [1.19.0](https://github.com/istio/istio/releases/tag/1.19.0)
 1. PostgresOperator: [v1.7.1](https://github.com/zalando/postgres-operator/releases/tag/v1.7.1) (released on 2021-11-04)
 1. Cert Manager: [v1.7.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.7.1) (released on 2022-02-05)
 
