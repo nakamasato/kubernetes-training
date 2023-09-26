@@ -1,5 +1,7 @@
 # [Istio](https://istio.io/)
 
+## 1. Overview
+
 An Istio service mesh is logically split into a **data plane** and a **control plane**.
 
 - The **data plane** is composed of a set of intelligent proxies ([Envoy](https://www.envoyproxy.io/)) deployed as sidecars. These proxies mediate and control all network communication between microservices. They also collect and report telemetry on all mesh traffic.
@@ -13,7 +15,7 @@ An Istio service mesh is logically split into a **data plane** and a **contro
 
 Istio uses [Envoy](https://www.envoyproxy.io/), *AN OPEN SOURCE EDGE AND SERVICE PROXY, DESIGNED FOR CLOUD-NATIVE APPLICATIONS*, proxy as its data plane.
 
-## Summary
+## 2. Summary
 
 CRDs and their roles
 
@@ -140,9 +142,9 @@ CRDs and their roles
     Configure with **Gateway** in `gateway.networking.k8s.io/v1beta1` and `HTTPRoute`
 
 
-## [Getting Started](https://istio.io/latest/docs/setup/getting-started/)
+## 3. [Getting Started](https://istio.io/latest/docs/setup/getting-started/)
 
-### Prepare Kubernetes Cluster
+### 3.1. Prepare Kubernetes Cluster
 
 **If you test on your local cluster, pleasee use docker-desktop, minikube, or kind.**
 
@@ -151,12 +153,12 @@ CRDs and their roles
     ```
     kind create cluster --config=../local-cluster/kind/cluster-with-port-mapping.yaml
     ```
-1. `minikube`: Confirmed everything works
+1. [minikube](../local-cluster/minikube): Confirmed everything works
     ```
     minikube start
     ```
-
-### [Install Istio](https://istio.io/latest/docs/setup/getting-started/#bookinfo)
+1. Docker Desktop
+### 3.2. [Install Istio](https://istio.io/latest/docs/setup/getting-started/#bookinfo)
 
 1. Install `istioctl` (you can skip this step if you already installed `istioctl`)
 
@@ -203,7 +205,7 @@ CRDs and their roles
     istiod-85669db8fd-5lz4s                1/1     Running   0          2m58s
     ```
 
-### Add `istio-injection=enabled` to the target Namespace
+### 3.3. Add `istio-injection=enabled` to the target Namespace
 
 1. Add a namespace label `istio-injection=enabled` to `default` Namespace to instruct Istio to automatically inject Envoy sidecar proxies when you deploy your application later:
 
@@ -219,7 +221,7 @@ CRDs and their roles
     default   Active   4m57s   istio-injection=enabled,kubernetes.io/metadata.name=default
     ```
 
-### [Deploy the sample application](https://istio.io/latest/docs/setup/getting-started/#bookinfo)
+### 3.4. [Deploy the sample application](https://istio.io/latest/docs/setup/getting-started/#bookinfo)
 
 ![](https://istio.io/latest/docs/examples/bookinfo/withistio.svg)
 
@@ -281,7 +283,7 @@ CRDs and their roles
     <title>Simple Bookstore App</title>
     ```
 
-### [Open the app to outside traffic](https://istio.io/latest/docs/setup/getting-started/#ip) (Gateway & VirtualService)
+### 3.5. [Open the app to outside traffic](https://istio.io/latest/docs/setup/getting-started/#ip) (Gateway & VirtualService)
 
 1. Istio Gateway (`Gateway` and `VirtualService` (`networking.istio.io/v1alpha3`))
 
@@ -391,7 +393,7 @@ CRDs and their roles
 
     TODO: You might not be able to open it when `EXTERNAL-IP` is `<pending>` (this happens when using `kind`).
 
-### [Define the service versions](https://istio.io/latest/docs/examples/bookinfo/#define-the-service-versions)
+### 3.6. [Define the service versions](https://istio.io/latest/docs/examples/bookinfo/#define-the-service-versions)
 
 Before you can use Istio to control the Bookinfo version routing, you need to define the available versions.
 
@@ -422,11 +424,11 @@ spec:
 ```
 
 
-### [Request Routing](https://istio.io/latest/docs/tasks/traffic-management/request-routing/)
+### 3.7. [Request Routing](https://istio.io/latest/docs/tasks/traffic-management/request-routing/)
 
 Istio includes beta support for the Kubernetes Gateway API
 
-#### Install necessary CRDs (necessary for `Gateway API`)
+#### 3.7.1.Install necessary CRDs (necessary for `Gateway API`)
 
 ```
 kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
@@ -442,7 +444,7 @@ The following custom resource definitions will be created:
 
 For more details, please check https://github.com/kubernetes-sigs/gateway-api
 
-#### Route to version 1
+#### 3.7.2. Route to version 1
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/virtual-service-all-v1.yaml
@@ -465,7 +467,7 @@ spec:
 
 ![](docs/route-to-version1.png)
 
-#### Route based on user identity
+#### 3.7.3. Route based on user identity
 
 > Istio also supports routing based on strongly authenticated JWT on ingress gateway, refer to the JWT claim based routing for more details.
 
@@ -505,7 +507,7 @@ What's done?
 > In this task, you used Istio to send 100% of the traffic to the v1 version of each of the Bookinfo services. You then set a rule to selectively send traffic to version v2 of the reviews service based on a custom end-user header added to the request by the productpage service.
 
 
-### [View the dashboard](https://istio.io/latest/docs/setup/getting-started/#dashboard)
+### 3.8. [View the dashboard](https://istio.io/latest/docs/setup/getting-started/#dashboard)
 
 1. Install [kiali](https://istio.io/latest/docs/ops/integrations/kiali/) dashboard
 
@@ -524,7 +526,7 @@ What's done?
 
     ![](docs/kiali.png)
 
-### Cleanup
+## 4. Cleanup
 
 ```bash
 for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia
@@ -539,10 +541,14 @@ kubectl delete namespace istio-system
 kubectl label namespace default istio-injection-
 ```
 
-## FAQ
+## 5. More
+
+1. [Ingress](ingress.md)
+1. Ingress Gateway
+## 5. FAQ
 
 1. Istio APIs vs Gateway APIs
 
-## Ref
+## 6. Ref
 
 1. [How to install kind and istio ingress controller](https://medium.com/@s4l1h/how-to-install-kind-and-istio-ingress-controller-3b510834c762)
