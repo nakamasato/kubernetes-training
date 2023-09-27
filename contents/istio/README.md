@@ -136,7 +136,8 @@ CRDs and their roles
     ```
 
     </details>
-1 [ServiceEntry](https://istio.io/latest/docs/concepts/traffic-management/#service-entries): Configuring service entries allows you to **manage traffic for services running outside of the mesh.** (ref: [Service Entry](https://istio.io/latest/docs/reference/config/networking/service-entry/))
+
+1. [ServiceEntry](https://istio.io/latest/docs/concepts/traffic-management/#service-entries): Configuring service entries allows you to **manage traffic for services running outside of the mesh.** (ref: [Service Entry](https://istio.io/latest/docs/reference/config/networking/service-entry/))
 1. [Sidecar](https://istio.io/latest/docs/concepts/traffic-management/#sidecars)
 1. `Gateway` (Kubernetes Gateway API): To overcome Ingress's shortcomings with a standard Kubernetes API (beta). You can consider migration of ingress traffic from Kubernetes Ignress or Gateway/VirtualService to the new Gateway API. (e.g. **Istio Implementation of the Gateway API**) Ref: [Getting started with the Kubernetes Gateway API](https://istio.io/latest/blog/2022/getting-started-gtwapi/)
     Configure with **Gateway** in `gateway.networking.k8s.io/v1beta1` and `HTTPRoute`
@@ -428,7 +429,7 @@ spec:
 
 Istio includes beta support for the Kubernetes Gateway API
 
-#### 3.7.1.Install necessary CRDs (necessary for `Gateway API`)
+#### 3.7.1. (Optional) Install necessary CRDs (only for `Gateway API`)
 
 ```
 kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
@@ -444,7 +445,7 @@ The following custom resource definitions will be created:
 
 For more details, please check https://github.com/kubernetes-sigs/gateway-api
 
-#### 3.7.2. Route to version 1
+#### 3.7.2. Route to version 1 (Istio APIs)
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/virtual-service-all-v1.yaml
@@ -467,7 +468,7 @@ spec:
 
 ![](docs/route-to-version1.png)
 
-#### 3.7.3. Route based on user identity
+#### 3.7.3. Route based on user identity (Istio APIs)
 
 > Istio also supports routing based on strongly authenticated JWT on ingress gateway, refer to the JWT claim based routing for more details.
 
@@ -527,6 +528,10 @@ What's done?
     ![](docs/kiali.png)
 
 ## 4. Cleanup
+
+```
+istioctl uninstall --purge
+```
 
 ```bash
 for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia

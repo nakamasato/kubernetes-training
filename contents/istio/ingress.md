@@ -1,13 +1,22 @@
 # [Kubernetes Ingress](https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/)
 
-In this page, we'll use `Istio APIs` not `Gateway API`.
+1. In this page, we'll use `Istio APIs` not `Gateway API`.
+1. For local Kubernetes, I use [Kubernetes in Docker Desktop](../local-cluster/docker-desktop/) as we can directly use `LoadBalancer` type `Service`.
+1. For `Ingress` resource, The `spec.ingressClassName` is required to tell **the Istio gateway controller** that it should handle this **Ingress**, otherwise it will be ignored.
 
-For local Kubernetes, I use [Kubernetes in Docker Desktop](../local-cluster/docker-desktop/) as we can directly use `LoadBalancer` type `Service`.
+
+
+
 
 ## 1. Setup
 
 ```
 istioctl install --set profile=demo -y
+```
+
+```
+export INGRESS_NAME=istio-ingressgateway
+export INGRESS_NS=istio-system
 ```
 
 ```
@@ -28,7 +37,7 @@ http://localhost:8000
 
 ![](docs/httpbin.png)
 
-## [Configure ingress using a Gateway](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#configuring-ingress-using-a-gateway)
+## 2. [Configure ingress using a Gateway](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#configuring-ingress-using-a-gateway)
 
 Gateway:
 
@@ -55,7 +64,7 @@ EOF
 
 VirtualService:
 
-```
+```yaml
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -92,12 +101,8 @@ NAME      GATEWAYS              HOSTS                     AGE
 httpbin   ["httpbin-gateway"]   ["httpbin.example.com"]   104s
 ```
 
-## [Determine Ingress IP and ports](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#determining-the-ingress-ip-and-ports)
+## 3. [Determine Ingress IP and ports](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#determining-the-ingress-ip-and-ports)
 
-```
-export INGRESS_NAME=istio-ingressgateway
-export INGRESS_NS=istio-system
-```
 
 ```
 kubectl get svc "$INGRESS_NAME" -n "$INGRESS_NS"
@@ -110,7 +115,7 @@ export INGRESS_HOST=$(kubectl -n "$INGRESS_NS" get service "$INGRESS_NAME" -o js
 export INGRESS_PORT=$(kubectl -n "$INGRESS_NS" get service "$INGRESS_NAME" -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
 ```
 
-## [Access ingress service](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#accessing-ingress-services)
+## 4. [Access ingress service](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#accessing-ingress-services)
 
 ```
 curl -s -I -HHost:httpbin.example.com "http://$INGRESS_HOST:$INGRESS_PORT/status/200"
@@ -123,3 +128,41 @@ access-control-allow-credentials: true
 content-length: 0
 x-envoy-upstream-service-time: 53
 ```
+
+## 5. [Configuring ingress using an Ingress resource](https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/#configuring-ingress-using-an-ingress-resource)
+
+```yaml
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+spec:
+  ingressClassName: istio
+  rules:
+  - host: httpbin.example.com
+    http:
+      paths:
+      - path: /status
+        pathType: Prefix
+        backend:
+          service:
+            name: httpbin
+            port:
+              number: 8000
+EOF
+```
+
+The `spec.ingressClassName` is required to tell the Istio gateway controller that it should handle this Ingress, otherwise it will be ignored.
+
+```
+curl -s -I -HHost:httpbin.example.com "http://$INGRESS_HOST:$INGRESS_PORT/status/200"
+```
+
+## Ref
+
+1. ([ingress controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/))
+    1. In order for the Ingress resource to work, the cluster must have an ingress controller running.
+    1. Istio Ingress is an Istio based ingress controller.
+
+
