@@ -83,6 +83,37 @@ main.main()
 exit status 2
 ```
 
+## Validator
+
+[Validator](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.2/pkg/webhook/admission#Validator) interface:
+
+```go
+type Validator interface {
+	runtime.Object
+
+	// ValidateCreate validates the object on creation.
+	// The optional warnings will be added to the response as warning messages.
+	// Return an error if the object is invalid.
+	ValidateCreate() (warnings Warnings, err error)
+
+	// ValidateUpdate validates the object on update. The oldObj is the object before the update.
+	// The optional warnings will be added to the response as warning messages.
+	// Return an error if the object is invalid.
+	ValidateUpdate(old runtime.Object) (warnings Warnings, err error)
+
+	// ValidateDelete validates the object on deletion.
+	// The optional warnings will be added to the response as warning messages.
+	// Return an error if the object is invalid.
+	ValidateDelete() (warnings Warnings, err error)
+}
+```
+
+The return value was updated in [controller-runtime@v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0) ([⚠️ feat: new features about support warning with webhook #2014](https://github.com/kubernetes-sigs/controller-runtime/pull/2014)) from [[Feature Request]: Support "Warning" for Validation Webhook #1896](https://github.com/kubernetes-sigs/controller-runtime/issues/1896)
+
+This is because Kubernets supports `warning` message in response for Admission webhook [ref](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#response) since 1.19:
+
+> Admission webhooks can optionally return warning messages that are returned to the requesting client in HTTP Warning headers with a warning code of 299. Warnings can be sent with allowed or rejected admission responses.
+
 ## Changes
 
 1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
@@ -90,4 +121,26 @@ exit status 2
 		```diff
 		- hookServer := &Server{Port: 8443}
 		+ hookServer := NewServer(Options{Port: 8443})
+		```
+	1. [⚠️ feat: new features about support warning with webhook #2014](https://github.com/kubernetes-sigs/controller-runtime/pull/2014) `Validator`, `CustomValidator` interface change: added warning to response of admission webhook.
+		```diff
+		type Validator interface {
+			runtime.Object
+		- 	ValidateCreate() error
+		- 	ValidateUpdate(old runtime.Object) error
+		- 	ValidateDelete() error
+
+		+	// ValidateCreate validates the object on creation.
+		+ 	// The optional warnings will be added to the response as warning messages.
+		+ 	// Return an error if the object is invalid.
+		+ 	ValidateCreate() (warnings Warnings, err error)
+		+ 	// ValidateUpdate validates the object on update. The oldObj is the object before the update.
+		+ 	// The optional warnings will be added to the response as warning messages.
+		+ 	// Return an error if the object is invalid.
+		+ 	ValidateUpdate(old runtime.Object) (warnings Warnings, err error)
+		+ 	// ValidateDelete validates the object on deletion.
+		+ 	// The optional warnings will be added to the response as warning messages.
+		+ 	// Return an error if the object is invalid.
+		+ 	ValidateDelete() (warnings Warnings, err error)
+		}
 		```
