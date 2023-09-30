@@ -164,5 +164,3 @@ curl -s -I -HHost:httpbin.example.com "http://$INGRESS_HOST:$INGRESS_PORT/status
 1. ([ingress controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/))
     1. In order for the Ingress resource to work, the cluster must have an ingress controller running.
     1. Istio Ingress is an Istio based ingress controller.
-
-

@@ -557,3 +557,6 @@ kubectl label namespace default istio-injection-
 ## 6. Ref
 
 1. [How to install kind and istio ingress controller](https://medium.com/@s4l1h/how-to-install-kind-and-istio-ingress-controller-3b510834c762)
+1. Official
+    1. [Istio operator code overview](https://github.com/istio/istio/blob/353f722394f90c48212dfd2e04962eafcfbbcfd4/architecture/environments/operator.md)
+    1. [Istio Operator](https://github.com/istio/istio/blob/e81a033756b37768a68913fbe2505e03442d3836/operator/README.md)
