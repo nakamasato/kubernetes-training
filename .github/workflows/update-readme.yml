@@ -38,9 +38,9 @@ jobs:
         id: need_commit
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
-            echo "::set-output name=need_commit::true
+            echo "need_commit=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::set-output name=need_commit::false
+            echo "need_commit=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: update date in readme and commit
@@ -58,7 +58,7 @@ jobs:
         if: steps.need_commit.outputs.need_commit == 'true'
         id: check_pr
         run: |
-          echo "::set-output name=count::$(gh pr list -S head:${{ env.BRANCH_NAME }} -B ${{ env.BASE_BRANCH_NAME }} | wc -l)"
+          echo "count=$(gh pr list -S head:${{ env.BRANCH_NAME }} -B ${{ env.BASE_BRANCH_NAME }} | wc -l)" > "$GITHUB_OUTPUT"
 
       - name: create pr
         if: ${{ steps.need_commit.outputs.need_commit == 'true' && steps.check_pr.outputs.count == 0 }}
