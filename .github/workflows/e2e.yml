@@ -33,7 +33,7 @@ jobs:
           )
       # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#adding-a-system-path
       - name: krew - set PATH
-        run: echo "${KREW_ROOT:-$HOME/.krew}/bin:$PATH" >> $GITHUB_PATH
+        run: echo "${KREW_ROOT:-$HOME/.krew}/bin:$PATH" >> "$GITHUB_PATH"
 
       # https://kuttl.dev/docs/cli.html#setup-the-kuttl-kubectl-plugin
       - name: kuttl - install
