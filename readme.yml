@@ -19,7 +19,7 @@ versions:
     repoUrl: https://github.com/argoproj/argo-cd
     category: CI/CD
   - name: Prometheus-Operator
-    version: v0.43.1
+    version: ""
     repoUrl: https://github.com/prometheus-operator/prometheus-operator
     category: Monitoring
     dir: prometheus-operator
@@ -51,7 +51,7 @@ versions:
     category: Monitoring
     todo: true
   - name: Strimzi
-    version: 0.24.0
+    version: ""
     repoUrl: https://github.com/strimzi/strimzi-kafka-operator
     category: Middleware (Operator)
   - name: Kind
