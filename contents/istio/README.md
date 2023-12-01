@@ -149,12 +149,14 @@ CRDs and their roles
 
 **If you test on your local cluster, pleasee use docker-desktop, minikube, or kind.**
 
-1. [kind](../local-cluster/kind): Istio Gateway might not work
+1. [kind](../local-cluster/kind): **Istio Gateway might not work**
 
     ```
     kind create cluster --config=../local-cluster/kind/cluster-with-port-mapping.yaml
     ```
-1. [minikube](../local-cluster/minikube): Confirmed everything works
+
+
+1. [minikube](../local-cluster/minikube): **Confirmed everything works**
     ```
     minikube start
     ```
@@ -164,7 +166,7 @@ CRDs and their roles
 1. Install `istioctl` (you can skip this step if you already installed `istioctl`)
 
     ```
-    ISTIO_VERSION=1.19.0
+    ISTIO_VERSION=1.20.0
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
     export PATH="$PATH:/$PWD/istio-${ISTIO_VERSION}/bin"
     ```
@@ -174,7 +176,7 @@ CRDs and their roles
     ```
     istioctl version
     no ready Istio pods in "istio-system"
-    1.19.0
+    1.20.0
     ```
 
 1. Install istio
@@ -343,6 +345,13 @@ CRDs and their roles
 
     </details>
 
+    **Notes: If you deploy `Gateway` and `VirtualService` in different namespaces, you need to specify the gateway in `VirtualService` with namespace as a prefix.**
+
+    ```yaml
+    gateways:
+    - gateway/bookinfo-gateway # <namespace of gateway>/<gateway name>
+    ```
+
     Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1beta1`)
 
 1. Check
@@ -429,7 +438,7 @@ spec:
 
 Istio includes beta support for the Kubernetes Gateway API
 
-#### 3.7.1. (Optional) Install necessary CRDs (only for `Gateway API`)
+#### 3.7.1. (Optional) Install necessary CRDs (only for `Gateway API` not needed for Istio APIs)
 
 ```
 kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
@@ -550,9 +559,192 @@ kubectl label namespace default istio-injection-
 
 1. [Ingress](ingress.md)
 1. Ingress Gateway
+
+
 ## 5. FAQ
 
 1. Istio APIs vs Gateway APIs
+
+## 7. Experiment
+
+### 7.1. Deploy Gateway and VirtualService in different namespaces
+
+Delete gateway and virtual service:
+
+```
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml
+```
+
+Create a namespace for gateway
+
+```
+kubectl create ns gateway
+```
+
+Create `productpage-v2`
+
+```
+kubectl deploy -f productpage-v2.yaml
+```
+
+Gateway and multiple VirtualServices
+
+
+`bookinfo-gateway.yaml`: `Gateway` and `VirtualService` (one for Gateway)
+
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookinfo-gateway
+  namespace: gateway
+spec:
+  # The selector matches the ingress gateway pod labels.
+  # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo
+  namespace: gateway
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookinfo-gateway # <namespace of gateway>/<gateway name>
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        prefix: /static
+    route:
+    - destination:
+        host: productpage.default.svc.cluster.local
+        port:
+          number: 9080
+  - match:
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage-v2.default.svc.cluster.local
+        port:
+          number: 9080
+EOF
+```
+
+You can check `/api/v1/products` is routed to `productpage-v2`, while `/productpage` is routed to `productpage-v1`.
+
+Clean up the resources:
+
+```
+kubectl delete gateway -n gateway bookinfo-gateway
+kubectl delete virtualservice -n gateway bookinfo
+```
+
+### 7.2. Gateway with Multiple VirtualServices
+
+If you have mulitple `VirtualService` for the same host, the one corresponding to `Gateway` will be used. [here](https://istio.io/latest/docs/ops/common-problems/network-issues/#route-rules-have-no-effect-on-ingress-gateway-requests)
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookinfo-gateway
+  namespace: gateway
+spec:
+  # The selector matches the ingress gateway pod labels.
+  # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo
+  namespace: gateway
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookinfo-gateway # <namespace of gateway>/<gateway name>
+  http:
+  - route:
+    - destination:
+        host: productpage.default.svc.cluster.local
+        port:
+          number: 9080
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: productpage
+spec:
+  hosts:
+  - productpage
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        prefix: /static
+    route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
+  - match:
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage-v2
+        port:
+          number: 9080
+EOF
+```
+
+Result:
+
+- All the requests via gateway are routed to `productpage` service.
+    - http://localhost/productpage
+    - http://localhost/api/v1/products
+- If you access `productpage` service directly, the routing is based on `productpage` VirtualService. (it seems that all the requests are routed to `productpage` not `productpage-v2`?)
+    - http://productpage.default.svc.cluster.local/productpage
+    - http://productpage.default.svc.cluster.local/api/v1/products
+
+
+    ```
+    for p in productpage api/v1/products; do kubectl run -i --tty --rm debug --image=curlimages/curl:latest --restart=Never --overrides='{"apiVersion": "v1","metadata": {"annotations": {"sidecar.istio.io/inject": "false"}}}' -- http://productpage.default.svc.cluster.local:9080/$p; done
+    ```
 
 ## 6. Ref
 
@@ -560,3 +752,10 @@ kubectl label namespace default istio-injection-
 1. Official
     1. [Istio operator code overview](https://github.com/istio/istio/blob/353f722394f90c48212dfd2e04962eafcfbbcfd4/architecture/environments/operator.md)
     1. [Istio Operator](https://github.com/istio/istio/blob/e81a033756b37768a68913fbe2505e03442d3836/operator/README.md)
+1. [ConflictingMeshGatewayVirtualServiceHosts](https://istio.io/latest/docs/reference/config/analysis/ist0109/): We can use `exportTo` to specify the target namespace.
+1. [Route rules have no effect on ingress gateway requests](https://istio.io/latest/docs/ops/common-problems/network-issues/#route-rules-have-no-effect-on-ingress-gateway-requests)
+    *The ingress requests are using the gateway host (e.g., myapp.com) which will activate the rules in the myapp VirtualService that routes to any endpoint of the helloworld service. Only internal requests with the host helloworld.default.svc.cluster.local will use the helloworld VirtualService which directs traffic exclusively to subset v1.*
+1. [Split large virtual services and destination rules into multiple resources](https://istio.io/latest/docs/ops/best-practices/traffic-management/#split-virtual-services)
+1. [#45332 Istio virtual service multiple services with the same host](https://github.com/istio/istio/issues/45332)
+1. [Introducing istiod: simplifying the control plane](https://istio.io/latest/blog/2020/istiod/)
+1. Relationship between the CLI and controller: *The CLI and controller share the same API and codebase for generating manifests from the API. You can think of the controller as the CLI command istioctl install running in a loop in a pod in the cluster and using the config from the in-cluster IstioOperator custom resource (CR).*
