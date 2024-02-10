@@ -1,4 +1,4 @@
-# kind
+# [kind](https://kind.sigs.k8s.io/)
 
 ## Description
 
@@ -6,7 +6,7 @@ kind is a tool for running local Kubernetes clusters using Docker container “n
 
 ## Prerequisite
 
-- go (1.11+)
+- go (1.16+)
 - Docker
 
 ## Quick Start
@@ -15,9 +15,7 @@ kind is a tool for running local Kubernetes clusters using Docker container “n
 kind create cluster
 ```
 
-## Installation
-
-https://kind.sigs.k8s.io/docs/user/quick-start/#installation
+## [Installation](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
 
 On Mac:
 
@@ -57,6 +55,8 @@ Have a nice day! 👋
 
 ### Example2: Port Mapping on MacOS
 
+kind - follow [the guide for setting up MetalLB](https://kind.sigs.k8s.io/docs/user/loadbalancer/) to get LoadBalancer type services to work.
+
 ```
 kind create cluster --config cluster-with-port-mapping.yaml
 ```
@@ -88,7 +88,3 @@ Ref:
     support for make / bash / docker, or bazel, in addition to pre-published builds
 - kind supports Linux, macOS and Windows
 - kind is a CNCF certified conformant Kubernetes installer
-
-## Official Document
-
-https://kind.sigs.k8s.io/

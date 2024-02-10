@@ -60,16 +60,22 @@ For more detail:
 
 There are several ways to create an operator. You can try any of them:
 
-1. [sample-controller](https://github.com/kubernetes/sample-controller): https://github.com/nakamasato/foo-controller-kubebuilder
 1. [operator-sdk](https://sdk.operatorframework.io/)
-    - [go-based](https://sdk.operatorframework.io/docs/building-operators/golang/quickstart/): https://github.com/nakamasato/memcached-operator
-    - [helm-based](https://sdk.operatorframework.io/docs/building-operators/helm/quickstart/): https://github.com/nakamasato/nginx-operator
-    - [ansible-based](https://sdk.operatorframework.io/docs/building-operators/ansible/quickstart/): https://github.com/nakamasato/memcached-operator-with-ansible
+    1. [go-based](https://sdk.operatorframework.io/docs/building-operators/golang/quickstart/): https://github.com/nakamasato/memcached-operator
+    1. [helm-based](https://sdk.operatorframework.io/docs/building-operators/helm/quickstart/): https://github.com/nakamasato/nginx-operator
+    1. [ansible-based](https://sdk.operatorframework.io/docs/building-operators/ansible/quickstart/): https://github.com/nakamasato/memcached-operator-with-ansible
 1. [kubebuilder](https://book.kubebuilder.io/)
-    - [Tutorial: Building CronJob](https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial.html)
+    1. [Tutorial: Building CronJob](https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial.html)
 1. [metacontroller](https://github.com/metacontroller/metacontroller)
 1. [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
 1. [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+
+You can also reference example controllers:
+
+1. [Sample Controller](https://github.com/kubernetes/sample-controller)
+1. [Istio Example Controller](https://github.com/istio/istio/blob/master/pkg/kube/controllers/example_test.go)
+1. [Foo Controller with Kubebuilder](https://github.com/nakamasato/foo-controller-kubebuilder)
+1. [Memcached Operator with Operator SDK](https://github.com/nakamasato/memcached-operator)
 
 ## 4. Understand more detail about each component
 
