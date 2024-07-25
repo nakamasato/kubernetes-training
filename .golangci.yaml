@@ -1,0 +1,15 @@
+run:
+  timeout: 5m # default is 1m
+issues:
+  exclude-rules:
+    - path: contents/kubernetes-operator/controller-runtime/
+      linters:
+        - errcheck
+
+    - path: contents/kubernetes-extensions/kubernetes-scheduler/random-scheduler
+      linters:
+        - errcheck
+
+    - path: contents/kubernetes-operator/client-go/
+      linters:
+        - errcheck

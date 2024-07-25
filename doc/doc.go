@@ -2,7 +2,6 @@ package doc
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -103,7 +102,7 @@ func (m *MarkDownDoc) WriteTable(t *Table) *MarkDownDoc {
 }
 
 func (m *MarkDownDoc) Export(filename string) error {
-	return ioutil.WriteFile(filename, []byte(m.builder.String()), os.ModePerm)
+	return os.WriteFile(filename, []byte(m.builder.String()), os.ModePerm)
 }
 
 func (m *MarkDownDoc) GetLink(desc, url string) string {
