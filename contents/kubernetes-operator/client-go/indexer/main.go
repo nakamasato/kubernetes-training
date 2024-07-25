@@ -110,11 +110,11 @@ func exampleWithThreadSafeMap() {
 }
 
 func nameIndexer(obj interface{}) ([]string, error) {
-	switch obj.(type) {
+	switch v := obj.(type) {
 	case string:
-		return []string{obj.(string)}, nil
+		return []string{v}, nil
 	case User:
-		return []string{obj.(User).Name}, nil
+		return []string{v.Name}, nil
 	default:
 		return []string{}, errors.New("nameIndexer error")
 	}
