@@ -120,19 +120,17 @@ Code: You can get the event through `w.ResultChan()`. The example is simplified 
 	}
 loop:
 	for {
-		select {
-		case event, ok := <-w.ResultChan():
-			if !ok {
-				break loop
-			}
-
-			meta, err := meta.Accessor(event.Object)
-			if err != nil {
-				continue
-			}
-			resourceVersion := meta.GetResourceVersion()
-			klog.Infof("event: %s, resourceVersion: %s", event.Type, resourceVersion)
+		event, ok := <-w.ResultChan()
+		if !ok {
+			break loop
 		}
+
+		meta, err := meta.Accessor(event.Object)
+		if err != nil {
+			continue
+		}
+		resourceVersion := meta.GetResourceVersion()
+		klog.Infof("event: %s, resourceVersion: %s", event.Type, resourceVersion)
 	}
 ```
 
