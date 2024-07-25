@@ -27,7 +27,7 @@ jobs:
           yq -i "(.versions[] | select(.name == \"ArgoCD\").version) = \"$argocd_version\"" readme.yml
 
       - name: set up
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
 
