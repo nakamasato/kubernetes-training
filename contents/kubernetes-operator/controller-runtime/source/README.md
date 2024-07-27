@@ -6,7 +6,7 @@ Component structure:
 Dataflow:
 ![](dataflow.drawio.svg)
 
-## [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L57-L68) interface
+## [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L47-L51) interface
 
 ```go
 type Source interface {
@@ -25,14 +25,9 @@ type SyncingSource interface {
 
 ## Implementations
 
-1. ~~[kindWithCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L77-L79): Just a wrapper of `Kind` without `InjectCache`. NewKindWithCache creates a Source without `InjectCache`, so that it is **assured that the given cache is used and not overwritten**.~~ -> Already removed in [Refactor source/handler/predicate packages to remove dep injection](https://github.com/kubernetes-sigs/controller-runtime/pull/2120) (from [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0))
-    ```go
-    type kindWithCache struct {
-    	kind Kind
-    }
-    ```
-    `Kind` has `InjectCache` while `kindWithCache` doesn't.
-1. ~~[Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102)~~ -> [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.16.0/pkg/internal/source/kind.go#L20-L31) (Moved to `pkg/internal/source/kind`): Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
+1. Already removed in [Refactor source/handler/predicate packages to remove dep injection](https://github.com/kubernetes-sigs/controller-runtime/pull/2120) (from [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0))
+    ~~`Kind` has `InjectCache` while `kindWithCache` doesn't.~~
+1. [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/internal/source/kind.go#L20-L31) Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
     ```go
     type Kind struct {
         Type client.Object
@@ -41,17 +36,12 @@ type SyncingSource interface {
         startCancel func()
     }
     ```
-    1. ~~`Kind` has `InjectCache` while `kindWithCache` doesn't.~~
-    1. ~~This is used by default if you build a controller with [builder](../builder/README.md#-convert-client.Object-to-source).~~
-        ```go
-        src := &source.Kind{Type: typeForSrc}
-        ```
-    1. ~~The cache is injected in [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L130) by [inject](../inject) feature~~ -> Changed to provide cache explicitly with the initialization method [`func Kind(cache cache.Cache, object client.Object) SyncingSource`](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.16.0/pkg/source/source.go#L61).
+    1. Provide cache explicitly with the initialization method [`func Kind(cache cache.Cache, object client.Object) SyncingSource`](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L61).
         ```go
         source.Kind(mgr.GetCache(), &corev1.Pod{})
         ```
-1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.16.0/pkg/source/source.go#L70-L86): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
-1. [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L338-L341): Informer is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
+1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L70-L86): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
+1. [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L185-L188): Informer is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
     ```go
     type Informer struct {
         // Informer is the controller-runtime Informer
@@ -69,7 +59,7 @@ What's the difference between `Informer` and `Kind`?
 ## How `Source` is used
 
 1. `Source` is initialized in `builder.doWatch` for each of `For`, `Owns`, and `Watches`:
-    1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L222-L225):
+    1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L271-L275):
         ```go
         // Reconcile type
         typeForSrc, err := blder.project(blder.forInput.object, blder.forInput.objectProjection)
@@ -78,7 +68,7 @@ What's the difference between `Informer` and `Kind`?
         }
         src := &source.Kind{Type: typeForSrc}
         ```
-    1. [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L235-L239):
+    1. [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L289-L293):
         ```go
         typeForSrc, err := blder.project(own.object, own.objectProjection)
 		if err != nil {
@@ -86,7 +76,7 @@ What's the difference between `Informer` and `Kind`?
 		}
 		src := &source.Kind{Type: typeForSrc}
         ```
-    1. [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L257-L263):
+    1. [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L316-L322):
         ```go
         // If the source of this watch is of type *source.Kind, project it.
 		if srckind, ok := w.src.(*source.Kind); ok {
@@ -97,14 +87,14 @@ What's the difference between `Informer` and `Kind`?
 			srckind.Type = typeForSrc
 		}
         ```
-1. The initialized source is passed to `controller.Watch` in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L246) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L54)
+1. The initialized source is passed to `controller.Watch` in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L279) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L56)
 
     ```go
     if err := blder.ctrl.Watch(w.src, w.eventhandler, allPredicates...); err != nil {
         return err
     }
     ```
-1. In [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L151)
+1. In [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/internal/controller/controller.go#L136)
     1. `Cache` is injected from controller.
         ```go
         // Inject Cache into arguments
@@ -116,7 +106,7 @@ What's the difference between `Informer` and `Kind`?
         ```go
         return src.Start(c.ctx, evthdler, c.Queue, prct...)
         ```
-1. [Source.Start](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L108)
+1. [Source.Start](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/internal/source/kind.go#L35)
     1. Get `informer` from the injected `cache`.
         ```go
         i, lastErr = ks.cache.GetInformer(ctx, ks.Type)
@@ -242,6 +232,20 @@ You can run:
     ```
 
     ```
-    2022-09-15T06:59:07.178+0900    INFO    source-examples CreateFunc is called    {"object": "nakamasato"}
-    2022-09-15T06:59:07.178+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"nakamasato"}}
+    2024-07-27T11:44:33.871+0900    INFO    source-examples CreateFunc is called    {"object": "sample-user"}
+    2024-07-27T11:44:33.872+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"sample-user"}}
+    ```
+
+1. Create nginx Pod
+    ```
+    kubectl run nginx --image=nginx
+    ```
+
+    ```
+    2024-07-27T11:45:13.787+0900    INFO    source-examples CreateFunc is called    {"object": "nginx"}
+    2024-07-27T11:45:13.787+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"nginx"}}
+    2024-07-27T11:45:13.805+0900    INFO    source-examples UpdateFunc is called    {"objectNew": "nginx", "objectOld": "nginx"}
+    2024-07-27T11:45:13.805+0900    INFO    source-examples got item        {"item": {"Event":"Update","Name":"nginx"}}
+    2024-07-27T11:45:13.819+0900    INFO    source-examples UpdateFunc is called    {"objectNew": "nginx", "objectOld": "nginx"}
+    2024-07-27T11:45:16.417+0900    INFO    source-examples UpdateFunc is called    {"objectNew": "nginx", "objectOld": "nginx"}
     ```

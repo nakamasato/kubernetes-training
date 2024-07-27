@@ -15,7 +15,6 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -68,11 +67,6 @@ func main() {
 	log.Info("cache is created")
 
 	ctx := context.Background()
-	pod := &v1.Pod{}
-	cache.Get(ctx, client.ObjectKeyFromObject(pod), pod)
-
-	mysqluser := &mysqlv1alpha1.MySQLUser{}
-	cache.Get(ctx, client.ObjectKeyFromObject(mysqluser), mysqluser)
 
 	// Start Cache
 	go func() {
@@ -82,8 +76,8 @@ func main() {
 	}()
 	log.Info("cache is started")
 
-	kindMysqlUser := source.Kind(cache, mysqluser)
-	kindPod := source.Kind(cache, pod)
+	kindMysqlUser := source.Kind(cache, &mysqlv1alpha1.MySQLUser{})
+	kindPod := source.Kind(cache, &v1.Pod{})
 
 	// Prepare queue and eventHandler
 	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
