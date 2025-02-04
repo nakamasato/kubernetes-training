@@ -2,7 +2,7 @@ module github.com/nakamasato/kubernetes-training
 
 go 1.22.0
 
-toolchain go1.23.5
+toolchain go1.23.6
 
 require (
 	github.com/nakamasato/mysql-operator v0.4.1
