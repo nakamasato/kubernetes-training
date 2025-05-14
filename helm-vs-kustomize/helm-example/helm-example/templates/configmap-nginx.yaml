@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "helm-example.fullname" . }}-nginx
+  labels:
+    {{- include "helm-example.labels" . | nindent 4 }}
+data:
+  nginx.conf: |
+{{ .Files.Get "nginx.conf" | indent 4 }}
