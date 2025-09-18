@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kustomize-example
+  name: kustomize-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kustomize-example
+  template:
+    metadata:
+      labels:
+        app: kustomize-example
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: nginx-conf
+              subPath: nginx.conf
+
+        - name: uwsgi
+          image: nakamasato/flask-test
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: kustomize-example-uwsgi
+            - secretRef:
+                name: kustomize-example-uwsgi
+
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: kustomize-example-nginx
+            items:
+              - key: nginx.conf
+                path: nginx.conf
