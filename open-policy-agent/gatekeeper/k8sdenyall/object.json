@@ -1,0 +1,212 @@
+{
+    "_unstable": {
+        "namespace": {
+            "apiVersion": "v1",
+            "kind": "Namespace",
+            "metadata": {
+                "creationTimestamp": "2020-11-13T14:24:50Z",
+                "managedFields": [
+                    {
+                        "apiVersion": "v1",
+                        "fieldsType": "FieldsV1",
+                        "fieldsV1": {
+                            "f:status": {
+                                "f:phase": {}
+                            }
+                        },
+                        "manager": "kube-apiserver",
+                        "operation": "Update",
+                        "time": "2020-11-13T14:24:50Z"
+                    }
+                ],
+                "name": "default",
+                "resourceVersion": "154",
+                "selfLink": "/api/v1/namespaces/default",
+                "uid": "5e71bedf-f896-4196-8c82-fdfd1b587681"
+            },
+            "spec": {
+                "finalizers": [
+                    "kubernetes"
+                ]
+            },
+            "status": {
+                "phase": "Active"
+            }
+        }
+    },
+    "dryRun": false,
+    "kind": {
+        "group": "",
+        "kind": "Pod",
+        "version": "v1"
+    },
+    "name": "busybox-7cf4b9fd89-xhrbp",
+    "namespace": "default",
+    "object": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+            "creationTimestamp": "2020-12-17T23:11:06Z",
+            "generateName": "busybox-7cf4b9fd89-",
+            "labels": {
+                "app": "busybox",
+                "pod-template-hash": "7cf4b9fd89"
+            },
+            "managedFields": [
+                {
+                    "apiVersion": "v1",
+                    "fieldsType": "FieldsV1",
+                    "fieldsV1": {
+                        "f:metadata": {
+                            "f:generateName": {},
+                            "f:labels": {
+                                ".": {},
+                                "f:app": {},
+                                "f:pod-template-hash": {}
+                            },
+                            "f:ownerReferences": {
+                                ".": {},
+                                "k:{\"uid\":\"e1a6525a-3ac7-46b8-8046-9fe330185033\"}": {
+                                    ".": {},
+                                    "f:apiVersion": {},
+                                    "f:blockOwnerDeletion": {},
+                                    "f:controller": {},
+                                    "f:kind": {},
+                                    "f:name": {},
+                                    "f:uid": {}
+                                }
+                            }
+                        },
+                        "f:spec": {
+                            "f:containers": {
+                                "k:{\"name\":\"busybox\"}": {
+                                    ".": {},
+                                    "f:command": {},
+                                    "f:image": {},
+                                    "f:imagePullPolicy": {},
+                                    "f:name": {},
+                                    "f:resources": {},
+                                    "f:terminationMessagePath": {},
+                                    "f:terminationMessagePolicy": {}
+                                }
+                            },
+                            "f:dnsPolicy": {},
+                            "f:enableServiceLinks": {},
+                            "f:restartPolicy": {},
+                            "f:schedulerName": {},
+                            "f:securityContext": {},
+                            "f:terminationGracePeriodSeconds": {}
+                        }
+                    },
+                    "manager": "kube-controller-manager",
+                    "operation": "Update",
+                    "time": "2020-12-17T23:11:06Z"
+                }
+            ],
+            "name": "busybox-7cf4b9fd89-xhrbp",
+            "namespace": "default",
+            "ownerReferences": [
+                {
+                    "apiVersion": "apps/v1",
+                    "blockOwnerDeletion": true,
+                    "controller": true,
+                    "kind": "ReplicaSet",
+                    "name": "busybox-7cf4b9fd89",
+                    "uid": "e1a6525a-3ac7-46b8-8046-9fe330185033"
+                }
+            ],
+            "uid": "797e8afe-095b-425b-bd90-63c78ab9f37e"
+        },
+        "spec": {
+            "containers": [
+                {
+                    "command": [
+                        "sh",
+                        "-c",
+                        "echo Container 1 is Running ; sleep 3600"
+                    ],
+                    "image": "busybox",
+                    "imagePullPolicy": "Always",
+                    "name": "busybox",
+                    "resources": {},
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File",
+                    "volumeMounts": [
+                        {
+                            "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                            "name": "default-token-qm759",
+                            "readOnly": true
+                        }
+                    ]
+                }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "enableServiceLinks": true,
+            "preemptionPolicy": "PreemptLowerPriority",
+            "priority": 0,
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "default",
+            "serviceAccountName": "default",
+            "terminationGracePeriodSeconds": 30,
+            "tolerations": [
+                {
+                    "effect": "NoExecute",
+                    "key": "node.kubernetes.io/not-ready",
+                    "operator": "Exists",
+                    "tolerationSeconds": 300
+                },
+                {
+                    "effect": "NoExecute",
+                    "key": "node.kubernetes.io/unreachable",
+                    "operator": "Exists",
+                    "tolerationSeconds": 300
+                }
+            ],
+            "volumes": [
+                {
+                    "name": "default-token-qm759",
+                    "secret": {
+                        "secretName": "default-token-qm759"
+                    }
+                }
+            ]
+        },
+        "status": {
+            "phase": "Pending",
+            "qosClass": "BestEffort"
+        }
+    },
+    "oldObject": null,
+    "operation": "CREATE",
+    "options": {
+        "apiVersion": "meta.k8s.io/v1",
+        "kind": "CreateOptions"
+    },
+    "requestKind": {
+        "group": "",
+        "kind": "Pod",
+        "version": "v1"
+    },
+    "requestResource": {
+        "group": "",
+        "resource": "pods",
+        "version": "v1"
+    },
+    "resource": {
+        "group": "",
+        "resource": "pods",
+        "version": "v1"
+    },
+    "uid": "ef3f4668-6e18-48b4-941c-dae847f0976f",
+    "userInfo": {
+        "groups": [
+            "system:serviceaccounts",
+            "system:serviceaccounts:kube-system",
+            "system:authenticated"
+        ],
+        "uid": "852050a8-0e3d-45ae-8d21-50c9cae1b0c5",
+        "username": "system:serviceaccount:kube-system:replicaset-controller"
+    }
+}
