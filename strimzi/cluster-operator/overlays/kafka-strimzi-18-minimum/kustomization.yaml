@@ -1,0 +1,16 @@
+namespace: kafka-strimzi-18-minimum
+bases:
+  - ../../base/strimzi-0.18.0
+resources:
+  # kafka cluster
+  - my-cluster.yaml
+  # topic
+  - topic/my-topic.yaml
+  # namespace
+  - namespace.yaml
+patches: # to update namespace
+  - strimzi-0.18.0/install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
+  - strimzi-0.18.0/install/cluster-operator/021-ClusterRoleBinding-strimzi-cluster-operator.yaml
+  - strimzi-0.18.0/install/cluster-operator/030-ClusterRoleBinding-strimzi-cluster-operator-kafka-broker-delegation.yaml
+  - strimzi-0.18.0/install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml
+  - strimzi-0.18.0/install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml
