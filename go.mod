@@ -6,7 +6,7 @@ toolchain go1.24.1
 
 require (
 	github.com/nakamasato/mysql-operator v0.4.1
-	go.uber.org/zap v1.27.0
+	go.uber.org/zap v1.27.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.32.2
 	k8s.io/apimachinery v0.32.2
