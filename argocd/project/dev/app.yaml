@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook-kustomize-dev
+  namespace: argocd
+  labels:
+    app: guestbook-ui
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: argocd-notifications-guestbook-ui
+spec:
+  project: dev
+
+  # Source of the application manifests
+  source:
+    repoURL: https://github.com/nakamasato/k8s-deploy-test.git
+    targetRevision: dev
+    path: apps/guestbook-kustomize/overlays/dev
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+
+  # Sync policy
+  syncPolicy:
+    automated:
+      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+      selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+    syncOptions:
+      - CreateNamespace=true

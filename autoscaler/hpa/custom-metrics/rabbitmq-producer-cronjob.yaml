@@ -1,0 +1,32 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: rabbitmq-producer
+spec:
+  schedule: '*/5 * * * *'
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      name: rabbitmq-producer
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - image: nakamasato/rabbitmq-producer
+              name: rabbitmq-producer
+              env:
+                - name: RABBITMQ_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: rabbitmq-default-user
+                      key: username
+                - name: RABBITMQ_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: rabbitmq-default-user
+                      key: password
+                - name: RABBITMQ_HOST
+                  value: rabbitmq
+                - name: NUM_OF_MESSAGES
+                  value: "20"

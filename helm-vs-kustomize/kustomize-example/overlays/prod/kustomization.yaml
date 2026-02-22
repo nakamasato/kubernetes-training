@@ -1,0 +1,10 @@
+namespace: kustomize-prod
+resources:
+  - ../../base
+patches:
+  - deployment.yaml
+
+images:
+  - name: nginx
+    newName: nginx
+    newTag: 1.29.5

@@ -1,0 +1,7721 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../kube-apiserver/">
+      
+      
+        <link rel="next" href="../kube-proxy/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>kube-controller-manager - Kubernetes Traning</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-9NTB93RVPJ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-9NTB93RVPJ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-9NTB93RVPJ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kube-controller-manager" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Kubernetes Traning" class="md-header__button md-logo" aria-label="Kubernetes Traning" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kubernetes Traning
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              kube-controller-manager
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/nakamasato/kubernetes-training" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Kubernetes Traning" class="md-nav__button md-logo" aria-label="Kubernetes Traning" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Kubernetes Traning
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nakamasato/kubernetes-training" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kubernetes-training
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PRACTICE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TESTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing (WIP)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../actions-runner-controller/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Actions runner controller
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Actions runner controller
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../argocd/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Argocd
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Argocd
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../autoscaler/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autoscaler
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autoscaler
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../autoscaler/ca/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ca
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ca
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../autoscaler/hpa/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hpa
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hpa
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../autoscaler/hpa/custom-metrics/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom metrics
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Custom metrics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../cert-manager/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cert manager
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cert manager
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../databases/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Databases
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Databases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../databases/mysql-operator/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mysql operator
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mysql operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../databases/postgres-operator/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Postgres operator
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Postgres operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../databases/vitess/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vitess
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Vitess
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../eck/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eck
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Eck
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../eksworkshop/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eksworkshop
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Eksworkshop
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intermediate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Intermediate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../eksworkshop/intermediate/velero/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Velero
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Velero
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../flux/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Flux
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Flux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../grafana/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grafana
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grafana
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../grafana-operator/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grafana operator
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grafana operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../helm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14" id="__nav_14_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../helm/hello-world/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hello world
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hello world
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_15" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../helm-vs-kustomize/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm vs kustomize
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Helm vs kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../ingress-nginx-controller/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingress nginx controller
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ingress nginx controller
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../istio/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Istio
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_17" id="__nav_17_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Istio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../istio/implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Istio Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../istio/ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes Ingress
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../knative/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knative
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Knative
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubeadm-local/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubeadm local
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubeadm local
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes components
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_20" id="__nav_20_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes components
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../cloud-controller-manager/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud controller manager
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cloud controller manager
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../etcd/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Etcd
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Etcd
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../kube-apiserver/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kube apiserver
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kube apiserver
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kube controller manager
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_20_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kube controller manager
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../kube-proxy/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kube proxy
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kube proxy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../kubectl/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubectl
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubectl
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../kubelet/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubelet
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubelet
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../kubernetes-scheduler/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes scheduler
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes scheduler
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_21" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-extensions/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes extensions
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_21" id="__nav_21_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_21_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_21">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes extensions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_21_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-extensions/kubernetes-scheduler/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes scheduler
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_21_2" id="__nav_21_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_21_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_21_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes scheduler
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_21_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-extensions/kubernetes-scheduler/random-scheduler/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Random scheduler
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_21_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_21_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Random scheduler
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_22" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-features/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes features
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_22" id="__nav_22_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_22_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_22">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_22_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-features/owner-references/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Owner references
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_22_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_22_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Owner references
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_22_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-features/resource-deletion/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource deletion
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_22_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_22_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resource deletion
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes operator
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_23" id="__nav_23_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_23_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/apimachinery/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apimachinery
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_23_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Apimachinery
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client go
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_23_3" id="__nav_23_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_23_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client go
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/clientset/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clientset
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Clientset
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/deltafifo/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deltafifo
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deltafifo
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/indexer/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Indexer
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Indexer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/informer/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Informer
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Informer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/lister/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lister
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lister
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/listerwatcher/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Listerwatcher
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Listerwatcher
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/reflector/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reflector
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reflector
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_3_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/client-go/workqueue/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workqueue
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workqueue
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controller runtime
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_23_4" id="__nav_23_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_23_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Controller runtime
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/builder/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Builder
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Builder
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/cache/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cache
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cache
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/client/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/cluster/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/controller/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controller
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Controller
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/example-controller/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example controller
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Example controller
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/handler/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handler
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Handler
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/inject/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inject
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Inject
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/leaderelection/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Leaderelection
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Leaderelection
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/log/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Log
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Log
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_12" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/manager/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manager
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Manager
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_13" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/reconciler/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reconciler
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reconciler
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_14" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/source/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Source
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Source
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_4_15" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/controller-runtime/webhook/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_23_4_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_4_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Webhook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_23_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-operator/list/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_23_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_23_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    List
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_24" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-the-hard-way/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes the hard way
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_24_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_24">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes the hard way
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_25" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kubernetes-tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes tools
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_25_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_25">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_26" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../kustomize/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kustomize
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_26_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_26">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kustomize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_27" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../local-cluster/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local cluster
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_27" id="__nav_27_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_27_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_27">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Local cluster
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_27_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../local-cluster/docker-desktop/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker desktop
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_27_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_27_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker desktop
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_27_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../local-cluster/kind/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kind
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_27_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_27_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kind
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_27_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../local-cluster/minikube/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minikube
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_27_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_27_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Minikube
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_28" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../loki/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Loki
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_28_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_28">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Loki
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_29" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../open-policy-agent/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open policy agent
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_29" id="__nav_29_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_29_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_29">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Open policy agent
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_29_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_29_2" id="__nav_29_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gatekeeper
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_29_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_29_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gatekeeper
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_29_2_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../open-policy-agent/gatekeeper/require-prefix/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Require prefix
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_29_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_29_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Require prefix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_30" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../prometheus/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prometheus
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_30_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_30">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prometheus
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_31" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../prometheus-operator/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prometheus operator
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_31_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_31">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prometheus operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_32" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../secret-management/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret management
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_32_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_32">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Secret management
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../strimzi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strimzi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_33" id="__nav_33_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_33_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Strimzi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_33_2" id="__nav_33_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster operator
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_33_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_33_2_1" id="__nav_33_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_33_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Base
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_33_2_1_1" id="__nav_33_2_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strimzi 0.18.0
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_33_2_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Strimzi 0.18.0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1_1_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../strimzi/cluster-operator/base/strimzi-0.18.0/examples/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_33_2_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_33_2_1_2" id="__nav_33_2_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strimzi 0.24.0
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_33_2_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Strimzi 0.24.0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1_2_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../strimzi/cluster-operator/base/strimzi-0.24.0/examples/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_33_2_1_2_1" id="__nav_33_2_1_2_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_33_2_1_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1_2_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_33_2_1_2_1_2" id="__nav_33_2_1_2_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="6" aria-labelledby="__nav_33_2_1_2_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_33_2_1_2_1_2_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../strimzi/cluster-operator/base/strimzi-0.24.0/examples/security/keycloak-authorization/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keycloak authorization
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="7" aria-labelledby="__nav_33_2_1_2_1_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_33_2_1_2_1_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Keycloak authorization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_34" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tempo/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tempo
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_34_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_34">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tempo
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_35" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../terraform-k8s/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform k8s
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_35_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_35">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform k8s
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_36" >
+        
+          
+          <label class="md-nav__link" for="__nav_36" id="__nav_36_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Traefik
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_36_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_36">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Traefik
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_36_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../traefik/quick-start/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_36_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_36_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quick start
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-kube-controller-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Kube Controller Manager
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-controller-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Controller Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-built-in-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Built-in Controllers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Built-in Controllers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-endpointscontroller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. EndpointsController
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-garbagecollector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. GarbageCollector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2. GarbageCollector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1. Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2.1. Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3211-garbagecollector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1.1. GarbageCollector:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3212-graphbuilder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1.2. GraphBuilder
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.2. Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#323-ref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.3. Ref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#324-memo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.4. Memo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-namespacecontroller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3. NamespaceController
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-deploymentcontroller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4. DeploymentController
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="kube-controller-manager">kube-controller-manager</h1>
+<h2 id="1-kube-controller-manager">1. Kube Controller Manager</h2>
+<p><img alt="" src="kube-controller-manager.drawio.svg" /></p>
+<p><strong>kube-controller-manager</strong> runs built-in controllers.</p>
+<p>Entrypoint:</p>
+<ol>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/controller-manager.go">controller-manager.go</a> starts kube-controller-manager with only three lines.
+    <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">command</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">app</span><span class="p">.</span><span class="nx">NewControllerManagerCommand</span><span class="p">()</span>
+<span class="w">    </span><span class="nx">code</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">cli</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="nx">command</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="nx">code</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/app/controllermanager.go#L103">NewControllerManagerCommand</a> returns a <a href="https://github.com/spf13/cobra">cobra.Command</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/app/controllermanager.go#L423">NewControllerInitializers</a> defines a set of controllers to start in the controller manager. Specifically, the following controllers are registered with the <code>startXXXController</code> with type <code>InitFunc</code>
+    <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">InitFunc</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">controllerCtx</span><span class="w"> </span><span class="nx">ControllerContext</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">controller</span><span class="w"> </span><span class="nx">controller</span><span class="p">.</span><span class="nx">Interface</span><span class="p">,</span><span class="w"> </span><span class="nx">enabled</span><span class="w"> </span><span class="kt">bool</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code><span class="nx">register</span><span class="p">(</span><span class="s">&quot;endpoint&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startEndpointController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;endpointslice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startEndpointSliceController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;endpointslicemirroring&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startEndpointSliceMirroringController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;replicationcontroller&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startReplicationController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;podgc&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startPodGCController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;resourcequota&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startResourceQuotaController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;namespace&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startNamespaceController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;serviceaccount&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startServiceAccountController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;garbagecollector&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startGarbageCollectorController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;daemonset&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startDaemonSetController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;job&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startJobController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;deployment&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startDeploymentController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;replicaset&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startReplicaSetController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;horizontalpodautoscaling&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startHPAController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;disruption&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startDisruptionController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;statefulset&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startStatefulSetController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;cronjob&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startCronJobController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;csrsigning&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startCSRSigningController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;csrapproving&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startCSRApprovingController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;csrcleaner&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startCSRCleanerController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;ttl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startTTLController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;bootstrapsigner&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startBootstrapSignerController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;tokencleaner&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startTokenCleanerController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;nodeipam&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startNodeIpamController</span><span class="p">)</span>
+<span class="nx">register</span><span class="p">(</span><span class="s">&quot;nodelifecycle&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">startNodeLifecycleController</span><span class="p">)</span>
+</code></pre></div></li>
+<li>The core function <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/app/controllermanager.go#L180">Run</a> calls <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/cmd/kube-controller-manager/app/controllermanager.go#L567">StartControllers</a> to start the controllers specified by <code>controllers</code> (<code>map[string]InitFunc{}</code> defined in the previous step)</li>
+</ol>
+<p>Each Controller:</p>
+<ol>
+<li><code>InitFunc</code> of each controller is defined in <a href="https://github.com/kubernetes/kubernetes/blob/master/cmd/kube-controller-manager/app/core.go">kube-controller-manager/app/core.go</a>. e.g. <a href="https://github.com/kubernetes/kubernetes/blob/master/cmd/kube-controller-manager/app/core.go#L508">startGarbageCollectorController</a>
+    <div class="highlight"><pre><span></span><code><span class="nx">garbageCollector</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">garbagecollector</span><span class="p">.</span><span class="nx">NewGarbageCollector</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">gcClientset</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">metadataClient</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">controllerContext</span><span class="p">.</span><span class="nx">RESTMapper</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">ignoredResources</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">controllerContext</span><span class="p">.</span><span class="nx">ObjectOrMetadataInformerFactory</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">controllerContext</span><span class="p">.</span><span class="nx">InformersStarted</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></li>
+<li>Each controller is defined under <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/controller">pkg/controller</a>. e.g. <a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/controller/garbagecollector/garbagecollector.go">pkg/controller/garbagecollector/garbagecollector.go</a>
+    <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">GarbageCollector</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">restMapper</span><span class="w">     </span><span class="nx">meta</span><span class="p">.</span><span class="nx">ResettableRESTMapper</span>
+<span class="w">    </span><span class="nx">metadataClient</span><span class="w"> </span><span class="nx">metadata</span><span class="p">.</span><span class="nx">Interface</span>
+<span class="w">    </span><span class="c1">// garbage collector attempts to delete the items in attemptToDelete queue when the time is ripe.</span>
+<span class="w">    </span><span class="nx">attemptToDelete</span><span class="w"> </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="c1">// garbage collector attempts to orphan the dependents of the items in the attemptToOrphan queue, then deletes the items.</span>
+<span class="w">    </span><span class="nx">attemptToOrphan</span><span class="w">        </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="nx">dependencyGraphBuilder</span><span class="w"> </span><span class="o">*</span><span class="nx">GraphBuilder</span>
+<span class="w">    </span><span class="c1">// GC caches the owners that do not exist according to the API server.</span>
+<span class="w">    </span><span class="nx">absentOwnerCache</span><span class="w"> </span><span class="o">*</span><span class="nx">ReferenceCache</span>
+
+<span class="w">    </span><span class="nx">kubeClient</span><span class="w">       </span><span class="nx">clientset</span><span class="p">.</span><span class="nx">Interface</span>
+<span class="w">    </span><span class="nx">eventBroadcaster</span><span class="w"> </span><span class="nx">record</span><span class="p">.</span><span class="nx">EventBroadcaster</span>
+
+<span class="w">    </span><span class="nx">workerLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="p">}</span>
+</code></pre></div></li>
+</ol>
+<h2 id="2-controller-overview">2. Controller Overview</h2>
+<p><img alt="" src="controller.drawio.svg" /></p>
+<p>Components:</p>
+<ul>
+<li><strong>Reflector</strong>:</li>
+<li><strong>Delta FIFO queue</strong>:</li>
+<li>
+<p><a href="https://pkg.go.dev/k8s.io/client-go/informers">Informer</a>: Monitor Object's event and EventHandler is called for each event (usually add item to WorkQueue in event handlers in a controller).</p>
+<ul>
+<li><a href="https://github.com/kubernetes/client-go/blob/b425fb657986de75a11b1844886c70b486728935/tools/cache/shared_informer.go#L274-L286">sharedIndexInformer</a>: Usually created for a specific resource (e.g. <code>deploymentInformer</code>) with <code>NewSharedIndexInformer</code>, which creates a new instance for the listwatcher.<ol>
+<li><a href="https://github.com/kubernetes/client-go/blob/b425fb657986de75a11b1844886c70b486728935/tools/cache/index.go#L35-L56">Indexer</a>: indexed local cache. Indexer extends <a href="https://github.com/kubernetes/client-go/blob/4ae0d1917adff2d93ea4c6a7ae3a9e5c19280b9f/tools/cache/store.go#L39">Store</a> with multiple indices and restricts each accumulator to simply hold the current object.</li>
+<li><code>Controller</code> that pulls objects/notifications using the ListerWatcher and pushes them into a <code>DeltaFIFO</code>.</li>
+<li><code>sharedProcessor</code> responsible for relaying those notifications to each of the informer's clients. &lt;- <code>EventHandler</code> is set to <code>processorListener</code>, which is stored in <code>listeners</code> of a <code>sharedProcessor</code>.</li>
+<li>
+<p><code>listerWatcher</code> for the target resource. e.g. for <a href="https://github.com/kubernetes/client-go/blob/b425fb657986de75a11b1844886c70b486728935/informers/apps/v1/deployment.go#L60-L73">deploymentInformer</a></p>
+<details>
+<div class="highlight"><pre><span></span><code><span class="o">&amp;</span><span class="nx">cache</span><span class="p">.</span><span class="nx">ListWatch</span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ListFunc</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">options</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">runtime</span><span class="p">.</span><span class="nx">Object</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">tweakListOptions</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">tweakListOptions</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">options</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">AppsV1</span><span class="p">().</span><span class="nx">Deployments</span><span class="p">(</span><span class="nx">namespace</span><span class="p">).</span><span class="nx">List</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">options</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">WatchFunc</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">options</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">watch</span><span class="p">.</span><span class="nx">Interface</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">tweakListOptions</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">tweakListOptions</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">options</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">AppsV1</span><span class="p">().</span><span class="nx">Deployments</span><span class="p">(</span><span class="nx">namespace</span><span class="p">).</span><span class="nx">Watch</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">options</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">},</span>
+</code></pre></div>
+</details>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Lister</strong>: Retrieve object from in-memory-cache.</p>
+</li>
+<li><strong>WorkQueue</strong>: Store item for which Reconcile loop is executed.</li>
+<li><strong>Scheme</strong>: Scheme defines methods for serializing and deserializing API objects, a type registry for converting group, version, and kind information to and from Go schemas, and mappings between Go schemas of different versions. (ref: <a href="https://github.com/kubernetes/apimachinery/blob/2936d3f03931b9c06a641799605d8e806cb2a58b/pkg/runtime/scheme.go#L31-L33">scheme.go</a>)</li>
+<li><strong>processNextWorkItem</strong>: Process an item in WorkQueue.</li>
+<li><strong>syncHandler</strong>: Reconcile loop called by <code>processNextWorkItem</code> function (Function name can be different).</li>
+</ul>
+<h2 id="3-built-in-controllers">3. Built-in Controllers</h2>
+<h3 id="31-endpointscontroller">3.1. EndpointsController</h3>
+<p><img alt="" src="endpoints-controller.drawio.svg" /></p>
+<p><a href="https://qiita.com/gymnstcs/items/13698c24af0a60f71bcd">[Kubernetes] EndpointsがよくわかってないのでEndpointsControllerを読んでみた</a></p>
+<h3 id="32-garbagecollector">3.2. GarbageCollector</h3>
+<p><img alt="" src="garbagecollector-simple.drawio.svg" /></p>
+<details>
+
+![](garbagecollector.drawio.svg)
+
+</details>
+
+<h4 id="321-components">3.2.1. Components</h4>
+<h5 id="3211-garbagecollector">3.2.1.1. <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go">GarbageCollector</a>:</h5>
+<details>
+
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">GarbageCollector</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">restMapper</span><span class="w">     </span><span class="nx">meta</span><span class="p">.</span><span class="nx">ResettableRESTMapper</span>
+<span class="w">    </span><span class="nx">metadataClient</span><span class="w"> </span><span class="nx">metadata</span><span class="p">.</span><span class="nx">Interface</span>
+<span class="w">    </span><span class="c1">// garbage collector attempts to delete the items in attemptToDelete queue when the time is ripe.</span>
+<span class="w">    </span><span class="nx">attemptToDelete</span><span class="w"> </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="c1">// garbage collector attempts to orphan the dependents of the items in the attemptToOrphan queue, then deletes the items.</span>
+<span class="w">    </span><span class="nx">attemptToOrphan</span><span class="w">        </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="nx">dependencyGraphBuilder</span><span class="w"> </span><span class="o">*</span><span class="nx">GraphBuilder</span>
+<span class="w">    </span><span class="c1">// GC caches the owners that do not exist according to the API server.</span>
+<span class="w">    </span><span class="nx">absentOwnerCache</span><span class="w"> </span><span class="o">*</span><span class="nx">ReferenceCache</span>
+
+<span class="w">    </span><span class="nx">kubeClient</span><span class="w">       </span><span class="nx">clientset</span><span class="p">.</span><span class="nx">Interface</span>
+<span class="w">    </span><span class="nx">eventBroadcaster</span><span class="w"> </span><span class="nx">record</span><span class="p">.</span><span class="nx">EventBroadcaster</span>
+
+<span class="w">    </span><span class="nx">workerLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="p">}</span>
+</code></pre></div>
+
+</details>
+
+<ol>
+<li><a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/api/meta#RESTMapper">RestMapper</a>: map resources to kind, and map kind and version to interfaces</li>
+</ol>
+<h5 id="3212-graphbuilder">3.2.1.2. <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go">GraphBuilder</a></h5>
+<p>builds a graph caching the dependencies among objects.</p>
+<details>
+
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">GraphBuilder</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">restMapper</span><span class="w"> </span><span class="nx">meta</span><span class="p">.</span><span class="nx">RESTMapper</span>
+
+<span class="w">    </span><span class="c1">// each monitor list/watches a resource, the results are funneled to the</span>
+<span class="w">    </span><span class="c1">// dependencyGraphBuilder</span>
+<span class="w">    </span><span class="nx">monitors</span><span class="w">    </span><span class="nx">monitors</span>
+<span class="w">    </span><span class="nx">monitorLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="w">    </span><span class="c1">// informersStarted is closed after after all of the controllers have been initialized and are running.</span>
+<span class="w">    </span><span class="c1">// After that it is safe to start them here, before that it is not.</span>
+<span class="w">    </span><span class="nx">informersStarted</span><span class="w"> </span><span class="o">&lt;-</span><span class="kd">chan</span><span class="w"> </span><span class="kd">struct</span><span class="p">{}</span>
+
+<span class="w">    </span><span class="c1">// stopCh drives shutdown. When a receive from it unblocks, monitors will shut down.</span>
+<span class="w">    </span><span class="c1">// This channel is also protected by monitorLock.</span>
+<span class="w">    </span><span class="nx">stopCh</span><span class="w"> </span><span class="o">&lt;-</span><span class="kd">chan</span><span class="w"> </span><span class="kd">struct</span><span class="p">{}</span>
+
+<span class="w">    </span><span class="c1">// running tracks whether Run() has been called.</span>
+<span class="w">    </span><span class="c1">// it is protected by monitorLock.</span>
+<span class="w">    </span><span class="nx">running</span><span class="w"> </span><span class="kt">bool</span>
+
+<span class="w">    </span><span class="nx">eventRecorder</span><span class="w"> </span><span class="nx">record</span><span class="p">.</span><span class="nx">EventRecorder</span>
+
+<span class="w">    </span><span class="nx">metadataClient</span><span class="w"> </span><span class="nx">metadata</span><span class="p">.</span><span class="nx">Interface</span>
+<span class="w">    </span><span class="c1">// monitors are the producer of the graphChanges queue, graphBuilder alters</span>
+<span class="w">    </span><span class="c1">// the in-memory graph according to the changes.</span>
+<span class="w">    </span><span class="nx">graphChanges</span><span class="w"> </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="c1">// uidToNode doesn&#39;t require a lock to protect, because only the</span>
+<span class="w">    </span><span class="c1">// single-threaded GraphBuilder.processGraphChanges() reads/writes it.</span>
+<span class="w">    </span><span class="nx">uidToNode</span><span class="w"> </span><span class="o">*</span><span class="nx">concurrentUIDToNode</span>
+<span class="w">    </span><span class="c1">// GraphBuilder is the producer of attemptToDelete and attemptToOrphan, GC is the consumer.</span>
+<span class="w">    </span><span class="nx">attemptToDelete</span><span class="w"> </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="nx">attemptToOrphan</span><span class="w"> </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="c1">// GraphBuilder and GC share the absentOwnerCache. Objects that are known to</span>
+<span class="w">    </span><span class="c1">// be non-existent are added to the cached.</span>
+<span class="w">    </span><span class="nx">absentOwnerCache</span><span class="w"> </span><span class="o">*</span><span class="nx">ReferenceCache</span>
+<span class="w">    </span><span class="nx">sharedInformers</span><span class="w">  </span><span class="nx">informerfactory</span><span class="p">.</span><span class="nx">InformerFactory</span>
+<span class="w">    </span><span class="nx">ignoredResources</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="nx">schema</span><span class="p">.</span><span class="nx">GroupResource</span><span class="p">]</span><span class="kd">struct</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+</details>
+
+<ol>
+<li><strong>monitors</strong>: a set of monitors, each of which runs a <a href="https://pkg.go.dev/k8s.io/client-go/tools/cache#Controller">cache.Controller</a> (1. construct and run a Reflector and pumps objects/notifications to the <strong>Config.Queue</strong>. 2. pop from the queue and process with <strong>Config.ProcessFunc</strong>).</li>
+<li><strong>graphChanges</strong>: workqueue to store events from informer (input of all process)</li>
+<li><strong>absentOwnerCache</strong>: Objects that are known to be non-existent are added to the cached.</li>
+<li><strong>uidToNode</strong> (graph): a pointer of <a href="https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph.go#L195">concurrentUIDToNode</a>
+    <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">concurrentUIDToNode</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">uidToNodeLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="w">    </span><span class="nx">uidToNode</span><span class="w">     </span><span class="kd">map</span><span class="p">[</span><span class="nx">types</span><span class="p">.</span><span class="nx">UID</span><span class="p">]</span><span class="o">*</span><span class="nx">node</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><strong>node</strong>
+    <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">node</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">identity</span><span class="w"> </span><span class="nx">objectReference</span>
+<span class="w">    </span><span class="c1">// dependents will be read by the orphan() routine, we need to protect it with a lock.</span>
+<span class="w">    </span><span class="nx">dependentsLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="w">    </span><span class="c1">// dependents are the nodes that have node.identity as a</span>
+<span class="w">    </span><span class="c1">// metadata.ownerReference.</span>
+<span class="w">    </span><span class="nx">dependents</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="o">*</span><span class="nx">node</span><span class="p">]</span><span class="kd">struct</span><span class="p">{}</span>
+<span class="w">    </span><span class="c1">// this is set by processGraphChanges() if the object has non-nil DeletionTimestamp</span>
+<span class="w">    </span><span class="c1">// and has the FinalizerDeleteDependents.</span>
+<span class="w">    </span><span class="nx">deletingDependents</span><span class="w">     </span><span class="kt">bool</span>
+<span class="w">    </span><span class="nx">deletingDependentsLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="w">    </span><span class="c1">// this records if the object&#39;s deletionTimestamp is non-nil.</span>
+<span class="w">    </span><span class="nx">beingDeleted</span><span class="w">     </span><span class="kt">bool</span>
+<span class="w">    </span><span class="nx">beingDeletedLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="w">    </span><span class="c1">// this records if the object was constructed virtually and never observed via informer event</span>
+<span class="w">    </span><span class="nx">virtual</span><span class="w">     </span><span class="kt">bool</span>
+<span class="w">    </span><span class="nx">virtualLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="w">    </span><span class="c1">// when processing an Update event, we need to compare the updated</span>
+<span class="w">    </span><span class="c1">// ownerReferences with the owners recorded in the graph.</span>
+<span class="w">    </span><span class="nx">owners</span><span class="w"> </span><span class="p">[]</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">OwnerReference</span>
+<span class="p">}</span>
+</code></pre></div><ol>
+<li><code>isObserved</code>: <code>!virtual</code></li>
+<li><code>vitual</code>: In <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L513-L529">attemptToDeleteItem</a>, if there's no corresponding object in API server or the latest uid is not same as item.identity.UID, the item is added back to graphChanges with virtual = true</li>
+</ol>
+</li>
+</ol>
+<h4 id="322-steps">3.2.2. Steps</h4>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L87">NewGarbageCollector</a>:</p>
+<ol>
+<li><strong>GarbageCollector</strong> and <strong>GraphBuilder</strong> are initialized</li>
+</ol>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L143">GarbageCollector.Run()</a>:</p>
+<ol>
+<li>Start <strong>gc.dependencyGraphBuilder.Run()</strong> (wait until cache is synced)
+    <div class="highlight"><pre><span></span><code><span class="k">go</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">dependencyGraphBuilder</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">())</span>
+</code></pre></div><ol>
+<li>Start <code>gb.startMonitors()</code>: ensure the current set of monitors are running. Start each of the monitors
+    <div class="highlight"><pre><span></span><code><span class="nx">gb</span><span class="p">.</span><span class="nx">sharedInformers</span><span class="p">.</span><span class="nx">Start</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">stopCh</span><span class="p">)</span>
+<span class="k">go</span><span class="w"> </span><span class="nx">monitor</span><span class="p">.</span><span class="nx">Run</span><span class="p">()</span>
+</code></pre></div></li>
+<li>Run <code>runProcessGraphChanges</code> every second
+    <div class="highlight"><pre><span></span><code><span class="nx">wait</span><span class="p">.</span><span class="nx">Until</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">runProcessGraphChanges</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span><span class="w"> </span><span class="nx">stopCh</span><span class="p">)</span>
+</code></pre></div></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L600">runProcessGraphChanges</a> calls <strong>processGraphChanges</strong> in a for loop.
+    <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">gb</span><span class="w"> </span><span class="o">*</span><span class="nx">GraphBuilder</span><span class="p">)</span><span class="w"> </span><span class="nx">runProcessGraphChanges</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">gb</span><span class="p">.</span><span class="nx">processGraphChanges</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li><code>processGraphChanges</code>: Get an item from <code>graphChanges</code> and put the corresponding node to <code>attemptToDelete</code> or <code>attemptToOrphan</code> queue.<ol>
+<li>if the node in <code>uidToNode</code> is not observed and now observed -&gt; node.<code>markObserved()</code> (Add a potentially invalid dependent to <code>attemptToDelete</code> queue) <a href="https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph_builder.go#L638-L666">ref</a></li>
+<li>[<code>addEvent</code> or <code>updateEvent</code>] if not found in <code>uidToNode</code>, <code>insertNode</code> + <code>processTransitions</code> <a href="https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/graph_builder.go#L668-L679">ref</a></li>
+<li>[<code>addEvent</code> or <code>updateEvent</code>] if found in <code>uidToNode</code>, reflect changes in ownerReferences and if being deleted, <code>markBeingDeleted()</code> + <code>processTransitions</code> <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L680-L699">ref</a></li>
+<li>[<code>deleteEvent</code>] if found<ol>
+<li>if <code>event.virtual</code> (event from GarbageCollector) -&gt; in some case set <code>removeExistingNode</code> to false as it's not certain. Detail: <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L708-L760">ref</a></li>
+<li>if <code>removeExistingNode</code>, <code>removeNode</code>, add dependents to <code>attemptToDelete</code>, and add owners to <code>attemptToDelete</code></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Start gc workers
+    <div class="highlight"><pre><span></span><code><span class="c1">// gc workers</span>
+<span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="nx">workers</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">go</span><span class="w"> </span><span class="nx">wait</span><span class="p">.</span><span class="nx">UntilWithContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">runAttemptToDeleteWorker</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<span class="w">    </span><span class="k">go</span><span class="w"> </span><span class="nx">wait</span><span class="p">.</span><span class="nx">Until</span><span class="p">(</span><span class="nx">gc</span><span class="p">.</span><span class="nx">runAttemptToOrphanWorker</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></div><ol>
+<li>run <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L302-L305">runAttemptToDeleteWorker()</a>
+    <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">gc</span><span class="w"> </span><span class="o">*</span><span class="nx">GarbageCollector</span><span class="p">)</span><span class="w"> </span><span class="nx">runAttemptToDeleteWorker</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">processAttemptToDeleteWorker</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+    <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L311-L326">processAttemptToDeleteWorker</a>:<ol>
+<li>Get an item (node) from <strong>attemptToDelete</strong> queue.
+    <div class="highlight"><pre><span></span><code><span class="nx">action</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">attemptToDeleteWorker</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">item</span><span class="p">)</span>
+</code></pre></div></li>
+<li>Process it in <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L338-L392">attemptToDeleteWorker</a><ol>
+<li>In case the node, converted from the item in the queue, is not observed (meaning that it's added from <code>objectReference</code> whose object is not found in API server), forget the item if it doesn't exist in the graph or it's observed. <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L345-L359">ref</a></li>
+</ol>
+</li>
+<li>Delete the item with <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go#L494-L617">attemptToDeleteItem</a>
+    <div class="highlight"><pre><span></span><code><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">attemptToDeleteItem</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">n</span><span class="p">)</span>
+</code></pre></div><ol>
+<li><code>item.isBeingDeleted</code> &amp; <code>!item.isDeletingDependents</code> -&gt; Do nothing and return <code>nil</code></li>
+<li>Get the latest object from API server
+    <div class="highlight"><pre><span></span><code><span class="nx">latest</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">getObject</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">identity</span><span class="p">)</span>
+</code></pre></div></li>
+<li>err=NotFound -&gt; <code>enqueueVirtualDeleteEvent</code>(enqueue event to <code>graphChanges</code> with <code>virtual=true</code>)
+    <div class="highlight"><pre><span></span><code><span class="nx">gc</span><span class="p">.</span><span class="nx">dependencyGraphBuilder</span><span class="p">.</span><span class="nx">enqueueVirtualDeleteEvent</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">identity</span><span class="p">)</span>
+</code></pre></div></li>
+<li><code>latest.GetUID() != item.identity.UID</code> -&gt; <code>enqueueVirtualDeleteEvent</code>(enqueue event to <code>graphChanges</code> with <code>virtual=true</code>) and return <code>enqueuedVirtualDeleteEventErr</code>
+    <div class="highlight"><pre><span></span><code><span class="nx">gc</span><span class="p">.</span><span class="nx">dependencyGraphBuilder</span><span class="p">.</span><span class="nx">enqueueVirtualDeleteEvent</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">identity</span><span class="p">)</span>
+</code></pre></div></li>
+<li><code>item.isDeletingDependents()</code> -&gt; <code>gc.processDeletingDependentsItem(item)</code> and return <code>enqueuedVirtualDeleteEventErr</code><ol>
+<li>If no <code>blockingDependents</code> -&gt; <code>gc.removeFinalizer(item, metav1.FinalizerDeleteDependents)</code></li>
+<li>For <code>blockingDependents</code>, if not <code>isBeingDeleted</code> -&gt; <code>gc.attemptToDelete.Add(dep)</code></li>
+</ol>
+</li>
+<li>If there's no <code>OwnerReferences</code> -&gt; nil</li>
+<li>Classify ownerReferences
+    <div class="highlight"><pre><span></span><code><span class="nx">solid</span><span class="p">,</span><span class="w"> </span><span class="nx">dangling</span><span class="p">,</span><span class="w"> </span><span class="nx">waitingForDependentsDeletion</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gc</span><span class="p">.</span><span class="nx">classifyReferences</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">item</span><span class="p">,</span><span class="w"> </span><span class="nx">ownerReferences</span><span class="p">)</span>
+</code></pre></div></li>
+<li><code>len(solid) != 0</code><ol>
+<li><code>len(dangling) == 0 &amp;&amp; len(waitingForDependentsDeletion) == 0</code> -&gt; return <code>nil</code></li>
+<li>Delete owner references for <code>dangling</code> and <code>waitingForDependentsDeletion</code> (send PATCH request to API server)</li>
+</ol>
+</li>
+<li><code>len(waitingForDependentsDeletion) != 0 &amp;&amp; item.dependentsLength() != 0</code>
+    for all dependents, if <code>isBeingDeleted</code> -&gt; send <code>unblockOwnerReferencesStrategicMergePatch</code> PATCH request to API server<ol>
+<li>delete with for <code>DeletePropagationForeground</code> (API server)</li>
+</ol>
+</li>
+<li>default<ol>
+<li><code>hasOrphanFinalizer</code> -&gt; delete with <code>DeletePropagationOrphan</code></li>
+<li><code>hasDeleteDependentsFinalizer</code> -&gt; delete with <code>DeletePropagationForeground</code></li>
+<li>default -&gt; delete with <code>DeletePropagationBackground</code></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>run <strong>runAttemptToOrphanWorker()</strong> every second<ol>
+<li>Get owner from <strong>attemptToOrphan</strong></li>
+<li><code>attemptToOrphanWorker</code><ol>
+<li><code>orphanDependents(owner, dependents)</code>: remove owner references via PATCH (API server)</li>
+<li><code>gc.removeFinalizer(owner, metav1.FinalizerOrphanDependents)</code></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/pkg/controller/garbagecollector/garbagecollector.go#L181">GarbageCollector.Sync</a> keeps updating the resources to monitor periodically. -&gt; <code>GraphBuilder.syncMonitors(resources)</code> but not found where it's called.</p>
+<p>TestCase:</p>
+<ol>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/test/integration/garbagecollector/garbage_collector_test.go#L454-L538">TestCascadingDeletion</a>:<ol>
+<li>Pod with ownerreference to <code>toBeDeletedRC</code> replicationcontroller -&gt; deleted</li>
+<li>Pod with ownerrefrerece to <code>remainingRC</code> and <code>toBeDeletedRC</code> replicatioincontroller -&gt; remain</li>
+<li>Pod without ownerreference -&gt; remain</li>
+<li>Delete <code>toBeDeletedRCName</code> replicationcontroller</li>
+</ol>
+</li>
+<li>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d/test/integration/garbagecollector/garbage_collector_test.go#L728-L806">TestOrphaning</a></p>
+<ol>
+<li>If deleted with <code>DeleteOptions.propagationPolicy=Orphan</code>, the ownerreferences are just removed without deleting the object itself.</li>
+</ol>
+<details>
+<div class="highlight"><pre><span></span><code>kubectl create deploy nginx --image=nginx --replicas=1
+deployment.apps/nginx created
+kubectl get deploy
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+nginx   1/1     1            1           3m25s
+kubectl delete deployment nginx --cascade=orphan
+deployment.apps &quot;nginx&quot; deleted
+kubectl get deploy
+No resources found in default namespace.
+kubectl get rs
+NAME              DESIRED   CURRENT   READY   AGE
+nginx-76d6c9b8c   1         1         1       3m40s
+kubectl get pod
+NAME                    READY   STATUS    RESTARTS   AGE
+nginx-76d6c9b8c-jcwxv   1/1     Running   0          3m46s
+</code></pre></div>
+</details>
+</li>
+</ol>
+<h4 id="323-ref">3.2.3. Ref</h4>
+<ol>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/garbagecollector.go">gabagecollector.go</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/garbagecollector/graph_builder.go#L132">graph_builder.go</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/test/integration/garbagecollector/garbage_collector_test.go">test/integration/gabagecollector/garbage_collector_test.go</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/pull/47665">Enable garbage collection of custom resources</a></li>
+</ol>
+<h4 id="324-memo">3.2.4. Memo</h4>
+<ol>
+<li>Delete<ol>
+<li><code>propagationPolicy=Forground</code> -&gt; API-server updates <code>metadata.deletionTimestamp</code> and adds <code>foregroundDeletion</code> finalizer instead of removing the object itself.<ol>
+<li>curl: with <code>'{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Foreground"}'</code></li>
+<li>kubectl: <code>kubectl delete --cascade=foregraound</code></li>
+</ol>
+</li>
+<li><code>PropagationPolicy=Backgound</code> (default) -&gt; API-server immediately deletes the object and its dependents.<ol>
+<li>curl: with <code>'{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Background"}'</code></li>
+<li><code>kubectl delete --cascade=background</code> (or <code>kubectl delete</code>)</li>
+</ol>
+</li>
+<li><code>PropagationPolicy=Orphan</code> -&gt; API-server deletes the object but not deletes the dependent objects. Instead its dependent objects remain as <em>orphan</em>s<ol>
+<li>curl: with <code>'{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Orphan"}'</code></li>
+<li><code>kubectl delete --cascade=orphan</code></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>OwnerReferences</li>
+<li>Finalizers</li>
+</ol>
+<h3 id="33-namespacecontroller">3.3. <a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/namespace/namespace_controller.go">NamespaceController</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// NamespaceController is responsible for performing actions dependent upon a namespace phase</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">NamespaceController</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// lister that can list namespaces from a shared cache</span>
+<span class="w">    </span><span class="nx">lister</span><span class="w"> </span><span class="nx">corelisters</span><span class="p">.</span><span class="nx">NamespaceLister</span>
+<span class="w">    </span><span class="c1">// returns true when the namespace cache is ready</span>
+<span class="w">    </span><span class="nx">listerSynced</span><span class="w"> </span><span class="nx">cache</span><span class="p">.</span><span class="nx">InformerSynced</span>
+<span class="w">    </span><span class="c1">// namespaces that have been queued up for processing by workers</span>
+<span class="w">    </span><span class="nx">queue</span><span class="w"> </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">RateLimitingInterface</span>
+<span class="w">    </span><span class="c1">// helper to delete all resources in the namespace when the namespace is deleted.</span>
+<span class="w">    </span><span class="nx">namespacedResourcesDeleter</span><span class="w"> </span><span class="nx">deletion</span><span class="p">.</span><span class="nx">NamespacedResourcesDeleterInterface</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>API: <a href="https://github.com/kubernetes/api/blob/master/core/v1/types.go#L5601">https://github.com/kubernetes/api/blob/master/core/v1/types.go#L5601</a></li>
+<li>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/master/cmd/kube-controller-manager/app/core.go#L451-L483">startNamespaceController</a>
+    <div class="highlight"><pre><span></span><code><span class="nx">namespaceController</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">namespacecontroller</span><span class="p">.</span><span class="nx">NewNamespaceController</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">ctx</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">namespaceKubeClient</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">metadataClient</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">discoverResourcesFn</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">controllerContext</span><span class="p">.</span><span class="nx">InformerFactory</span><span class="p">.</span><span class="nx">Core</span><span class="p">().</span><span class="nx">V1</span><span class="p">().</span><span class="nx">Namespaces</span><span class="p">(),</span>
+<span class="w">    </span><span class="nx">controllerContext</span><span class="p">.</span><span class="nx">ComponentConfig</span><span class="p">.</span><span class="nx">NamespaceController</span><span class="p">.</span><span class="nx">NamespaceSyncPeriod</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">v1</span><span class="p">.</span><span class="nx">FinalizerKubernetes</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">go</span><span class="w"> </span><span class="nx">namespaceController</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="nx">controllerContext</span><span class="p">.</span><span class="nx">ComponentConfig</span><span class="p">.</span><span class="nx">NamespaceController</span><span class="p">.</span><span class="nx">ConcurrentNamespaceSyncs</span><span class="p">))</span>
+</code></pre></div>
+    <a href="https://github.com/kubernetes/api/blob/master/core/v1/types.go#L5596-L5598">FinalizerKubernetes</a>
+    <div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="nx">FinalizerKubernetes</span><span class="w"> </span><span class="nx">FinalizerName</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;kubernetes&quot;</span>
+<span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/namespace/namespace_controller.go#L65">NewNamespaceController</a>:</p>
+<ol>
+<li>Init NamespaceController
+    <div class="highlight"><pre><span></span><code><span class="nx">namespaceController</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">NamespaceController</span><span class="p">{</span>
+<span class="w">    </span><span class="nx">queue</span><span class="p">:</span><span class="w">                      </span><span class="nx">workqueue</span><span class="p">.</span><span class="nx">NewNamedRateLimitingQueue</span><span class="p">(</span><span class="nx">nsControllerRateLimiter</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;namespace&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">namespacedResourcesDeleter</span><span class="p">:</span><span class="w"> </span><span class="nx">deletion</span><span class="p">.</span><span class="nx">NewNamespacedResourcesDeleter</span><span class="p">(</span><span class="nx">kubeClient</span><span class="p">.</span><span class="nx">CoreV1</span><span class="p">().</span><span class="nx">Namespaces</span><span class="p">(),</span><span class="w"> </span><span class="nx">metadataClient</span><span class="p">,</span><span class="w"> </span><span class="nx">kubeClient</span><span class="p">.</span><span class="nx">CoreV1</span><span class="p">(),</span><span class="w"> </span><span class="nx">discoverResourcesFn</span><span class="p">,</span><span class="w"> </span><span class="nx">finalizerToken</span><span class="p">),</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li>Prepare event handler for namespaceInformer
+    <div class="highlight"><pre><span></span><code><span class="nx">namespaceInformer</span><span class="p">.</span><span class="nx">Informer</span><span class="p">().</span><span class="nx">AddEventHandlerWithResyncPeriod</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">cache</span><span class="p">.</span><span class="nx">ResourceEventHandlerFuncs</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">AddFunc</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">obj</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">namespace</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">obj</span><span class="p">.(</span><span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">)</span>
+<span class="w">            </span><span class="nx">namespaceController</span><span class="p">.</span><span class="nx">enqueueNamespace</span><span class="p">(</span><span class="nx">namespace</span><span class="p">)</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">UpdateFunc</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">oldObj</span><span class="p">,</span><span class="w"> </span><span class="nx">newObj</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">namespace</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">newObj</span><span class="p">.(</span><span class="o">*</span><span class="nx">v1</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">)</span>
+<span class="w">            </span><span class="nx">namespaceController</span><span class="p">.</span><span class="nx">enqueueNamespace</span><span class="p">(</span><span class="nx">namespace</span><span class="p">)</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">resyncPeriod</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></li>
+</ol>
+</li>
+<li>Run -&gt; worker -&gt; workFunc</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/namespace/namespace_controller.go#L136-L160">workFunc</a>:<ol>
+<li>get key from queue
+    <div class="highlight"><pre><span></span><code><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">quit</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">nm</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">Get</span><span class="p">()</span>
+</code></pre></div></li>
+<li>sync
+    <div class="highlight"><pre><span></span><code><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">nm</span><span class="p">.</span><span class="nx">syncNamespaceFromKey</span><span class="p">(</span><span class="nx">key</span><span class="p">.(</span><span class="kt">string</span><span class="p">))</span>
+</code></pre></div></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.26.0/pkg/controller/namespace/namespace_controller.go#L172">syncNamespaceFromKey</a>:<ol>
+<li>get namespace
+    <div class="highlight"><pre><span></span><code><span class="nx">namespace</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">nm</span><span class="p">.</span><span class="nx">lister</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+</code></pre></div></li>
+<li>run deleter
+    <div class="highlight"><pre><span></span><code><span class="nx">nm</span><span class="p">.</span><span class="nx">namespacedResourcesDeleter</span><span class="p">.</span><span class="nx">Delete</span><span class="p">(</span><span class="nx">namespace</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</code></pre></div><ol>
+<li>Get namespace
+    <div class="highlight"><pre><span></span><code><span class="nx">namespace</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">nsClient</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">TODO</span><span class="p">(),</span><span class="w"> </span><span class="nx">nsName</span><span class="p">,</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">GetOptions</span><span class="p">{})</span>
+</code></pre></div></li>
+<li><code>namespace.DeletionTimestamp == nil</code> -&gt; return nil</li>
+<li>Update namespace status to terminating
+    <div class="highlight"><pre><span></span><code><span class="nx">namespace</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">retryOnConflictError</span><span class="p">(</span><span class="nx">namespace</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">updateNamespaceStatusFunc</span><span class="p">)</span>
+</code></pre></div>
+    <code>newNamespace.Status.Phase = v1.NamespaceTerminating</code></li>
+<li>Delete all contents in the namespace
+    <div class="highlight"><pre><span></span><code><span class="nx">estimate</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">deleteAllContent</span><span class="p">(</span><span class="nx">namespace</span><span class="p">)</span>
+</code></pre></div></li>
+<li>finalizeNamespace removes the specified finalizerToken and finalizes the namespace
+    <div class="highlight"><pre><span></span><code><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">retryOnConflictError</span><span class="p">(</span><span class="nx">namespace</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">finalizeNamespace</span><span class="p">)</span>
+</code></pre></div></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="34-deploymentcontroller">3.4. DeploymentController</h3>
+<p>ToDo</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html">https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html</a></li>
+<li><a href="https://engineering.bitnami.com/articles/kubewatch-an-example-of-kubernetes-custom-controller.html">https://engineering.bitnami.com/articles/kubewatch-an-example-of-kubernetes-custom-controller.html</a></li>
+<li><a href="https://cloudnative.to/blog/client-go-informer-source-code/">https://cloudnative.to/blog/client-go-informer-source-code/</a></li>
+<li>Start each controller: <a href="https://github.com/kubernetes/kubernetes/blob/fe099b2abdb023b21a17cd6a127e381b846c1a1f/cmd/kube-controller-manager/controller-manager.go">https://github.com/kubernetes/kubernetes/blob/fe099b2abdb023b21a17cd6a127e381b846c1a1f/cmd/kube-controller-manager/controller-manager.go</a></li>
+<li>Definition of each controller: <a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/controller">https://github.com/kubernetes/kubernetes/tree/master/pkg/controller</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["header.autohide", "navigation.indexes", "navigation.instant", "navigation.sections", "toc.follow", "navigation.tracking", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,22 @@
+apiVersion: kafka.strimzi.io/v1alpha1
+kind: KafkaConnector
+metadata:
+  name: es-connector-twitter
+  labels:
+    strimzi.io/cluster: kafka-connect-sink
+spec:
+  class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+  tasksMax: 2
+  config:
+    topics: twitter
+    name: es-connector-twitter
+    connection.url: http://elasticsearch-master-headless.eck:9200
+    connection.username: elastic
+    connection.password: xxxxx
+    elastic.security.protocol: PLAINTEXT
+    type.name: es-connector-twitter
+    key.ignore: true
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter.schemas.enable: true
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter.schemas.enable: true

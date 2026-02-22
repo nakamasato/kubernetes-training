@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      nodeSelector:
+        nodegroup: prod
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - name: hello-kubernetes
+        image: nginx
