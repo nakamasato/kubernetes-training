@@ -9,7 +9,7 @@
 - Kustomize: [kustomize/v4.5.7](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v4.5.7)
 - Helm: [v3.11.2](https://github.com/helm/helm/releases/tag/v3.11.2)
 - Traefik: [v2.9.0](https://github.com/traefik/traefik/releases/tag/v2.9.0)
-- ArgoCD: [v2.8.4](https://github.com/argoproj/argo-cd/releases/tag/v2.8.4)
+- ArgoCD: [v3.3.2](https://github.com/argoproj/argo-cd/releases/tag/v3.3.2)
 - Prometheus-Operator: [v0.43.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.43.1)
 - Prometheus: [latest](https://github.com/prometheus/prometheus/releases)
 - Grafana: [latest](https://github.com/grafana/grafana/releases)
