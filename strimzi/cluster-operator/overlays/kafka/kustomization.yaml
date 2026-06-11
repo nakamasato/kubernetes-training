@@ -1,0 +1,9 @@
+namespace: kafka
+bases:
+  - ../../base/strimzi-0.24.0
+patches: # to update namespace
+  - cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml
+  - cluster-operator/021-ClusterRoleBinding-strimzi-cluster-operator.yaml
+  - cluster-operator/030-ClusterRoleBinding-strimzi-cluster-operator-kafka-broker-delegation.yaml
+  - cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml
+  - cluster-operator/033-ClusterRoleBinding-strimzi-cluster-operator-kafka-client-delegation.yaml

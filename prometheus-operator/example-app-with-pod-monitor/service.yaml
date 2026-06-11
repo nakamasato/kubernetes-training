@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: example-app-with-pod-monitor
+  labels:
+    app: example-app-with-pod-monitor
+spec:
+  selector:
+    app: example-app-with-pod-monitor
+  ports:
+  - name: web
+    port: 8080

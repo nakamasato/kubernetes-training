@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: argocd
+  name: argocd-applicationset-controller
+status:
+  readyReplicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: argocd
+  name: argocd-dex-server
+status:
+  readyReplicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: argocd
+  name: argocd-notifications-controller
+status:
+  readyReplicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: argocd
+  name: argocd-redis
+status:
+  readyReplicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: argocd
+  name: argocd-repo-server
+status:
+  readyReplicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: argocd
+  name: argocd-server
+status:
+  readyReplicas: 1

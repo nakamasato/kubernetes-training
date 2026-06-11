@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-app-with-pod-monitor
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example-app-with-pod-monitor
+  template:
+    metadata:
+      labels:
+        app: example-app-with-pod-monitor
+    spec:
+      containers:
+      - name: example-app-with-pod-monitor
+        image: fabxc/instrumented_app
+        ports:
+        - name: web
+          containerPort: 8080

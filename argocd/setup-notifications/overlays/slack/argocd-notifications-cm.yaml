@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+data:
+  # Contains centrally managed global application subscriptions
+  context: |
+    argocdUrl: localhost:8080
+
+  subscriptions: |
+    # subscription for on-sync-status-unknown trigger notifications
+    - recipients:
+      - slack:argocd-notifications
+      triggers:
+      - on-created
+      - on-deleted
+      - on-deployed
+      - on-health-degraded
+      - on-sync-failed
+      - on-sync-running
+      - on-sync-status-unknown
+      - on-sync-succeeded
+    # subscription restricted to applications with matching labels only
+    - recipients:
+      - slack:argocd-notifications-guestbook-ui
+      selector: app=guestbook-ui
+      triggers:
+      - on-sync-status-unknown
+      - on-sync-succeeded
+  service.slack: |
+    token: $slack-token
+    username: argocd-notifications
+    icon: ":argo:"
