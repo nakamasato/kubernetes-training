@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Person
+metadata:
+  name: alice
+spec:
+  name: Alice
+  age: 28
+  email: alice@example.com

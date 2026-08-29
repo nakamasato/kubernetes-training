@@ -1,0 +1,46 @@
+argocdUrl: https://localhost:8080
+
+subscriptions:
+  # subscription for on-sync-status-unknown trigger notifications
+  - recipients:
+    - slack:argocd-notifications
+    triggers:
+    - on-created
+    - on-deleted
+    - on-deployed
+    - on-health-degraded
+    - on-sync-failed
+    - on-sync-running
+    - on-sync-status-unknown
+    - on-sync-succeeded
+  # subscription restricted to applications with matching labels only
+  - recipients:
+    - slack:argocd-notifications-guestbook-ui
+    selector: app=guestbook-ui
+    triggers:
+    - on-sync-status-unknown
+    - on-sync-succeeded
+
+notifiers:
+  service.slack: |
+    token: $slack-token
+    username: argocd-notifications
+    icon: ":argo:"
+
+secret:
+  items:
+    slack-token: dummy
+
+templates:
+  template.app-deployed: |
+    email:
+      subject: New version of an application {{.app.metadata.name}} is up and running.
+    message: |
+      {{if eq .serviceType "slack"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} is now running new version of deployments manifests.
+triggers:
+  trigger.on-deployed: |
+    - description: Application is synced and healthy. Triggered once per commit.
+      oncePer: app.status.operationState.syncResult.revision
+      send:
+      - app-deployed
+      when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
