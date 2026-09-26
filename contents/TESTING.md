@@ -7,6 +7,7 @@ bash scripts/e2e/run.sh argocd
 bash scripts/e2e/run.sh prometheus-operator
 bash scripts/e2e/run.sh prometheus
 bash scripts/e2e/run.sh grafana
+bash scripts/e2e/run.sh mysql
 bash scripts/e2e/run.sh helm       # also requires Helm
 bash scripts/e2e/run.sh kustomize  # also requires standalone Kustomize
 ```
@@ -70,3 +71,7 @@ Go-only examples remain covered by the separate Go workflow.
 Only registered targets have E2E coverage; this does not claim coverage of every
 sample in the repository. Helm cases must pass `--kube-context "$context"` and
 `--kubeconfig "$KUBECONFIG"` explicitly.
+
+MySQL tests the Helm/Kustomize shared database dependency with authenticated SQL
+through its Service: table creation, insert, select and delete. It does not cover
+the older Flask application or migration of an existing MySQL 5.6 database.

@@ -17,5 +17,8 @@
   ],
   "kustomize": [
     "contents/kustomize/**"
+  ],
+  "mysql": [
+    "contents/helm-vs-kustomize/dependencies/mysql/**"
   ]
 }
