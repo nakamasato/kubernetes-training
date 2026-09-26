@@ -16,7 +16,7 @@ And [more](list/README.md)
 ![](diagram.drawio.svg)
 
 1. Kubernetes Controller components.
-1. How Kubernetes Controlloer works.
+1. How Kubernetes Controller works.
 1. Custom Resource.
 
 **Kubernetes Operator**
@@ -35,10 +35,10 @@ From [Kubernetes Operators ~ Automating the Container Orchestration Platform ~](
 
 **Operator vs. Controller**
 
-> - Controller（Custom Controller）:Custom Resourceの管理を行うController。Control Loop（Reconciliation Loop）を実行するコンポーネント
-> - Operator: CRDとCustom Controllerのセット。etcd operatorやmysql operatorなどのように、特定のソフトウェアの管理を自動化するためのソフトウェア
+> - Controller (custom controller): a component that manages custom resources by running a control loop (reconciliation loop).
+> - Operator: a CRD and custom controller that automate management of specific software, such as an etcd or MySQL operator.
 
-From [実践入門Kubernetesカスタムコントローラーへの道](https://www.amazon.co.jp/dp/B0851QCR81)
+Translated from [A Practical Introduction to Kubernetes Custom Controllers](https://www.amazon.co.jp/dp/B0851QCR81)
 
 > - Controllers can act on core resources such as deployments or services, which are typically part of the Kubernetes controller manager in the control plane, or can watch and manipulate user-defined custom resources.
 > - Operators are controllers that encode some operational knowledge, such as application lifecycle management, along with the custom resources defined in Chapter 4.
@@ -68,7 +68,7 @@ There are several ways to create an operator. You can try any of them:
     1. [Tutorial: Building CronJob](https://book.kubebuilder.io/cronjob-tutorial/cronjob-tutorial.html)
 1. [metacontroller](https://github.com/metacontroller/metacontroller)
 1. [KUDO (Kubernetes Universal Declarative Operator)](https://kudo.dev/)
-1. [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+1. [Learn Kubebuilder by Building](https://zoetrope.github.io/kubebuilder-training/)
 
 You can also reference example controllers:
 
@@ -78,6 +78,8 @@ You can also reference example controllers:
 1. [Memcached Operator with Operator SDK](https://github.com/nakamasato/memcached-operator)
 
 ## 4. Understand more detail about each component
+
+The walkthroughs and diagrams target client-go v0.37.1 and controller-runtime v0.25.1 from [go.mod](../../go.mod). They include implementation structure, construction paths, and runnable examples.
 
 Simplified:
 
@@ -104,7 +106,7 @@ More Detailed:
         1. reflector
     1. [lister](client-go/lister): Get data from in-memory cache.
     1. [indexer](client-go/indexer): in-memory cache
-    1. workqueue: A queue to store items that the controller will process.
+    1. [workqueue](client-go/workqueue): A queue to store items that the controller will process.
 1. [code-generator](https://github.com/kubernetes/code-generator):
     1. Generate codes for clientset for a custom resource.
 1. [apimachinery](apimachinery):
@@ -115,7 +117,7 @@ More Detailed:
     1. [client](controller-runtime/client/)
     1. [cluster](controller-runtime/cluster/)
     1. [controller](controller-runtime/controller/)
-    1. [eventhandler](controller-runtime/eventhandler/)
+    1. [handler](controller-runtime/handler/)
     1. [inject](controller-runtime/inject/)
     1. [log](controller-runtime/log)
     1. [manager](controller-runtime/manager/)
@@ -154,8 +156,8 @@ Considerations:
         return reconcile.Result{}, nil
         // Reconcile failed due to error - requeue
         return reconcile.Result{}, err
-        // Requeue for any reason other than error
-        return reconcile.Result{Requeue: true}, nil
+        // Reconcile again after a deliberate delay
+        return reconcile.Result{RequeueAfter: time.Minute}, nil
         ```
     - https://github.com/operator-framework/operator-sdk/issues/4209#issuecomment-729916367
     - [How can I have separate logic for Create, Update, and Delete events? When reconciling an object can I access its previous state?](https://sdk.operatorframework.io/docs/faqs/#how-can-i-have-separate-logic-for-create-update-and-delete-events-when-reconciling-an-object-can-i-access-its-previous-state) -> You should not have separate logic. Instead design your reconciler to be idempotent.
@@ -183,7 +185,7 @@ Considerations:
         - request & response: ConversionReview
         ![](conversion-webhook.drawio.svg)
 
-- [Indexing](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.10.0/pkg/client#hdr-Indexing)
+- [Indexing](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/client#hdr-Indexing)
 
 ## 6. Tools
 - https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil
@@ -194,7 +196,7 @@ Considerations:
 
 1. [golang-standanrds/project-layout](https://github.com/golang-standards/project-layout)
 1. [Learn Go with tests](https://quii.gitbook.io/learn-go-with-tests/)
-1. [GoとDependency Injectionの現在](https://note.com/timakin/n/nc95d66a75b3d)
+1. [The Current State of Go and Dependency Injection](https://note.com/timakin/n/nc95d66a75b3d)
 1. [Go Blog](https://go.dev/blog)
 1. [Gopher Reading List](https://github.com/enocom/gopher-reading-list)
 1. [Type Embedding](https://go101.org/article/type-embedding.html)
@@ -214,7 +216,7 @@ Considerations:
 1. [How To Call Kubernetes API using Simple HTTP Client](https://iximiuz.com/en/posts/kubernetes-api-call-simple-http-client/)
 1. [How To Call Kubernetes API using Go - Types and Common Machinery](https://iximiuz.com/en/posts/kubernetes-api-go-types-and-common-machinery/)
 1. [How To Extend Kubernetes API - Kubernetes vs. Django](https://iximiuz.com/en/posts/kubernetes-api-how-to-extend/)
-1. [在不生成 crd client 代码的情况下通过 client-go 增删改查 k8s crd 资源](https://mozillazg.com/2020/07/k8s-kubernetes-client-go-list-get-create-update-patch-delete-crd-resource-without-generate-client-code-update-or-create-via-yaml.html)
+1. [Manage Custom Resources with client-go Without Generating a Client](https://mozillazg.com/2020/07/k8s-kubernetes-client-go-list-get-create-update-patch-delete-crd-resource-without-generate-client-code-update-or-create-via-yaml.html)
 1. [kubebuilder vs operator-sdk (2019-04-10)](https://tiewei.github.io/posts/kubebuilder-vs-operator-sdk)
-1. [client-go 中的 informer 源码分析](https://jimmysong.io/kubernetes-handbook/develop/client-go-informer-sourcecode-analyse.html)
+1. [client-go Informer Source Analysis](https://jimmysong.io/kubernetes-handbook/develop/client-go-informer-sourcecode-analyse.html)
 1. [Operator Best Practices](https://sdk.operatorframework.io/docs/best-practices/best-practices/)

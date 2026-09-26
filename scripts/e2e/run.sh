@@ -12,6 +12,8 @@ done
 target=$1
 # A fresh directory and random name prevent touching an existing cluster/config.
 run_dir=$(mktemp -d "${TMPDIR:-/tmp}/training-e2e.XXXXXXXX")
+export E2E_RUN_DIR=$run_dir
+E2E_BACKGROUND_PIDS=()
 cluster="training-e2e-$(basename "$run_dir" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9' | tail -c 8)"
 export KUBECONFIG="$run_dir/kubeconfig"
 context="kind-$cluster"
@@ -24,6 +26,12 @@ cleanup() {
   result=$?
   trap - EXIT
   set +e
+  for pid in "${E2E_BACKGROUND_PIDS[@]:-}"; do
+    kill "$pid" 2>/dev/null
+  done
+  for pid in "${E2E_BACKGROUND_PIDS[@]:-}"; do
+    wait "$pid" 2>/dev/null
+  done
   if (( result != 0 )); then
     k get pods -A -o wide >"$artifacts/pods.txt" 2>&1
     k get events -A --sort-by=.metadata.creationTimestamp >"$artifacts/events.txt" 2>&1

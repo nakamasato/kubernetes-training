@@ -4,16 +4,38 @@
 >
 > It uses built-in Kubernetes leader election APIs.
 
+The comparison below describes two election strategies. controller-runtime v0.25.1 uses lease-based election; leader-for-life is included for comparison.
+
 ## Types
 
 ### 1. **Leader-for-life**
 
-*In the "leader for life" approach, a specific Pod is the leader. Once established (by creating a lock record), the Pod is the leader until it is destroyed. There is no possibility for multiple pods to think they are the leader at the same time. The leader does not need to renew a lease, consider stepping down, or do anything related to election activity once it becomes the leader.*
+*In the "leader for life" approach, a specific Pod is the leader. Once established (by creating a lock record), the Pod is the leader until it is destroyed. This strategy relies on the platform establishing that the previous leader has stopped before replacing it. The leader does not need to renew a lease, consider stepping down, or do anything related to election activity once it becomes the leader.*
 
-### 2. **Lease-baed**
+### 2. **Lease-based**
 
 *Leases provide a way to indirectly observe whether the leader still exists. The leader must periodically renew its lease, usually by updating a timestamp in its lock record. If it fails to do so, it is presumed dead, and a new election takes place. If the leader is in fact still alive but unreachable, it is expected to gracefully step down. A variety of factors can cause a leader to fail at updating its lease, but continue acting as the leader before succeeding at stepping down.*
 
+
+## How Manager uses leader election
+
+```go
+mgr, err := ctrl.NewManager(cfg, ctrl.Options{
+    LeaderElection:          true,
+    LeaderElectionID:        "example-controller.example.com",
+    LeaderElectionNamespace: "default",
+    LeaderElectionResourceLock: "leases",
+})
+if err != nil {
+    return err
+}
+```
+
+Replicas coordinate using the same Lease name and namespace. Grant the ServiceAccount access to get/create/update the Lease. Use different election IDs for unrelated controllers. Manager starts webhook/cache services independently of leadership and starts its LeaderElection runnable group after acquisition. If leadership is lost, the Manager reports an error; the process should stop rather than continue making changes.
+
+LeaseDuration, RenewDeadline, and RetryPeriod default to 15s, 10s, and 2s. LeaderElectionReleaseOnCancel can shorten failover, but only enable it when all protected work has stopped before the lock is released. Lease-based election is not fencing: external systems may need a separate mechanism to reject operations from a stale leader.
+
+The local examples leave leader election disabled to simplify single-process exercises. See [Manager](../manager/) for runnable classification and startup order.
 
 ## References
 

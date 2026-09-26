@@ -58,25 +58,35 @@ func main() {
 	})
 
 	// Create Controller with Manager
-	ctrl.NewControllerManagedBy(mgr).
+	if err := ctrl.NewControllerManagedBy(mgr).
 		For(&corev1.Pod{}).
-		Complete(podReconciler)
+		Complete(podReconciler); err != nil {
+		log.Error(err, "unable to create Pod controller")
+		os.Exit(1)
+	}
 
-	ctrl.NewControllerManagedBy(mgr).
+	if err := ctrl.NewControllerManagedBy(mgr).
 		For(&appsv1.Deployment{}).
-		Complete(deploymentReconciler)
+		Complete(deploymentReconciler); err != nil {
+		log.Error(err, "unable to create Deployment controller")
+		os.Exit(1)
+	}
 
 	// Add raw RunnableFunc to Manager
-	mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+	if err := mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
 		log.Info("RunnableFunc is called")
 		return nil
-	}))
+	})); err != nil {
+		log.Error(err, "unable to add runnable")
+		os.Exit(1)
+	}
 
 	// Start the Manager
-	ctx := context.Background()
+	ctx := ctrl.SetupSignalHandler()
 	err = mgr.Start(ctx)
 	if err != nil {
 		log.Error(err, "unable to start manager")
+		os.Exit(1)
 	}
 	log.Info("created manager", "manager", mgr)
 }

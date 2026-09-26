@@ -34,11 +34,6 @@ def select(paths, targets=None, base_targets=None, head_targets=None):
         if path.startswith("scripts/e2e/test_") and path.endswith(".py"):
             # The changes job always executes these tests without a cluster.
             continue
-        if path == ".github/workflows/e2e.yml" or (
-            path.startswith("scripts/e2e/")
-            and not path.startswith("scripts/e2e/cases/")
-        ):
-            return sorted(targets)
         for target, patterns in targets.items():
             if path == f"scripts/e2e/cases/{target}.sh" or any(
                 fnmatch.fnmatchcase(path, pattern) for pattern in patterns

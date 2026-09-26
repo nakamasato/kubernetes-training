@@ -2,17 +2,20 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
+	"strconv"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 func main() {
+	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 	var log = ctrl.Log.WithName("builder-examples")
 
 	manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
@@ -54,17 +57,35 @@ func (a *ReplicaSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	rs := &appsv1.ReplicaSet{}
 	err := a.Get(ctx, req.NamespacedName, rs)
 	if err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	selector, err := metav1.LabelSelectorAsSelector(rs.Spec.Selector)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 	pods := &corev1.PodList{}
-	err = a.List(ctx, pods, client.InNamespace(req.Namespace), client.MatchingLabels(rs.Spec.Template.Labels))
+	err = a.List(ctx, pods, client.InNamespace(req.Namespace), client.MatchingLabelsSelector{Selector: selector})
 	if err != nil {
 		return ctrl.Result{}, err
 	}
 
-	rs.Labels["pod-count"] = fmt.Sprintf("%v", len(pods.Items))
-	err = a.Update(context.TODO(), rs)
+	count := 0
+	for i := range pods.Items {
+		if metav1.IsControlledBy(&pods.Items[i], rs) {
+			count++
+		}
+	}
+	podCount := strconv.Itoa(count)
+	if rs.Labels["pod-count"] == podCount {
+		return ctrl.Result{}, nil
+	}
+	original := rs.DeepCopy()
+	if rs.Labels == nil {
+		rs.Labels = make(map[string]string)
+	}
+	rs.Labels["pod-count"] = podCount
+	err = a.Patch(ctx, rs, client.MergeFrom(original))
 	if err != nil {
 		return ctrl.Result{}, err
 	}

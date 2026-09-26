@@ -2,21 +2,20 @@
 
 ![](diagram.drawio.svg)
 
-Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)). A Reconciler implements a function which takes a reconcile Request containing the name and namespace of the object to reconcile, reconciles the object, and returns a Response or an error indicating whether to requeue for a second round of processing.
+Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)). A Reconciler implements a function which takes a reconcile Request containing the name and namespace of the object to reconcile, reconciles the object, and returns a Result or an error indicating whether to requeue for a second round of processing.
 
-As you can see in the diagram above, a Reconciler is part of a Controller. A Controller has a function to watch changes of the target resources, put change events into the queue, and call **Reconcile** function with an queue item, and requeue the item if necessary.
+As you can see in the diagram above, a Reconciler is part of a Controller. A Controller has a function to watch changes of the target resources, put reconciliation keys into the queue, and call **Reconcile** function with an queue item, and requeue the item if necessary.
 
 
 ## Types
 
-### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/reconcile/reconcile.go#L89)
+### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/reconcile/reconcile.go)
 
 ```go
-type Reconciler interface {
-	// Reconcile performs a full reconciliation for the object referred to by the Request.
-	// The Controller will requeue the Request to be processed again if an error is non-nil or
-	// Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
-	Reconcile(context.Context, Request) (Result, error)
+type Reconciler = TypedReconciler[Request]
+
+type TypedReconciler[request comparable] interface {
+    Reconcile(context.Context, request) (Result, error)
 }
 ```
 
@@ -24,8 +23,8 @@ type Reconciler interface {
 
 ```go
 type Request struct {
-	// NamespacedName is the name and namespace of the object to reconcile.
-	types.NamespacedName
+    // NamespacedName is the name and namespace of the object to reconcile.
+    types.NamespacedName
 }
 ```
 
@@ -33,12 +32,11 @@ type Request struct {
 
 ```go
 type Result struct {
-	// Requeue tells the Controller to requeue the reconcile key.  Defaults to false.
-	Requeue bool
+    Requeue bool
 
-	// RequeueAfter if greater than 0, tells the Controller to requeue the reconcile key after the Duration.
-	// Implies that Requeue is true, there is no need to set Requeue to true at the same time as RequeueAfter.
-	RequeueAfter time.Duration
+    RequeueAfter time.Duration
+
+    Priority *int
 }
 ```
 ## Implement
@@ -46,16 +44,32 @@ type Result struct {
 You can use either implementation of the `Reconciler` interface:
 1. a reconciler struct with `Reconcile` function.
 1. a `reconcile.Func`, which implements Reconciler interface:
-	```go
-	type Func func(context.Context, Request) (Result, error)
-	```
+    ```go
+    type Func func(context.Context, Request) (Result, error)
+    ```
 
-([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L42) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
+([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/internal/controller/controller.go) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
 ## How reconciler is used
 Reconciler is passed to Controller [builder](../builder) when initializing controller (you can also check it in [Manager](../manager/)):
 
 ```go
-ctrl.NewControllerManagedBy(mgr). // returns controller Builder
-    For(&corev1.Pod{}). // defines the type of Object being reconciled
-    Complete(podReconciler) // Complete builds the Application controller, and return error
+if err := ctrl.NewControllerManagedBy(mgr).
+    For(&corev1.Pod{}).
+    Complete(podReconciler); err != nil {
+    return err
+}
 ```
+
+`Reconcile` must be exported with this exact signature. The [standalone sample](main.go) has a compile-time `reconcile.Reconciler` assertion and runs without a cluster:
+
+```sh
+go run ./contents/kubernetes-operator/controller-runtime/reconciler
+```
+
+## Results, retries, and current state
+
+A Request contains a key, not the original event or previous object. Read current state on every call. Ignore NotFound if no cleanup remains; return other errors so the controller can retry. Reconciliation must tolerate duplicate calls and partial previous progress.
+
+An error normally schedules a rate-limited retry and overrides RequeueAfter. TerminalError suppresses that automatic retry. With a nil error, RequeueAfter schedules a delayed call; an empty Result waits for a future event. Requeue is deprecated; prefer RequeueAfter for intentional scheduling. Priority optionally controls the priority of subsequent queued work.
+
+For a concrete read/list/patch implementation and no-op behavior, see the [ReplicaSet reconciler](../example-controller/). The [Controller](../controller/#start-func) owns queue processing, retry bookkeeping, and worker concurrency.

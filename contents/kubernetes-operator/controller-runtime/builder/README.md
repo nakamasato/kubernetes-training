@@ -1,5 +1,8 @@
 # builder
 
+
+These implementation notes and diagrams target controller-runtime v0.25.1, pinned in the repository's go.mod. Use the signatures and call paths below for this version.
+
 ## Overview
 
 ![](overview.drawio.svg)
@@ -10,26 +13,29 @@ The main role of Builder is:
 1. Configure target resources for the controller
 1. Register the controller to the Manager
 
-About how the registered controllers are triggered, you can study in [Manager](../manager/). The controller registered to the manager by Builder will be in **runnables.Others** in Manager object, which will be started by `Manager.Start()`.
+About how the registered controllers are triggered, you can study in [Manager](../manager/). The controller is registered in the Manager's LeaderElection group by default. Controllers opting out of leader election are in Others. Both are started by `Manager.Start()` after cache readiness.
 
 ![](../manager/diagram.drawio.svg)
 
 
 ## Types
 
-### [Builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L54)
+### [Builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go)
 
 ```go
-// Builder builds a Controller.
-type Builder struct {
-	forInput         ForInput
-	ownsInput        []OwnsInput
-	watchesInput     []WatchesInput
-	mgr              manager.Manager
-	globalPredicates []predicate.Predicate
-	ctrl             controller.Controller
-	ctrlOptions      controller.Options
-	name             string
+type Builder = TypedBuilder[reconcile.Request]
+
+type TypedBuilder[request comparable] struct {
+    forInput         ForInput
+    ownsInput        []OwnsInput
+    rawSources       []source.TypedSource[request]
+    watchesInput     []WatchesInput[request]
+    mgr              manager.Manager
+    globalPredicates []predicate.Predicate
+    ctrl             controller.TypedController[request]
+    ctrlOptions      controller.TypedOptions[request]
+    name             string
+    newController    func(name string, mgr manager.Manager, options controller.TypedOptions[request]) (controller.TypedController[request], error)
 }
 ```
 
@@ -39,24 +45,24 @@ Initialize a Builder with the specified manager.
 
 ```go
 func ControllerManagedBy(m manager.Manager) *Builder {
- return &Builder{mgr: m}
+    return TypedControllerManagedBy[reconcile.Request](m)
 }
 ```
 
-## [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L82), [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L106), and [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L127): Define what object to watch
+## [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go), [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go), and [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go): Define what object to watch
 
 ![](for-owns-watches.drawio.svg)
 
 1. `For(object client.Object, opts ...ForOption) *Builder`: only one resource can be configured. Same as
     ```go
-    Watches(&source.Kind{Type: apiType}, &handler.EnqueueRequestForObject{})
+    Watches(&corev1.Pod{}, &handler.EnqueueRequestForObject{})
     ```
 3. `Owns(object client.Object, opts ...OwnsOption) *Builder`: Owns defines types of Objects being *generated* by the ControllerManagedBy, and configures the ControllerManagedBy to respond to create / delete / update events by **reconciling the owner object**. Same as the following code:
     ```go
-    Watches(object, handler.EnqueueRequestForOwner([...], ownerType, OnlyControllerOwner()))
+    Watches(object, handler.EnqueueRequestForOwner(mgr.GetScheme(), mgr.GetRESTMapper(), ownerType, handler.OnlyControllerOwner()))
     ```
-    [EnqueueRequestForOwner](https://github.com/coderanger/controller-runtime/blob/1da1a4b89b30a7019d694b9485b594862867fe10/pkg/handler/enqueue_owner.go#L46): Extract owner object from ownerReferences and enqueue it to the queue.
-3. `Watches(src source.Source, eventhandler handler.EventHandler, opts ...WatchesOption) *Builder`: Watches exposes the lower-level ControllerManagedBy Watches functions through the builder. Consider using Owns or For instead of Watches directly.
+    [EnqueueRequestForOwner](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/handler/enqueue_owner.go): Extract owner object from ownerReferences and enqueue it to the queue.
+3. `Watches(object client.Object, eventhandler handler.TypedEventHandler[client.Object, request], opts ...WatchesOption) *TypedBuilder[request]`: Watches exposes the lower-level ControllerManagedBy Watches functions through the builder. Consider using Owns or For instead of Watches directly.
 
 
 Example:
@@ -76,72 +82,89 @@ err = builder.
 Receive `reconcile.Reconciler` and call `Build`:
 
 ```go
-// Complete builds the Application Controller.
-func (blder *Builder) Complete(r reconcile.Reconciler) error {
-	_, err := blder.Build(r)
-	return err
+func (blder *TypedBuilder[request]) Complete(r reconcile.TypedReconciler[request]) error {
+    _, err := blder.Build(r)
+    return err
 }
 ```
 
 ## `Build`: Create a controller and return the controller.
 
 ```go
-func (blder *Builder) Build(r reconcile.Reconciler) (controller.Controller, error) {
-    ...
-	// Set the ControllerManagedBy
-	if err := blder.doController(r); err != nil {
-		return nil, err
-	}
+func (blder *TypedBuilder[request]) Build(r reconcile.TypedReconciler[request]) (controller.TypedController[request], error) {
+    if r == nil {
+        return nil, fmt.Errorf("must provide a non-nil Reconciler")
+    }
+    if blder.mgr == nil {
+        return nil, fmt.Errorf("must provide a non-nil Manager")
+    }
+    if blder.forInput.err != nil {
+        return nil, blder.forInput.err
+    }
 
-	// Set the Watch
-	if err := blder.doWatch(); err != nil {
-		return nil, err
-	}
+    if err := blder.doController(r); err != nil {
+        return nil, err
+    }
+
+    if err := blder.doWatch(); err != nil {
+        return nil, err
+    }
+
     return blder.ctrl, nil
 }
 ```
 
-1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L191) to register the controler to the buidler
+1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go) to construct the controller and register it with the Manager
     1. Create a new controller.
         ```go
-        blder.ctrl, err = newController(controllerName, blder.mgr, ctrlOptions)
+        blder.ctrl, err = controller.NewTyped(controllerName, blder.mgr, ctrlOptions)
         ```
-    1. the controller is added to `manager.runnables.Others` by `Manager.Add(Runnable)` in `newController`. ([controller](../controller/README.md#how-controller-is-used))
-1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L196) to start watching the target resources configured by `For`, `Owns`, and `Watches`.
+    1. the controller is added to the appropriate Manager runnable group by `Manager.Add(Runnable)` in `newController`. ([controller](../controller/README.md#how-controller-is-used))
+1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go) to register watches for the target resources configured by `For`, `Owns`, and `Watches`.
     1. The actual implementation of `Watch` function is in the [controller](../controller)
 
 ## Convert `client.Object` to `Source`
 
-1. [Controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L76) needs `Source` as the first argument.
+1. [Controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/controller/controller.go) needs `Source` as the first argument.
     ```go
-    Watch(src source.Source, eventhandler handler.EventHandler, predicates ...predicate.Predicate) error
+    Watch(src source.TypedSource[request]) error
     ```
 1. `client.Object` is set in `ForInput`, `OwnsInput`, and `WatchesInput` for `For`, `Owns`, and `Watches` respectively.
-1. Before calling `Controller.Watch`, the `client.Object` needs to be [project](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L203-L218)ed into [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L57-L61) based on `objectProjection`:
+1. Before calling `Controller.Watch`, the `client.Object` needs to be [project](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go)ed into [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/source/source.go) based on `objectProjection`:
     1. `projectAsNormal`: Use the object as it is. (**In most cases**)
     1. `projectAsMetadata`: Extract only metadata.
 
     ```go
-	typeForSrc, err := blder.project(blder.forInput.object, blder.forInput.objectProjection)
-	if err != nil {
-		return err
-	}
-	src := &source.Kind{Type: typeForSrc}
+    typeForSrc, err := blder.project(blder.forInput.object, blder.forInput.objectProjection)
+    if err != nil {
+        return err
+    }
+    hdlr := &handler.EnqueueRequestForObject{}
+    src := source.Kind(blder.mgr.GetCache(), typeForSrc, hdlr, allPredicates...)
+    if err := blder.ctrl.Watch(src); err != nil {
+        return err
+    }
     ```
 
-    [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L91-L102) implements the [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/source/source.go#L57-L61) interface.
+    `source.Kind` constructs an internal Kind, which implements the [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/source/source.go) interface.
 
     ```go
-    type Kind struct {
-        // Type is the type of object to watch.  e.g. &v1.Pod{}
-        Type client.Object
+    type Kind[object client.Object, request comparable] struct {
+        Type object
 
-        // cache used to watch APIs
-        cache cache.Cache
+        Cache cache.Cache
 
-        // started may contain an error if one was encountered during startup. If its closed and does not
-        // contain an error, startup and syncing finished.
-        started     chan error
+        Handler handler.TypedEventHandler[object, request]
+
+        Predicates []predicate.TypedPredicate[object]
+
+        startedErr  chan error
         startCancel func()
     }
     ```
+
+`For` uses the object's own key; `Owns` resolves ownerReferences and enqueues the owner's key; `Watches` uses your supplied mapping handler. Merely matching labels does not establish ownership. Predicates run before the handler, so filtering a Delete or an initial Add can suppress a needed reconciliation.
+
+`WatchesRawSource` accepts an already configured source, such as a Channel, and does not automatically apply the builder's global event filter. Metadata projection watches PartialObjectMetadata: use that same representation for reads if you intend to avoid starting an additional typed informer.
+
+`Complete` returns only the construction error; `Build` also returns the Controller. Both must be checked. The example's Foo type and FooReconciler stand for your own API and implementation.

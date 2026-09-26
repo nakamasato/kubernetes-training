@@ -17,9 +17,18 @@ class SelectionTest(unittest.TestCase):
     def test_case_only(self):
         self.assertEqual(module.select(["scripts/e2e/cases/argocd.sh"]), ["argocd"])
 
-    def test_shared(self):
-        for path in ["scripts/e2e/run.sh", "scripts/e2e/select_targets.py", ".github/workflows/e2e.yml"]:
-            self.assertEqual(module.select([path]), sorted(module.TARGETS))
+    def test_controller_runtime_target(self):
+        self.assertEqual(
+            module.select(["contents/kubernetes-operator/controller-runtime/client/README.md"]),
+            ["controller-runtime"],
+        )
+
+    def test_shared_runner_and_workflow_changes_need_no_cluster(self):
+        for path in ["scripts/e2e/run.sh", ".github/workflows/e2e.yml"]:
+            self.assertEqual(module.select([path]), [])
+
+    def test_selector_changes_need_no_cluster(self):
+        self.assertEqual(module.select(["scripts/e2e/select_targets.py"]), [])
 
     def test_rename_or_delete_paths(self):
         self.assertEqual(module.select(["contents/argocd/deleted.yaml", "contents/prometheus-operator/new.yaml"]), ["argocd", "prometheus-operator"])
@@ -71,7 +80,7 @@ class SelectionTest(unittest.TestCase):
         merged = {**head, "unrelated": ["other/**"]}
         self.assertEqual(module.select([module.REGISTRY], targets=merged,
                                        base_targets=base, head_targets=head), ["b"])
-        self.assertEqual(module.select(["scripts/e2e/run.sh"], targets=merged), sorted(merged))
+        self.assertEqual(module.select(["scripts/e2e/run.sh"], targets=merged), [])
 
     def test_unit_test_changes_need_no_cluster(self):
         self.assertEqual(module.select(["scripts/e2e/test_select.py", "scripts/e2e/test_isolation.py"]), [])

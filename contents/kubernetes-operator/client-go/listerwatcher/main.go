@@ -1,13 +1,18 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
+	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
@@ -43,7 +48,9 @@ func main() {
 	)
 
 	// List
-	list, err := podListWatcher.List(metav1.ListOptions{}) // returns runtime.Object
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	list, err := podListWatcher.ListWithContext(ctx, metav1.ListOptions{}) // returns runtime.Object
 	if err != nil {
 		klog.Fatal(err)
 	}
@@ -64,17 +71,17 @@ func main() {
 	klog.Infof("items: %d", len(items))
 
 	// Watch
-	w, err := podListWatcher.Watch(metav1.ListOptions{}) // returns watch.Interface
+	w, err := podListWatcher.WatchWithContext(ctx, metav1.ListOptions{ResourceVersion: resourceVersion}) // returns watch.Interface
 	if err != nil {
 		klog.Fatal(err)
 	}
-loop:
-	for {
-		event, ok := <-w.ResultChan()
-		if !ok {
-			break loop
-		}
+	defer w.Stop()
+	for event := range w.ResultChan() {
 
+		if event.Type == watch.Error {
+			klog.Errorf("watch error (restart with a fresh List): %v", event.Object)
+			return
+		}
 		meta, err := meta.Accessor(event.Object)
 		if err != nil {
 			continue

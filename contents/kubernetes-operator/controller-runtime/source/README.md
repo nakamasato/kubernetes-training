@@ -6,246 +6,225 @@ Component structure:
 Dataflow:
 ![](dataflow.drawio.svg)
 
-## [Source](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L47-L51) interface
+These implementation notes and diagrams target controller-runtime v0.25.1, pinned in the repository's go.mod. Use the signatures and call paths below for this version.
+
+## Source interface
+
+`Source` is an alias for `TypedSource[reconcile.Request]`; custom comparable queue keys use TypedSource directly. A source now stores its handler and predicates at construction, and Start receives only context and queue.
 
 ```go
-type Source interface {
-	// Start is internal and should be called only by the Controller to register an EventHandler with the Informer
-	// to enqueue reconcile.Requests.
-	Start(context.Context, handler.EventHandler, workqueue.RateLimitingInterface, ...predicate.Predicate) error
+type TypedSource[request comparable] interface {
+    Start(context.Context, workqueue.TypedRateLimitingInterface[request]) error
 }
+```
 
-// SyncingSource is a source that needs syncing prior to being usable. The controller
-// will call its WaitForSync prior to starting workers.
-type SyncingSource interface {
-	Source
-	WaitForSync(ctx context.Context) error
+```go
+type TypedSyncingSource[request comparable] interface {
+    TypedSource[request]
+    WaitForSync(ctx context.Context) error
 }
 ```
 
 ## Implementations
 
-1. Already removed in [Refactor source/handler/predicate packages to remove dep injection](https://github.com/kubernetes-sigs/controller-runtime/pull/2120) (from [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0))
-    ~~`Kind` has `InjectCache` while `kindWithCache` doesn't.~~
-1. [Kind](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/internal/source/kind.go#L20-L31) Kind is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
-    ```go
-    type Kind struct {
-        Type client.Object
-        cache cache.Cache
-        started     chan error
-        startCancel func()
-    }
-    ```
-    1. Provide cache explicitly with the initialization method [`func Kind(cache cache.Cache, object client.Object) SyncingSource`](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L61).
-        ```go
-        source.Kind(mgr.GetCache(), &corev1.Pod{})
-        ```
-1. [Channel](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L70-L86): Channel is used to provide a source of **events originating outside the cluster** (e.g. GitHub Webhook callback).  **Channel requires the user to wire the external source** (eh.g. http handler) to write GenericEvents to the underlying channel.
-1. [Informer](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/source/source.go#L185-L188): Informer is used to provide a source of **events originating inside the cluster** from Watches (e.g. Pod Create).
-    ```go
-    type Informer struct {
-        // Informer is the controller-runtime Informer
-        Informer cache.Informer
-    }
-    ```
+### Kind: events from Kubernetes objects
 
-What's the difference between `Informer` and `Kind`?
+Kind is a constructor, not the old exported struct literal. It receives the cache, object type, handler, and optional predicates explicitly:
 
-1. `Kind` gets informer from `cache.Cache`.
-1. `Informer` needs to be initialized with `cache.Informer` directly.
-1. `Kind` calls `WaitForCacheSync` after adding eventhandler by `AddEventHandler` while `Informer` doesn't.
+```go
+func Kind[object client.Object](
+    cache cache.Cache,
+    obj object,
+    handler handler.TypedEventHandler[object, reconcile.Request],
+    predicates ...predicate.TypedPredicate[object],
+) SyncingSource {
+    return TypedKind(cache, obj, handler, predicates...)
+}
+```
 
+```go
+type Kind[object client.Object, request comparable] struct {
+    Type object
+
+    Cache cache.Cache
+
+    Handler handler.TypedEventHandler[object, request]
+
+    Predicates []predicate.TypedPredicate[object]
+
+    startedErr  chan error
+    startCancel func()
+}
+```
+
+For example:
+
+```go
+src := source.Kind(mgr.GetCache(), &corev1.Pod{},
+    &handler.TypedEnqueueRequestForObject[*corev1.Pod]{})
+if err := controller.Watch(src); err != nil {
+    return err
+}
+```
+
+Use `source.TypedKind` with a typed handler when the queue holds custom keys. The old InjectCache and NewKindWithCache paths were removed; dependency wiring happens here.
+
+### Channel: external events
+
+Channel accepts a Go channel of TypedGenericEvent values and a handler. Your code must connect the external producer (such as a timer or HTTP callback) to that channel; Channel does not establish external connections itself. Buffer-size and predicate options configure delivery.
+
+```go
+func Channel[object any](
+    source <-chan event.TypedGenericEvent[object],
+    handler handler.TypedEventHandler[object, reconcile.Request],
+    opts ...ChannelOpt[object, reconcile.Request],
+) Source {
+    return TypedChannel[object, reconcile.Request](source, handler, opts...)
+}
+```
+
+### Informer: an already selected informer
+
+Informer receives a cache.Informer directly, together with a handler and predicates:
+
+```go
+type TypedInformer[object any, request comparable] struct {
+    Informer   cache.Informer
+    Handler    handler.TypedEventHandler[object, request]
+    Predicates []predicate.TypedPredicate[object]
+}
+```
+
+Kind obtains its informer from a Cache and implements WaitForSync. Informer uses the supplied informer and does not implement SyncingSource, so its caller must arrange startup/synchronization. Kind waits for both the cache and its handler's initial-list delivery.
 
 ## How `Source` is used
 
-1. `Source` is initialized in `builder.doWatch` for each of `For`, `Owns`, and `Watches`:
-    1. [For](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L271-L275):
-        ```go
-        // Reconcile type
-        typeForSrc, err := blder.project(blder.forInput.object, blder.forInput.objectProjection)
-        if err != nil {
-            return err
-        }
-        src := &source.Kind{Type: typeForSrc}
-        ```
-    1. [Owns](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L289-L293):
-        ```go
-        typeForSrc, err := blder.project(own.object, own.objectProjection)
-		if err != nil {
-			return err
-		}
-		src := &source.Kind{Type: typeForSrc}
-        ```
-    1. [Watches](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L316-L322):
-        ```go
-        // If the source of this watch is of type *source.Kind, project it.
-		if srckind, ok := w.src.(*source.Kind); ok {
-			typeForSrc, err := blder.project(srckind.Type, w.objectProjection)
-			if err != nil {
-				return err
-			}
-			srckind.Type = typeForSrc
-		}
-        ```
-1. The initialized source is passed to `controller.Watch` in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L279) if the controller is initialized by [builder](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L56)
+1. Builder.doWatch projects each For/Owns/Watches object to normal or metadata-only form.
+2. For uses EnqueueRequestForObject; Owns uses EnqueueRequestForOwner; Watches uses the caller's handler. Builder combines global and per-watch predicates.
+3. It calls `source.TypedKind(mgr.GetCache(), object, handler, predicates...)`, then `controller.Watch(src)`.
+4. Watch stores sources until controller source startup. Manager starts the shared cache before controller workers.
+5. Kind.Start starts asynchronous setup: get the informer for Type, wrap the event handler with the queue/predicates, and register it with AddEventHandler.
+6. Startup waits for cache sync and the registration handle's HasSynced. WaitForSync returns any startup error or context timeout.
+7. Informer notifications pass through predicates and the handler, which adds queue keys. The controller workers invoke Reconcile for those keys.
 
-    ```go
-    if err := blder.ctrl.Watch(w.src, w.eventhandler, allPredicates...); err != nil {
-        return err
+The actual Kind startup code illustrates error propagation and the synchronization boundary:
+
+```go
+func (ks *Kind[object, request]) Start(ctx context.Context, queue workqueue.TypedRateLimitingInterface[request]) error {
+    if isNil(ks.Type) {
+        return fmt.Errorf("must create Kind with a non-nil object")
     }
-    ```
-1. In [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/internal/controller/controller.go#L136)
-    1. `Cache` is injected from controller.
-        ```go
-        // Inject Cache into arguments
-        if err := c.SetFields(src); err != nil {
-            return err
+    if isNil(ks.Cache) {
+        return fmt.Errorf("must create Kind with a non-nil cache")
+    }
+    if isNil(ks.Handler) {
+        return errors.New("must create Kind with non-nil handler")
+    }
+
+    ctx, ks.startCancel = context.WithCancel(ctx)
+    ks.startedErr = make(chan error, 1) // Buffer chan to not leak goroutines if WaitForSync isn't called
+    go func() {
+        var (
+            i       cache.Informer
+            lastErr error
+        )
+
+        if err := wait.PollUntilContextCancel(ctx, 10*time.Second, true, func(ctx context.Context) (bool, error) {
+            i, lastErr = ks.Cache.GetInformer(ctx, ks.Type)
+            if lastErr != nil {
+                kindMatchErr := &meta.NoKindMatchError{}
+                switch {
+                case errors.As(lastErr, &kindMatchErr):
+                    logKind.Error(lastErr, "if kind is a CRD, it should be installed before calling Start",
+                        "kind", kindMatchErr.GroupKind)
+                case runtime.IsNotRegisteredError(lastErr):
+                    logKind.Error(lastErr, "kind must be registered to the Scheme")
+                default:
+                    logKind.Error(lastErr, "failed to get informer from cache")
+                }
+                return false, nil // Retry.
+            }
+            return true, nil
+        }); err != nil {
+            if lastErr != nil {
+                ks.startedErr <- fmt.Errorf("failed to get informer from cache: %w", lastErr)
+                return
+            }
+            ks.startedErr <- err
+            return
         }
-        ```
-    1. `source.Start` is called with `EventHandler` and `Queue`
-        ```go
-        return src.Start(c.ctx, evthdler, c.Queue, prct...)
-        ```
-1. [Source.Start](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/internal/source/kind.go#L35)
-    1. Get `informer` from the injected `cache`.
-        ```go
-        i, lastErr = ks.cache.GetInformer(ctx, ks.Type)
-        ```
-    1. Add the event handler with `AddEventHandler`
-        ```go
-        i.AddEventHandler(internal.EventHandler{Queue: queue, EventHandler: handler, Predicates: prct})
-        ```
-1. informer is started by `manager.Start()`.
-    ```go
-    manager.runnables.Cache.Start()
-    ```
-    1. cache is initialized in [cluster](../cluster/README.md#set-fields) when a [Manager](../manager/README.md#1-initialize-a-controllermanagerhttpsgithubcomkubernetes-sigscontroller-runtimeblobv0123pkgmanagerinternalgol66-with-newmanager) is created.
+
+        handlerRegistration, err := i.AddEventHandlerWithOptions(NewEventHandler(ctx, queue, ks.Handler, ks.Predicates), toolscache.HandlerOptions{
+            Logger: &logKind,
+        })
+        if err != nil {
+            ks.startedErr <- err
+            return
+        }
+        if !ks.Cache.WaitForCacheSync(ctx) {
+            ks.startedErr <- errors.New("cache did not sync")
+            close(ks.startedErr)
+            return
+        }
+        if !toolscache.WaitForCacheSync(ctx.Done(), handlerRegistration.HasSynced) {
+            ks.startedErr <- errors.New("handler did not sync")
+        }
+        close(ks.startedErr)
+    }()
+
+    return nil
+}
+```
 
 ## Example Usage: Debugging your controller
 
-if you want to check events of specific resource you can set by the following.
+The [standalone sample](main.go) watches Pods and MySQLUsers without a Manager. It owns Cache and queue lifecycle explicitly.
 
-1. Set up scheme if you want to monitor CRD (Optional)
-    ```go
-    import (
-        mysqlv1alpha1 "github.com/nakamasato/mysql-operator/api/v1alpha1" // Target CRD
-	    utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	    clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-    )
+1. Register client-go and MySQLUser API types in the Scheme. Scheme registration describes types locally; install the CRD separately on the cluster.
+2. Call `cache.New(cfg, cache.Options{Scheme: scheme})`. It creates the HTTP client and RESTMapper. Do not call Get with an empty object's namespace/name just to start an informer.
+3. Start the cache with a signal-derived context and retain its error result.
+4. Create a typed rate-limiting queue and handlers. Include Kind, Namespace, and Name in the key so different resources do not collide. This debugging sample also keeps Event for display.
+5. Build a TypedKind for each resource with that cache and handler, then call Start(ctx, queue).
+6. Call WaitForSync with a 30-second timeout. Missing CRDs or list/watch permissions produce a startup failure instead of leaving a worker blocked indefinitely.
+7. Consume queue.Get results, call Forget after successful handling, and always pair Get with Done. Canceling the context calls ShutDown to unblock Get, stops the cache, and joins its goroutine.
 
-    func init() {
-    	utilruntime.Must(mysqlv1alpha1.AddToScheme(scheme))
-    	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-    }
-    ```
+The sample's typed queue item is:
 
-1. `cache.Get()`: Internally create informer if not exists.
+```go
+type WorkQueueItem struct {
+    Event     string
+    Kind      string
+    Namespace string
+    Name      string
+}
+```
 
-    ```go
-    pod := &v1.Pod{}
-    cache.Get(ctx, client.ObjectKeyFromObject(pod), pod)
+The registration pattern is:
 
-    mysqluser := &mysqlv1alpha1.MySQLUser{}
-    cache.Get(ctx, client.ObjectKeyFromObject(mysqluser), mysqluser)
-    ```
-1. Start the cache.
+```go
+kindPod := source.TypedKind[client.Object](objectCache, &corev1.Pod{}, eventHandler)
+if err := kindPod.Start(ctx, queue); err != nil {
+    return err
+}
+if err := kindPod.WaitForSync(syncCtx); err != nil {
+    return err
+}
+```
 
-    ```go
-	go func() {
-		if err := cache.Start(ctx); err != nil { // func (m *InformersMap) Start(ctx context.Context) error {
-			log.Error(err, "failed to start cache")
-		}
-	}()
-    ```
-1. Create `Kind` for the target resource.
-    ```go
-    kind := source.Kind(cache, mysqluser)
-    ```
-1. Prepare `workqueue` and `eventHandler`.
-    ```go
-	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
-	eventHandler := handler.Funcs{
-		CreateFunc: func(e event.CreateEvent, q workqueue.RateLimitingInterface) {
-			log.Info("CreateFunc is called", "object", e.Object.GetName())
-			// queue.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
-		},
-		UpdateFunc: func(e event.UpdateEvent, q workqueue.RateLimitingInterface) {
-			log.Info("UpdateFunc is called", "objectNew", e.ObjectNew.GetName(), "objectOld", e.ObjectOld.GetName())
-			// queue.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
-		},
-		DeleteFunc: func(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
-			log.Info("DeleteFunc is called", "object", e.Object.GetName())
-			// queue.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
-		},
-	}
-    ```
-1. Start `kind` with the prepared `eventHandler` and `queue`.
-    ```go
-	if err := kind.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
-		log.Error(err, "")
-	}
-    ```
+Run from the repository root on a development cluster:
 
-You can run:
+```sh
+kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/crd/bases/mysql.nakamasato.com_mysqlusers.yaml
+go run ./contents/kubernetes-operator/controller-runtime/source
+```
 
-1. Install your CRD
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/crd/bases/mysql.nakamasato.com_mysqlusers.yaml
-    ```
-1. Run the `kind`
-    ```
-    go run main.go
-    ```
+Initial objects log CreateFunc calls, followed by `kind is ready` and `got item` messages containing Event, Kind, Namespace, and Name. In another terminal, generate both custom-resource and Pod events:
 
-    <details>
+```sh
+kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/samples/mysql_v1alpha1_mysqluser.yaml
+kubectl run nginx --image=nginx
+kubectl annotate pod nginx source-demo=updated
+kubectl delete pod nginx
+```
 
-    ```
-    2022-09-15T06:58:43.895+0900    INFO    source-examples source start
-    2022-09-15T06:58:44.070+0900    INFO    source-examples cache is created
-    2022-09-15T06:58:44.071+0900    INFO    source-examples cache is started
-    2022-09-15T06:58:44.096+0900    INFO    source-examples CreateFunc is called    {"object": "kube-apiserver-kind-control-plane"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kube-controller-manager-kind-control-plane"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kube-scheduler-kind-control-plane"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kube-proxy-zpj2w"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "coredns-6d4b75cb6d-s2dhg"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "coredns-6d4b75cb6d-25dbf"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "etcd-kind-control-plane"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "kindnet-8fjbg"}
-    2022-09-15T06:58:44.097+0900    INFO    source-examples CreateFunc is called    {"object": "local-path-provisioner-9cd9bd544-xl67h"}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples kindWithCache is ready
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-apiserver-kind-control-plane"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-controller-manager-kind-control-plane"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-scheduler-kind-control-plane"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kube-proxy-zpj2w"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"coredns-6d4b75cb6d-s2dhg"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"coredns-6d4b75cb6d-25dbf"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"etcd-kind-control-plane"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"kindnet-8fjbg"}}
-    2022-09-15T06:58:44.172+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"local-path-provisioner-9cd9bd544-xl67h"}}
-    ```
-
-    </details>
-
-1. Create custom resource manually. You'll see the events related to the CRD.
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/nakamasato/mysql-operator/main/config/samples/mysql_v1alpha1_mysqluser.yaml
-    ```
-
-    ```
-    2024-07-27T11:44:33.871+0900    INFO    source-examples CreateFunc is called    {"object": "sample-user"}
-    2024-07-27T11:44:33.872+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"sample-user"}}
-    ```
-
-1. Create nginx Pod
-    ```
-    kubectl run nginx --image=nginx
-    ```
-
-    ```
-    2024-07-27T11:45:13.787+0900    INFO    source-examples CreateFunc is called    {"object": "nginx"}
-    2024-07-27T11:45:13.787+0900    INFO    source-examples got item        {"item": {"Event":"Create","Name":"nginx"}}
-    2024-07-27T11:45:13.805+0900    INFO    source-examples UpdateFunc is called    {"objectNew": "nginx", "objectOld": "nginx"}
-    2024-07-27T11:45:13.805+0900    INFO    source-examples got item        {"item": {"Event":"Update","Name":"nginx"}}
-    2024-07-27T11:45:13.819+0900    INFO    source-examples UpdateFunc is called    {"objectNew": "nginx", "objectOld": "nginx"}
-    2024-07-27T11:45:16.417+0900    INFO    source-examples UpdateFunc is called    {"objectNew": "nginx", "objectOld": "nginx"}
-    ```
+The first command produces a MySQLUser Create event; the Pod commands produce Create, Update, and Delete events. Watch delivery may combine changes, so exact event counts and ordering are not guaranteed. Ctrl+C stops the sample. Remove the sample MySQLUser afterward if it was created only for this exercise.

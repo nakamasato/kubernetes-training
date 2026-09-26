@@ -1,389 +1,299 @@
-# [Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager)
+# [Manager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/manager/manager.go)
 
 ![](diagram.drawio.svg)
 
-The main role of Manager is
-1. Manage the lifecycle of a set of controllers (registration, start and stop)
-1. Provide the shared resources (Kubernetes API server client, cache, etc.)
+Manager owns controller registration, startup, shutdown, and shared cluster dependencies. [Builder](../builder/) registers controllers; [Cluster](../cluster/) supplies Client, Cache, Scheme, RESTMapper, APIReader, and recorders.
 
-The registration of a controller is done by [Builder](../builder/).
+These implementation notes and the diagram target controller-runtime v0.25.1, pinned in the repository's go.mod. Use the signatures and call paths below for this version.
 
 ## types
 
-### 1. [Manager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L52) Interface
+### 1. Manager Interface
 
 ```go
-// Manager initializes shared dependencies such as Caches and Clients, and provides them to Runnables.
-// A Manager is required to create Controllers.
 type Manager interface {
-	cluster.Cluster
-	Add(Runnable) error
-	Elected() <-chan struct{}
-	AddMetricsExtraHandler(path string, handler http.Handler) error
-	AddHealthzCheck(name string, check healthz.Checker) error
-	AddReadyzCheck(name string, check healthz.Checker) error
-	Start(ctx context.Context) error
-	GetWebhookServer() *webhook.Server
-	GetLogger() logr.Logger
-	GetControllerOptions() v1alpha1.ControllerConfigurationSpec
+    cluster.Cluster
+
+    Add(Runnable) error
+
+    Elected() <-chan struct{}
+
+    AddMetricsServerExtraHandler(path string, handler http.Handler) error
+
+    AddHealthzCheck(name string, check healthz.Checker) error
+
+    AddReadyzCheck(name string, check healthz.Checker) error
+
+    Start(ctx context.Context) error
+
+    GetWebhookServer() webhook.Server
+
+    GetLogger() logr.Logger
+
+    GetControllerOptions() config.Controller
+
+    GetConverterRegistry() conversion.Registry
 }
 ```
 
-### 2. [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L66-L173)
+### 2. controllerManager
+
+The concrete Manager stores the Cluster, runnable groups, error channel, leader-election configuration, webhook server, metrics server, and shutdown state. These fields explain why Manager can coordinate resources that a standalone Reconciler cannot:
 
 ```go
 type controllerManager struct {
-	sync.Mutex
-	started bool
+    sync.Mutex
+    started bool
 
-	stopProcedureEngaged *int64
-	errChan              chan error
-	runnables            *runnables
+    stopProcedureEngaged *int64
+    errChan              chan error
+    runnables            *runnables
 
-	// cluster holds a variety of methods to interact with a cluster. Required.
-	cluster cluster.Cluster
+    cluster cluster.Cluster
 
-    ...
+    recorderProvider *intrec.Provider
+
+    resourceLock resourcelock.Interface
+
+    leaderElectionReleaseOnCancel bool
+
+    metricsServer metricsserver.Server
+
+    healthProbeListener net.Listener
+
+    readinessEndpointName string
+
+    livenessEndpointName string
+
+    readyzHandler *healthz.Handler
+
+    healthzHandler *healthz.Handler
+
+    pprofListener net.Listener
+
+    controllerConfig config.Controller
+
+    logger logr.Logger
+
+    leaderElectionStopped chan struct{}
+
+    leaderElectionCancel context.CancelFunc
+
+    elected chan struct{}
+
+    webhookServer webhook.Server
+    webhookServerOnce sync.Once
+
+    converterRegistry conversion.Registry
+
+    leaderElectionID string
+    leaseDuration time.Duration
+    renewDeadline time.Duration
+    retryPeriod time.Duration
+
+    gracefulShutdownTimeout time.Duration
+
+    onStoppedLeading func()
+
+    shutdownCtx context.Context
+
+    internalCtx    context.Context
+    internalCancel context.CancelFunc
+
+    internalProceduresStop chan struct{}
 }
 ```
 
-### 3. [Runnable](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L293-L298) interface
+### 3. Runnable interface
+
+Start must block while the component runs, honor context cancellation, and return errors to the Manager. A RunnableFunc adapts a function with this signature.
 
 ```go
 type Runnable interface {
-	Start(context.Context) error
+    Start(context.Context) error
 }
 ```
 
-### 4. [runnables](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/runnable_group.go#L37-L45)
+### 4. runnables
+
+Each group queues registrations, starts goroutines, checks readiness where applicable, reports errors, and waits for completion during shutdown.
 
 ```go
 type runnables struct {
-	Webhooks       *runnableGroup
-	Caches         *runnableGroup
-	LeaderElection *runnableGroup
-	Others         *runnableGroup
+    HTTPServers    *runnableGroup
+    Webhooks       *runnableGroup
+    Caches         *runnableGroup
+    LeaderElection *runnableGroup
+    Warmup         *runnableGroup
+    Others         *runnableGroup
 }
+```
 
+```go
 type runnableGroup struct {
-	ctx    context.Context
-	cancel context.CancelFunc
+    ctx    context.Context
+    cancel context.CancelFunc
 
-	start        sync.Mutex
-	startOnce    sync.Once
-	started      bool
-	startQueue   []*readyRunnable
-	startReadyCh chan *readyRunnable
+    start        sync.Mutex
+    startOnce    sync.Once
+    started      bool
+    startQueue   []*readyRunnable
+    startReadyCh chan *readyRunnable
 
-	stop     sync.RWMutex
-	stopOnce sync.Once
-	stopped  bool
+    stop     sync.RWMutex
+    stopOnce sync.Once
+    stopped  bool
 
-	errChan chan error
-	ch chan *readyRunnable
-	wg *sync.WaitGroup
+    errChan chan error
+
+    ch chan *readyRunnable
+
+    wg *sync.WaitGroup
+
+    logger logr.Logger
 }
 ```
 
-types of runnables:
+## How `Manager` is initialized by New
 
-1. `Webhooks`
-1. `Caches`
-1. `LeaderElection`
-1. `Others`
-
-## How `Manager` is initialized by [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L336)
-
-### 1. Set default values for Options fields wiht [setOptionsDefaults](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L571)
+### 1. Set default values for Options fields with setOptionsDefaults
 
 ```go
-manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
+mgr, err := manager.New(cfg, manager.Options{})
+if err != nil {
+    return err
+}
 ```
 
-```go
-options = setOptionsDefaults(options)
-```
+Important options and their roles:
 
-|name|value|where is the option used|
-|---|---|---|
-|newResourceLock|leaderelection.NewResourceLock|`setLeaderElectionConfig`|
-|newRecorderProvider|intrec.NewProvider|New to create recorderProvider|
-|EventBroadcaster|`func() (record.EventBroadcaster, bool) {return record.NewBroadcaster(), true}`|as an option for `newRecorderProvider` in New|
-|newMetricsListener|metrics.NewListener|New to create metricsListener|
-|LeaseDuration|*defaultLeaseDuration|`setLeaderElectionConfig`|
-|RenewDeadline|*defaultRenewDeadline|`setLeaderElectionConfig`|
-|RetryPeriod|*defaultRetryPeriod|`setLeaderElectionConfig`|
-|ReadinessEndpointName|defaultReadinessEndpoint||
-|LivenessEndpointName|defaultLivenessEndpoint||
-|newHealthProbeListener|defaultHealthProbeListener|
-|GracefulShutdownTimeout|*defaultGracefulShutdownPeriod||
-|Logger|log.Log||
-|BaseContext|defaultBaseContext||
+| Option | Role/default |
+| --- | --- |
+| Scheme, MapperProvider, HTTPClient | Forwarded to Cluster for type mappings and transport |
+| Cache / NewCache | Cache configuration / constructor |
+| Client / NewClient | Client configuration / constructor |
+| Metrics | `metricsserver.Options`; replaces MetricsBindAddress |
+| WebhookServer | Server returned by GetWebhookServer; defaulted when omitted |
+| LeaderElection | Disabled unless enabled |
+| LeaseDuration / RenewDeadline / RetryPeriod | Default leadership timing: 15s / 10s / 2s |
+| LeaderElectionID / Namespace | Identify the shared election lock |
+| HealthProbeBindAddress | Health/readiness listener configuration |
+| ReadinessEndpointName / LivenessEndpointName | `readyz` / `healthz` |
+| GracefulShutdownTimeout | Time allowed for components to stop |
+| BaseContext | Base context used to run managed components |
 
-※ **New** in the table means [Manager.New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/manager.go#L336)
+`setOptionsDefaults` supplies constructors, timing values, logging, and listener defaults. New then constructs the dependencies; it does not start reconciliation.
 
+### 2. Initialize a controllerManager
 
-### 2. Initialize a [controllerManager](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L66)
-
-1. Initialize **Cluster**, which provides methods to interact with Kubernetes cluster
-    ```go
-    cluster, err := cluster.New(config, func(clusterOptions *cluster.Options) {
-        clusterOptions.Scheme = options.Scheme
-        clusterOptions.MapperProvider = options.MapperProvider
-        clusterOptions.Logger = options.Logger
-        clusterOptions.SyncPeriod = options.SyncPeriod
-        clusterOptions.Namespace = options.Namespace
-        clusterOptions.NewCache = options.NewCache
-        clusterOptions.NewClient = options.NewClient
-        clusterOptions.ClientDisableCacheFor = options.ClientDisableCacheFor
-        clusterOptions.DryRunClient = options.DryRunClient
-        clusterOptions.EventBroadcaster = options.EventBroadcaster //nolint:staticcheck
-    })
-    ```
-    For more details, please check [cluster](../cluster/README.md).
-    `Cluster` is also a runnable.
-1. Initialize other necessary things like `recordProvider`, `runnables`, etc.
-
-1. Initialize `controllerManager`
-
-    ```go
-    &controllerManager{
-        ...
-		cluster:                       cluster,
-		runnables:                     runnables,
-        ...
-		recorderProvider:              recorderProvider,
-	}
-    ```
+1. `cluster.New` receives Scheme, MapperProvider, HTTPClient, Cache/NewCache, Client/NewClient, Logger, and EventBroadcaster options.
+2. Cluster builds the shared cache, read/write client, uncached reader, RESTMapper, and recorders. See its [construction walkthrough](../cluster/#new).
+3. Manager creates runnable groups, event recording, metrics/health listeners, and any leader-election resource lock.
+4. Manager stores these with its internal contexts and error channel. The Cluster itself is a Runnable, classified into the Caches group when added.
 
 ### 3. Bind a Controller to the Manager
 
-Bind a Controller to the Manager using [NewControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/alias.go#L101)(alias for [builder.ControllerManagedBy](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L66)).
-
 ```go
-err = ctrl.
-    NewControllerManagedBy(manager). // Create the Controller
-    For(&appsv1.ReplicaSet{}).       // ReplicaSet is the Application API
-    Owns(&corev1.Pod{}).             // ReplicaSet owns Pods created by it
-    Complete(&ReplicaSetReconciler{Client: manager.GetClient()})
+if err := ctrl.NewControllerManagedBy(mgr).
+    For(&appsv1.ReplicaSet{}).
+    Owns(&corev1.Pod{}).
+    Complete(&ReplicaSetReconciler{Client: mgr.GetClient()}); err != nil {
+    return err
+}
 ```
 
-Internally, [builder.Build](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L175) create a new controller and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`.
+Builder.Build calls doController and doWatch. The controller is registered through Manager.Add, and watches are configured before startup. The [ReplicaSet sample](../example-controller/) supplies the Reconciler used here.
 
-You can also check [Builder](../builder) and [Internal process of adding a Controller to a Manager](#internal-process-of-adding-a-controller-to-a-manager)
+### 4. controllerManager.Start calls runnable group Start
 
+1. Register the Cluster runnable and managed servers.
+2. Start HTTPServers, then Webhooks. Webhooks are available before cache startup, which can require conversion webhooks.
+3. Start Caches and wait for their readiness checks.
+4. Start Others, which do not require leadership.
+5. Start Warmup work, allowing controllers configured for warmup to prepare sources before leadership.
+6. Start leader election and the LeaderElection group after acquisition. When election is disabled, start that group directly.
+7. Wait for cancellation or an error and run coordinated shutdown.
 
-### 4. [controllerManager.Start()](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L399) calls `runnables.xxx.Start()` to start all runnables.
-
-```go
-// (1) Add the cluster runnable.
-if err := cm.add(cm.cluster); err != nil {
-...
-
-// (2) First start any webhook servers
-if err := cm.runnables.Webhooks.Start(cm.internalCtx); err != nil {
-...
-
-// (3) Start and wait for caches.
-if err := cm.runnables.Caches.Start(cm.internalCtx); err != nil {
-...
-
-// (4) Start the non-leaderelection Runnables after the cache has synced.
-if err := cm.runnables.Others.Start(cm.internalCtx); err != nil {
-
-// (5) Start the leader election and all required runnables.
-if err := cm.startLeaderElection(ctx); err != nil {
-...
-if err := cm.startLeaderElectionRunnables(); err != nil {
-...
-```
-
-Controller will be in `runnables.Others` and you can check the actual `Start` logic in [controller](../controller).
+Controllers normally belong to LeaderElection, not Others. Disabling election at Manager level does not change their classification; it removes the need to acquire leadership before starting that group.
 
 ## Internal process of adding a `Controller` to a `Manager`
 
-1. `controllerManager.Add(Runnable)`: gets lock and calls `add(runnable)`.
-    1. [cm.SetFields(r)](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/internal.go#L202)
-        ```go
-        if err := cm.cluster.SetFields(i); err != nil {
-            return err
+Manager.Add checks Manager state under its lock and delegates to runnables.Add. It no longer injects dependencies using SetFields. The current classification logic is:
+
+```go
+func (r *runnables) Add(fn Runnable) error {
+    switch runnable := fn.(type) {
+    case *Server:
+        if runnable.NeedLeaderElection() {
+            return r.LeaderElection.Add(fn, nil)
         }
-        if _, err := inject.InjectorInto(cm.SetFields, i); err != nil {
-            return err
-        }
-        if _, err := inject.StopChannelInto(cm.internalProceduresStop, i); err != nil {
-            return err
-        }
-        if _, err := inject.LoggerInto(cm.logger, i); err != nil {
-            return err
-        }
-        ```
-        1. [cluster.SetFields](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/internal.go#L67) set dependencies on the object that implements the [inject](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/runtime/inject) interface. Specifically set the following cluster's field to the runnable (controller)
-            1. `config` (`inject.ConfigInto(c.config, i)`)
-            1. `client` (`inject.ClientInto(c.client, i)`)
-            1. `apiReader` (`inject.APIReaderInto(c.apiReader, i)`)
-            1. `scheme` (`inject.SchemeInto(c.scheme, i)`)
-            1. `cache` (`inject.CacheInto(c.cache, i)`)
-            1. `mapper` (`inject.MapperInto(c.mapper, i)`)
-        1. `cm.SetFields` is set to `controller.SetFields` via `InjectorInto`. (details: [inject](../inject/)) <- `controller.SetFields` will be used for source, event handler and predicates in [Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L129-L140).
-        1. `StopChannelInto` and `Logger`.
-    1. [cm.runnables.Add(r)](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/manager/runnable_group.go#L53)
-        ```go
-        type runnables struct {
-            Webhooks       *runnableGroup
-            Caches         *runnableGroup
-            LeaderElection *runnableGroup
-            Others         *runnableGroup
-        }
-        ```
-        Add `r` based on the type.
-        ```go
-        func (r *runnables) Add(fn Runnable) error {
-            switch runnable := fn.(type) {
-            case hasCache: // check if `GetCache() exists
-                return r.Caches.Add(fn, func(ctx context.Context) bool {
-                    return runnable.GetCache().WaitForCacheSync(ctx)
-                })
-            case *webhook.Server: // check if webhook.Server type
-                return r.Webhooks.Add(fn, nil)
-            case LeaderElectionRunnable: // check if `NeedLeaderElection() exists
-                if !runnable.NeedLeaderElection() {
-                    return r.Others.Add(fn, nil)
-                }
-                return r.LeaderElection.Add(fn, nil)
-            default:
-                return r.LeaderElection.Add(fn, nil)
+        return r.HTTPServers.Add(fn, nil)
+    case hasCache:
+        return r.Caches.Add(fn, func(ctx context.Context) bool {
+            return runnable.GetCache().WaitForCacheSync(ctx)
+        })
+    case webhook.Server:
+        return r.Webhooks.Add(fn, nil)
+    case warmupRunnable, LeaderElectionRunnable:
+        if warmupRunnable, ok := fn.(warmupRunnable); ok {
+            if err := r.Warmup.Add(RunnableFunc(warmupRunnable.Warmup), nil); err != nil {
+                return err
             }
         }
-        ```
+
+        leaderElectionRunnable, ok := fn.(LeaderElectionRunnable)
+        if !ok {
+            return r.LeaderElection.Add(fn, nil)
+        }
+
+        if !leaderElectionRunnable.NeedLeaderElection() {
+            return r.Others.Add(fn, nil)
+        }
+        return r.LeaderElection.Add(fn, nil)
+    default:
+        return r.LeaderElection.Add(fn, nil)
+    }
+}
+```
+
+HTTP servers can opt into leadership. Objects exposing GetCache receive a cache synchronization readiness check. Webhook servers are their own group. Controllers exposing Warmup have warmup work registered separately; NeedLeaderElection decides their main group. A plain Runnable without a leadership interface defaults to LeaderElection.
 
 ## `Manager.GetClient()` and `GetScheme()`
 
-1. The client, scheme and more are initialized and stored in the [cluster](../cluster) when a Manager is created.
-1. The client, scheme and more are directly got from `cm.cluster.GetXXX()`
-1. The client got by `GetClient()` is passed to `Reconciler` so you can manipulate objects in the Reconcile function.
-
+These methods delegate to the embedded Cluster. Pass the returned dependencies explicitly to reconcilers and other components. GetClient uses the shared cache for eligible reads and the API server for writes; GetAPIReader bypasses the cache. Register custom API types in the Scheme before constructing components that need to resolve them.
 
 ## Example
 
-1. Initialize with `NewManager`.
+The [sample](main.go) creates a Manager, builds Pod and Deployment controllers using `reconcile.Func`, adds a RunnableFunc, and starts the Manager with `ctrl.SetupSignalHandler()`. Every New, Complete, Add, and Start error is checked.
 
-    ```go
-    mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
-    ```
+A Runnable must not ignore cancellation when it runs continuously:
 
-    You can configure Options based on your requirements.
-    example:
-
-    ```go
-    {
-        Scheme:                 scheme,
-        MetricsBindAddress:     metricsAddr,
-        Port:                   9443,
-        HealthProbeBindAddress: probeAddr,
-        LeaderElection:         enableLeaderElection,
-        LeaderElectionID:       "63ffe61d.example.com",
-    }
-    ```
-
-1. Define a simple Reconciler
-
-    ```go
-	podReconciler := reconcile.Func(func(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-		fmt.Printf("podReconciler is called for %v\n", req)
-		return reconcile.Result{}, nil
-	})
-    ```
-
-    For more details about Reconciler, you can check [reconciler](../reconciler).
-
-1. Set up Controller with `NewControllerManagedBy`
-
-    ```go
-    ctrl.NewControllerManagedBy(mgr). // returns controller Builder
-        For(&corev1.Pod{}). // defines the type of Object being reconciled
-        Complete(podReconciler) // Complete builds the Application controller, and return error
-    ```
-
-    1. `For`: define which resource to monitor.
-    1. `Complete`: pass the reconciler to complete the controller.
-    1. Internally, `NewControllerManagedBy` returns controller builder.
-    1. Controller builder calls two functions in `Complete(reconcile.Reconciler)`
-        1. [doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L279): Set controller to the builder
-            ```go
-            blder.ctrl, err = newController(controllerName, blder.mgr, ctrlOptions)
-            ```
-        1. [doWatch](): call `blder.ctrl.Watch(src, hdler, allPredicates...)` for `For`, `Owns`, and `Watches`.
+```go
+err := mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+    // Initialize component resources here.
+    <-ctx.Done()
+    return nil
+}))
+if err != nil {
+    return err
+}
+return mgr.Start(ctrl.SetupSignalHandler())
+```
 
 ## Run
 
-1. Run (initialize a Manager with podReconciler & deploymentReconciler)
+From the repository root with a kubeconfig and list/watch access to Pods and Deployments:
 
-    ```
-    go run main.go
-    2022-09-06T06:27:08.255+0900    INFO    controller-runtime.metrics      Metrics server is starting to listen    {"addr": ":8080"}
-    2022-09-06T06:27:08.255+0900    INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
-    2022-09-06T06:27:08.255+0900    INFO    Starting EventSource    {"controller": "pod", "controllerGroup": "", "controllerKind": "Pod", "source": "kind source: *v1.Pod"}
-    2022-09-06T06:27:08.255+0900    INFO    Starting Controller     {"controller": "pod", "controllerGroup": "", "controllerKind": "Pod"}
-    2022-09-06T06:27:08.255+0900    INFO    manager-examples        RunnableFunc is called
-    2022-09-06T06:27:08.255+0900    INFO    Starting EventSource    {"controller": "deployment", "controllerGroup": "apps", "controllerKind": "Deployment", "source": "kind source: *v1.Deployment"}
-    2022-09-06T06:27:08.255+0900    INFO    Starting Controller     {"controller": "deployment", "controllerGroup": "apps", "controllerKind": "Deployment"}
-    2022-09-06T06:27:08.356+0900    INFO    Starting workers        {"controller": "pod", "controllerGroup": "", "controllerKind": "Pod", "worker count": 1}
-    2022-09-06T06:27:08.357+0900    INFO    Starting workers        {"controller": "deployment", "controllerGroup": "apps", "controllerKind": "Deployment", "worker count": 1}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/coredns-6d4b75cb6d-jtg59"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "local-path-storage/local-path-provisioner-9cd9bd544-g89rs"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-scheduler-kind-control-plane"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-controller-manager-kind-control-plane"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-proxy-7jsn6"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/coredns-6d4b75cb6d-k68r5"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/etcd-kind-control-plane"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kube-apiserver-kind-control-plane"}
-    2022-09-06T06:27:08.357+0900    INFO    manager-examples        podReconciler is called {"req": "kube-system/kindnet-6dj6q"}
-    2022-09-06T06:27:08.358+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "kube-system/coredns"}
-    2022-09-06T06:27:08.358+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "local-path-storage/local-path-provisioner"}
-    ```
+```sh
+go run ./contents/kubernetes-operator/controller-runtime/manager
+```
 
-    The reconcile functions are called when cache is synced.
+Existing objects enqueue initial requests. The sample logs `podReconciler is called` or `deploymentReconciler is called` with the namespace/name, plus `RunnableFunc is called`. Create a test object in another terminal:
 
-1. Create a Pod
-    ```
-    kubectl run nginx --image=nginx
-    ```
+```sh
+kubectl create deployment manager-demo --image=nginx
+kubectl scale deployment manager-demo --replicas=2
+kubectl delete deployment manager-demo
+```
 
-    You'll see the following logs:
-
-    ```
-    2022-09-06T07:16:26.400+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
-    2022-09-06T07:16:26.519+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
-    2022-09-06T07:16:26.660+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
-    2022-09-06T07:16:32.547+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx"}
-    ```
-1. Delete the Pod
-    ```
-    kubectl delete pod nginx
-    ```
-
-    You'll see the logs again.
-1. Create a Deployment
-    ```
-    kubectl create deploy nginx --image=nginx
-    ```
-
-    ```
-    2022-09-06T07:17:04.963+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
-    2022-09-06T07:17:05.281+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
-    2022-09-06T07:17:05.320+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
-    2022-09-06T07:17:05.341+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
-    2022-09-06T07:17:05.342+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
-    2022-09-06T07:17:05.432+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
-    2022-09-06T07:17:05.461+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
-    2022-09-06T07:17:08.630+0900    INFO    manager-examples        podReconciler is called {"req": "default/nginx-8f458dc5b-lnkqz"}
-    2022-09-06T07:17:08.674+0900    INFO    manager-examples        deploymentReconciler is called  {"req": "default/nginx"}
-    ```
-
-1. Delete the Deployment
-    ```
-    kubectl delete deploy nginx
-    ```
-
-    You'll see the logs again.
+Each operation can produce multiple Pod/Deployment events, and duplicate queued keys can collapse. Ctrl+C cancels the Manager and waits for its managed components to stop. `created manager` is logged only after Start returns in this sample, not as a readiness signal.

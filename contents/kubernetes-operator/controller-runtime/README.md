@@ -2,23 +2,22 @@
 
 [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime) is a subproject of kubebuilder which provides a lot of useful tools that help develop Kubernetes Operator.
 
-Version: [v0.13.0](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0)
+Version: [v0.25.1](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1), with client-go v0.37.1, as pinned in [go.mod](../../../go.mod).
 
 ## Overview
 
 ![](diagram.drawio.svg)
 
-1. Create a **Manager**.
-    1. **Cluster**, which has `Cache`, `Client`, `Scheme`, etc, is created internally. Read [cluster](cluster/README.md) for more details.
-1. Create one or multiple **Reconciler**s. For more details, read [reconciler](reconciler/README.md).
-1. Build the `Reconciler`(s) with the `Manager` using `Builder`.
-    1. Internally, `builder.doWatch` and `builder.doController` are called.
-    1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L279) calls [newController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L88) to create a new **Controller** and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`. ([controller](controller/README.md#how-controller-is-used))
-        1. Inject dependencies to Reconciler and Controller. e.g. Cache.
-    1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L220) creates [Kind (Source)](source/README.md#how-source-is-used) and call [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L125) for `For`, `Owns`, and `Watches`.
-        1. [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L125) calls `source.Start()`, which gets informer from the injected cache and add the event handler.
-1. Start the `Manager`, which trigger to start all the `mgr.runnables` (`Caches`, `Webhooks`, `Others`) in the `Manager`.
-    1. `Informer.Run` is called in `cm.runnables.Caches.Start(cm.internalCtx)`
+1. Create a **Manager**. Internally, [Cluster](cluster/) constructs the shared Cache, Client, Scheme, RESTMapper, and uncached APIReader.
+1. Create **Reconcilers** with explicit dependencies such as `Client: mgr.GetClient()`; see [Reconciler](reconciler/).
+1. Configure each controller with [Builder](builder/): For chooses the reconciled type, Owns maps child events to owners, and Watches supplies custom event mappings.
+1. Builder.doController constructs a **Controller** and registers it with Manager.Add. Controllers require leadership by default; those opting out run in Others.
+1. Builder.doWatch constructs **Kind sources** using Cache, handler, and predicates, then calls Controller.Watch to register them.
+1. Start Manager. It starts HTTP servers, webhooks, caches, non-leader work, warmup work, and leader-gated controllers in the appropriate order.
+1. Kind.Start obtains an informer from Cache and registers the handler. Controller waits for source synchronization before running workers.
+1. Informer events pass predicates, handlers enqueue keys, and Controller workers call Reconcile. Reconcile reads current state through Client and writes desired changes to the API server.
+
+The component pages and diagrams retain construction details, interfaces, usage examples, and call relationships for the pinned version.
 
 For more details, you can check the [architecture in book.kubebuilder.io](https://book.kubebuilder.io/architecture.html):
 ![](https://raw.githubusercontent.com/kubernetes-sigs/kubebuilder/master/docs/book/src/kb_concept_diagram.svg)
@@ -26,14 +25,15 @@ For more details, you can check the [architecture in book.kubebuilder.io](https:
 List of components:
 
 1. [Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager): Package manager is required to create Controllers and provides shared dependencies such as clients, caches, schemes, etc.
-1. [Controller](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller): Package controller provides types and functions for building Controllers. The Controller **MUST** be started by calling Manager.Start.
+1. [Controller](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller): Package controller provides types and functions for building Controllers. Managed controllers start through Manager.Start; unmanaged constructors require the caller to manage lifecycle.
     1. Event
     1. Builder
     1. Source
     1. Handler
     1. Predicate
 1. [Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client): Package client contains functionality for interacting with Kubernetes API servers.
-    1. [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L69): The default client type whose Get and List get object from [cache.CacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/cache_reader.go#L40), which reduces the API requests to API server.
+    1. [cache-backed client](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/client/client.go): Get/List use the configured cache unless bypassed; writes use the API server. This replaces the older delegatingClient implementation.
+
 1. [Cache](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/cache)
     1. client.Reader: Cache acts as a client to objects stored in the cache.
     1. Informers: Cache loads informers and adds field indices.
@@ -58,35 +58,21 @@ List of components:
 ## Examples
 
 1. [example-controller](example-controller)
-1. envtest
+1. [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/envtest): integration tests with a local API server and etcd; not configured by these examples.
+
+## Validation
+
+Run from the repository root:
+
+```sh
+go test ./contents/kubernetes-operator/...
+golangci-lint run
+```
+
+CI runs the Go tests with coverage and golangci-lint when Go source, go.mod/go.sum, lint configuration, or the Go workflow changes. Packages marked `[no test files]` are compiled but have no dedicated behavioral tests. Regression tests cover informer object ownership/tombstones, ReplicaSet reconciliation, and webhook mutation. Cluster-dependent walkthroughs require a kubeconfig and the described RBAC/CRDs; unit tests do not validate live watch delivery or leader election.
 
 ## Memo
 
-1. [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
-1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
-    1. [⚠️ Refactor source/handler/predicate packages to remove dep injection #2120](https://github.com/kubernetes-sigs/controller-runtime/pull/2120)
-
-        ```diff
-        -       kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
-        -       kindWithCacheMysql := source.NewKindWithCache(mysql, cache)
-        -       kindWithCachesecret := source.NewKindWithCache(secret, cache)
-        +       kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
-        +       kindWithCacheMysql := source.Kind(cache, mysql)
-        +       kindWithCachesecret := source.Kind(cache, secret)
-        ```
-
-    1. Example PR: https://github.com/nakamasato/secret-mirror-operator/pull/28
-
-1. [v0.16.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.16.0)
-    1. [⚠ Introduce Metrics Options struct & secure metrics serving #2407](https://github.com/kubernetes-sigs/controller-runtime/pull/2407)
-
-        ```diff
-        import (
-        + metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-        )
-        - MetricsBindAddress: metricsAddr
-        + Metrics: metricsserver.Options{BindAddress: metricsAddr},
-        ```
-
-    1. [⚠ Remove deprecated manager, webhook and cluster options #2422](https://github.com/kubernetes-sigs/controller-runtime/pull/2422)
-    1. Example PR: https://github.com/nakamasato/secret-mirror-operator/pull/28
+1. The default logger uses epoch timestamps unless configured otherwise.
+1. Sources, handlers, and predicates receive their dependencies explicitly. For example, construct a `Kind` source with `source.Kind(cache, object, handler)`; no dependency injection is required.
+1. Metrics and webhook servers use dedicated options and server interfaces. See [Manager](manager/) and [Webhook](webhook/) for the current configuration paths.

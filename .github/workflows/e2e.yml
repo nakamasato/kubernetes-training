@@ -53,6 +53,11 @@ jobs:
         target: ${{ fromJSON(needs.changes.outputs.targets) }}
     steps:
       - uses: actions/checkout@v7
+      - name: Set up Go for the controller-runtime example
+        if: matrix.target == 'controller-runtime'
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
       - name: Install kind and kubectl
         run: |
           curl -fsSL https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 -o /tmp/kind

@@ -13,7 +13,7 @@ https://pkg.go.dev/k8s.io/client-go
 Go clients for talking to a kubernetes cluster.
 
 - https://pkg.go.dev/k8s.io/client-go/tools
-    - [cache](https://pkg.go.dev/k8s.io/client-go@v0.23.4/tools/cache): Package cache is a client-side caching mechanism.
+    - [cache](https://pkg.go.dev/k8s.io/client-go@v0.37.1/tools/cache): Package cache is a client-side caching mechanism.
 ## 3. apimachinery
 
 https://pkg.go.dev/k8s.io/apimachinery

@@ -27,6 +27,10 @@
   "mysql": [
     "contents/helm-vs-kustomize/dependencies/mysql/**"
   ],
+  "controller-runtime": [
+    "contents/kubernetes-operator/controller-runtime/**",
+    "scripts/e2e/cases/controller-runtime.sh"
+  ],
   "istio": [
     "contents/istio/**"
   ]

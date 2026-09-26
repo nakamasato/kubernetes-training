@@ -21,9 +21,11 @@ jobs:
         with:
           filters: |
             go:
-              - 'contents/kubernetes-operator/**.go'
+              - '**/*.go'
+              - go.mod
+              - go.sum
+              - .golangci.yaml
               - .github/workflows/go.yml
-              - '**go**'
 
   status-check-go:
     runs-on: ubuntu-latest
