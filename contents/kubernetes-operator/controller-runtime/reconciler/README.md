@@ -1,28 +1,75 @@
-# Reconciler
+# [Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)
 
-Reconciler は現在の状態を読み、望ましい状態に近づける処理を実装する。通常の `reconcile.Reconciler` は `TypedReconciler[Request]` の別名で、次のメソッドを持つ。
+![](diagram.drawio.svg)
+
+Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)). A Reconciler implements a function which takes a reconcile Request containing the name and namespace of the object to reconcile, reconciles the object, and returns a Result or an error indicating whether to requeue for a second round of processing.
+
+As you can see in the diagram above, a Reconciler is part of a Controller. A Controller has a function to watch changes of the target resources, put reconciliation keys into the queue, and call **Reconcile** function with an queue item, and requeue the item if necessary.
+
+
+## Types
+
+### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/reconcile/reconcile.go)
 
 ```go
-Reconcile(context.Context, reconcile.Request) (reconcile.Result, error)
+type Reconciler = TypedReconciler[Request]
+
+type TypedReconciler[request comparable] interface {
+    Reconcile(context.Context, request) (Result, error)
+}
 ```
 
-`Request` は `types.NamespacedName` を持つ。作成・更新・削除といったイベント種別や古いオブジェクトは含まない。現在の状態を取得し、繰り返し実行しても不要な変更を行わないようにする。
+### Request
 
-| 戻り値 | 動作 |
-|---|---|
-| `reconcile.Result{}, nil` | 今回の処理を完了。新しいイベントでは再度呼ばれる |
-| `reconcile.Result{RequeueAfter: time.Minute}, nil` | 指定時間後に再実行 |
-| `reconcile.Result{}, err` | 通常のエラーは rate limit 付きで再試行 |
-| `reconcile.Result{}, reconcile.TerminalError(err)` | エラーを記録するが、そのエラーを理由に再試行しない |
+```go
+type Request struct {
+    // NamespacedName is the name and namespace of the object to reconcile.
+    types.NamespacedName
+}
+```
 
-`Result.Requeue` は deprecated。明示的な待ち時間には `RequeueAfter` を使う。エラーを返す場合、Result は無視される。
+### Result
 
-## Run
+```go
+type Result struct {
+    Requeue bool
 
-[main.go](main.go) は struct と `reconcile.Func` の二通りで実装する。struct は大文字の `Reconcile` メソッドが必要で、コンパイル時にインターフェースへの適合を確認している。クラスタは不要。
+    RequeueAfter time.Duration
+
+    Priority *int
+}
+```
+## Implement
+
+You can use either implementation of the `Reconciler` interface:
+1. a reconciler struct with `Reconcile` function.
+1. a `reconcile.Func`, which implements Reconciler interface:
+    ```go
+    type Func func(context.Context, Request) (Result, error)
+    ```
+
+([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/internal/controller/controller.go) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
+## How reconciler is used
+Reconciler is passed to Controller [builder](../builder) when initializing controller (you can also check it in [Manager](../manager/)):
+
+```go
+if err := ctrl.NewControllerManagedBy(mgr).
+    For(&corev1.Pod{}).
+    Complete(podReconciler); err != nil {
+    return err
+}
+```
+
+`Reconcile` must be exported with this exact signature. The [standalone sample](main.go) has a compile-time `reconcile.Reconciler` assertion and runs without a cluster:
 
 ```sh
 go run ./contents/kubernetes-operator/controller-runtime/reconciler
 ```
 
-参照: [Reconcile API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/reconcile)、[実際の Controller](../example-controller)。
+## Results, retries, and current state
+
+A Request contains a key, not the original event or previous object. Read current state on every call. Ignore NotFound if no cleanup remains; return other errors so the controller can retry. Reconciliation must tolerate duplicate calls and partial previous progress.
+
+An error normally schedules a rate-limited retry and overrides RequeueAfter. TerminalError suppresses that automatic retry. With a nil error, RequeueAfter schedules a delayed call; an empty Result waits for a future event. Requeue is deprecated; prefer RequeueAfter for intentional scheduling. Priority optionally controls the priority of subsequent queued work.
+
+For a concrete read/list/patch implementation and no-op behavior, see the [ReplicaSet reconciler](../example-controller/). The [Controller](../controller/#start-func) owns queue processing, retry bookkeeping, and worker concurrency.

@@ -1,31 +1,19 @@
 # client-go
 
-Kubernetes の Go client ライブラリ。この教材は [go.mod](../../../go.mod) の **v0.37.1** を対象にする。
+![](diagram.drawio.svg)
 
-## Components
+Version: [v0.37.1](https://github.com/kubernetes/client-go/releases/tag/v0.37.1)
 
-1. [clientset](clientset): 組み込みリソースへの型付き API client
-1. [listerwatcher](listerwatcher): List の状態を起点に Watch で変更を受け取る
-1. [reflector](reflector): リソースの変更を継続的に取得して Store に反映する
-1. [deltafifo](deltafifo): 同じキーの変更をまとめて渡すキュー
-1. [indexer](indexer): index を持つメモリ上の Store
-1. [informer](informer): Reflector、Store、イベント通知をまとめる
-1. [lister](lister): Informer の Indexer から型付きオブジェクトを読む
-1. [workqueue](workqueue): Controller が処理するキーと再試行を管理する
+1. [clientset](clientset): a set of clients to access Kubernetes API
+1. [indexer](indexer): An indexed in-memory key-value store for objects
+1. [informer](informer)
+    1. indexer
+    1. reflector
+    1. ListerWatcher
+1. [lister](lister)
+    1. indexer
+1. [workqueue](workqueue): manages controller work items and retries.
+1. [reflector](reflector): watches a specified resource with **listerwatcher** and reflects all changes to the configured store (FIFO).
+1. [listerwatcher](listerwatcher): list and watch the API server. used in **reflector**.
 
-Informer のキャッシュを更新するキューと、Reconcile するキーを入れる workqueue は役割が異なる。キャッシュ由来のオブジェクトは共有されるため、変更前に `DeepCopy()` する。
-
-## Run
-
-コマンドはリポジトリルートで実行する。
-
-```sh
-go test ./contents/kubernetes-operator/client-go/...
-go run ./contents/kubernetes-operator/client-go/indexer
-go run ./contents/kubernetes-operator/client-go/lister
-go run ./contents/kubernetes-operator/client-go/deltafifo
-```
-
-上記はクラスタ不要。clientset / listerwatcher / informer の例は有効な kubeconfig と対象リソースへの権限が必要。これらの例の接続先は `-kubeconfig /path/to/config` で指定でき、デフォルトは `~/.kube/config`。継続監視は Ctrl+C で停止する。
-
-参照: [client-go v0.37.1](https://pkg.go.dev/k8s.io/client-go@v0.37.1)、[Kubernetes との互換性](https://github.com/kubernetes/client-go/tree/v0.37.1#compatibility-matrix)。
+Commands in the component walkthroughs use the versions pinned in [go.mod](../../../go.mod). Run `go test ./contents/kubernetes-operator/client-go/...` from the repository root. Informer/cache queues update stored objects; a controller workqueue separately schedules reconciliation keys.

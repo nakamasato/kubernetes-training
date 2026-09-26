@@ -1,8 +1,8 @@
 # Workqueue
 
-Controller が処理するキーを保持するキュー。同じキーの重複追加を集約し、処理中に再追加されたキーは `Done` 後にもう一度処理できる。
+A workqueue holds keys for a controller to process. It coalesces duplicate additions. If a key is added again while being processed, it can be processed again after `Done`.
 
-現在は型付き API を使う。
+Use the typed API:
 
 ```go
 q := workqueue.NewTypedRateLimitingQueue(
@@ -12,7 +12,7 @@ defer q.ShutDown()
 q.Add(types.NamespacedName{Namespace: "default", Name: "example"})
 ```
 
-ワーカーで一つ処理する例（`sync` はそのキーの最新状態を読み調整する関数）:
+A worker can process one item as follows. Here, `sync` reads and reconciles the current state for the key:
 
 ```go
 key, shutdown := q.Get()
@@ -28,11 +28,11 @@ if err := sync(ctx, key); err != nil {
 return true
 ```
 
-- `Done` は取得した項目の処理完了を通知する。成功・失敗のどちらでも必要。
-- `Forget` は失敗回数など rate limiter の状態をリセットする。`Done` の代わりにはならない。
-- `AddAfter` は一定時間後、`AddRateLimited` は rate limiter に従って再追加する。
-- 空のキューの `Get` は待機する。context をキャンセルするだけでは解除されないので、停止時に `ShutDown` する。
+- `Done` marks processing of an acquired item as complete, on both success and failure.
+- `Forget` resets rate-limiter state, such as failure counts. It does not replace `Done`.
+- `AddAfter` schedules an item after a duration; `AddRateLimited` uses the rate limiter to schedule it.
+- `Get` blocks on an empty queue. Context cancellation alone does not unblock it; call `ShutDown` when stopping.
 
-[Source の実行例](../../controller-runtime/source) は型付きキューを使い、context のキャンセルで `ShutDown` する。通常の controller-runtime Controller はキューと再試行を内部で管理するので、Reconciler は Result / error を返す。
+The [Source example](../../controller-runtime/source) uses a typed queue and calls `ShutDown` when its context is canceled. A controller-runtime Controller normally manages queues and retries internally, so its Reconciler returns a Result and an error.
 
-参照: [Workqueue API](https://pkg.go.dev/k8s.io/client-go@v0.37.1/util/workqueue)、[公式サンプル](https://github.com/kubernetes/client-go/blob/v0.37.1/examples/workqueue/main.go)。
+References: [Workqueue API](https://pkg.go.dev/k8s.io/client-go@v0.37.1/util/workqueue), [official example](https://github.com/kubernetes/client-go/blob/v0.37.1/examples/workqueue/main.go).

@@ -1,41 +1,59 @@
 # Example Controller
 
-ReplicaSet と、その ReplicaSet を controller owner に持つ Pod を監視する。ReplicaSet に `pod-count` ラベルで所有 Pod 数を記録する。
+A ReplicaSet controller built with controller-runtime v0.25.1. Run commands from the repository root with a kubeconfig and permissions to read ReplicaSets/Pods and patch ReplicaSets.
+## Example
 
-[example-controller.go](example-controller.go) の処理:
+1. Run example controller.
 
-1. ReplicaSet を取得する。削除済み（NotFound）なら正常終了する。
-1. `spec.selector`（matchExpressions を含む）で同じ namespace の Pod を絞る。
-1. controller owner の UID が一致する Pod を数える。他の ReplicaSet や owner のない Pod は数えない。
-1. ラベルが未設定なら map を初期化し、値が変わる場合だけ merge patch する。
+    ```
+    go run ./contents/kubernetes-operator/controller-runtime/example-controller
+    ```
 
-Pod の終了処理中でも、キャッシュ上に残っている所有 Pod は数に含む。これはラベル更新の教材で、ReplicaSet 本来の Pod 作成・削除は Kubernetes の ReplicaSet controller が担う。
+    What this controller does:
 
-## Run
+    1. Read the ReplicaSet
+    1. Read the Pods
+    1. Set a Label on the ReplicaSet with the Pod count.
 
-リポジトリルートで実行する。ReplicaSet の get/list/watch/patch と Pod の list/watch 権限を用意する。
+1. Create Deployment
 
-```sh
-go run ./contents/kubernetes-operator/controller-runtime/example-controller
-```
+    ```
+    kubectl create deploy test --replicas=3 --image=nginx
+    ```
 
-別ターミナルで Deployment を作成する。
+    The controller counts Pods that both match the ReplicaSet selector and have its controller owner UID. It supports matchExpressions, initializes missing labels, and patches only when pod-count changes. A merge patch avoids overwriting unrelated fields; other API errors still trigger retries.
 
-```sh
-kubectl create deployment test --replicas=3 --image=nginx
-kubectl get rs -l app=test -L pod-count
-kubectl scale deployment test --replicas=1
-kubectl get rs -l app=test -L pod-count
-```
+1. Check `pod-count=3` labels added to the ReplicaSet
 
-キャッシュが追いつくと `pod-count` が 3、スケール後は 1 になる。書き込みの直後は読み取りが古い場合がある。エラーは Controller によって再試行される。
+    ```
+    kubectl get rs -o jsonpath='{.items[].metadata.labels}'
+    {"app":"test","pod-count":"3","pod-template-hash":"8499f4f74"}
+    ```
 
-```sh
-kubectl delete deployment test
-```
+1. Clean up
+    ```
+    kubectl delete deploy test
+    ```
 
-Ctrl+C で Controller を停止する。クラスタ不要の回帰テスト:
+## Implementation and event flow
+
+`For(&appsv1.ReplicaSet{})` maps ReplicaSet events to its own key. `Owns(&corev1.Pod{})` maps Pod ownerReferences to the controlling ReplicaSet. Manager supplies a cache-backed Client explicitly to ReplicaSetReconciler.
+
+On each request:
+
+1. Get the ReplicaSet; ignore NotFound because deletion leaves nothing to label.
+2. Convert Spec.Selector with LabelSelectorAsSelector, including matchExpressions.
+3. List matching Pods in the request namespace.
+4. Count only Pods whose controller owner UID matches this ReplicaSet. Labels alone do not prove ownership.
+5. Return immediately if pod-count already matches.
+6. DeepCopy the original, allocate Labels if nil, and patch with client.MergeFrom(original).
+
+The write produces another watch event; the no-op check makes that subsequent reconciliation settle. Reads can lag writes because the Client reads from the cache. This sample counts existing owned Pods, not only Ready Pods, and does not create or delete Pods itself.
+
+## Tests
 
 ```sh
 go test ./contents/kubernetes-operator/controller-runtime/example-controller
 ```
+
+The fake-client regression tests cover missing ReplicaSets, nil labels, selector expressions, owner filtering, namespace filtering, and avoiding unchanged writes. They do not substitute for a running-cluster check of informer delivery or API-server admission.
