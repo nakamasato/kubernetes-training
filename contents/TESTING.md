@@ -7,7 +7,6 @@ bash scripts/e2e/run.sh argocd
 bash scripts/e2e/run.sh prometheus-operator
 bash scripts/e2e/run.sh prometheus
 bash scripts/e2e/run.sh grafana
-bash scripts/e2e/run.sh grafana-operator
 bash scripts/e2e/run.sh helm       # also requires Helm
 bash scripts/e2e/run.sh kustomize  # also requires standalone Kustomize
 ```
@@ -40,6 +39,11 @@ Prometheus tests readiness and a successful self-scrape query. Grafana tests sta
 with the repository's dashboard/datasource provisioning and database health; it
 does not provision the optional MySQL or RabbitMQ dashboard backends.
 
+Grafana Operator tests the HA sample with PostgreSQL 18.6, two ready Grafana
+replicas, database health through the Service, and Grafana-created SQL tables.
+Optional Prometheus datasources and external dashboards are outside this test.
+Run it with `bash scripts/e2e/run.sh grafana-operator`.
+
 Helm tests the hello-world chart's install, connection hook, upgrade with optional
 Ingress/HPA resources, HTTP response and uninstall. Kustomize tests the portable
 `contents/kustomize/example` dev/prod overlays, content and replicas. These tests
@@ -71,7 +75,3 @@ Go-only examples remain covered by the separate Go workflow.
 Only registered targets have E2E coverage; this does not claim coverage of every
 sample in the repository. Helm cases must pass `--kube-context "$context"` and
 `--kubeconfig "$KUBECONFIG"` explicitly.
-
-Grafana Operator tests the HA sample with PostgreSQL 18.6, two ready Grafana
-replicas, database health through the Service, and Grafana-created SQL tables.
-Optional Prometheus datasources and external dashboards are outside this test.
