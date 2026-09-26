@@ -10,5 +10,12 @@
   ],
   "grafana": [
     "contents/grafana/**"
+  ],
+  "helm": [
+    "contents/helm/README.md",
+    "contents/helm/hello-world/**"
+  ],
+  "kustomize": [
+    "contents/kustomize/**"
   ]
 }

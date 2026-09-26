@@ -31,3 +31,10 @@ class SelectionTest(unittest.TestCase):
     def test_monitoring_targets_are_independent(self):
         for target in ["prometheus", "prometheus-operator", "grafana"]:
             self.assertEqual(module.select([f"contents/{target}/kustomization.yaml"]), [target])
+
+    def test_packaging_targets(self):
+        for path in ["contents/helm/README.md", "contents/helm/hello-world/helloworld-chart/values.yaml"]:
+            self.assertEqual(module.select([path]), ["helm"])
+        for path in ["contents/kustomize/README.md", "contents/kustomize/example/overlays/prod/kustomization.yaml"]:
+            self.assertEqual(module.select([path]), ["kustomize"])
+        self.assertEqual(module.select(["contents/helm-vs-kustomize/README.md"]), [])
