@@ -15,6 +15,7 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -76,32 +77,33 @@ func main() {
 	}()
 	log.Info("cache is started")
 
-	kindMysqlUser := source.Kind(cache, &mysqlv1alpha1.MySQLUser{})
-	kindPod := source.Kind(cache, &v1.Pod{})
-
 	// Prepare queue and eventHandler
-	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
+	queue := workqueue.NewTypedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[WorkQueueItem]())
+	defer queue.ShutDown()
 
-	eventHandler := handler.Funcs{
-		CreateFunc: func(ctx context.Context, e event.CreateEvent, q workqueue.RateLimitingInterface) {
+	eventHandler := handler.TypedFuncs[client.Object, WorkQueueItem]{
+		CreateFunc: func(ctx context.Context, e event.CreateEvent, q workqueue.TypedRateLimitingInterface[WorkQueueItem]) {
 			log.Info("CreateFunc is called", "object", e.Object.GetName())
-			queue.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
+			q.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
 		},
-		UpdateFunc: func(ctx context.Context, e event.UpdateEvent, q workqueue.RateLimitingInterface) {
+		UpdateFunc: func(ctx context.Context, e event.UpdateEvent, q workqueue.TypedRateLimitingInterface[WorkQueueItem]) {
 			log.Info("UpdateFunc is called", "objectNew", e.ObjectNew.GetName(), "objectOld", e.ObjectOld.GetName())
-			queue.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
+			q.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
 		},
-		DeleteFunc: func(ctx context.Context, e event.DeleteEvent, q workqueue.RateLimitingInterface) {
+		DeleteFunc: func(ctx context.Context, e event.DeleteEvent, q workqueue.TypedRateLimitingInterface[WorkQueueItem]) {
 			log.Info("DeleteFunc is called", "object", e.Object.GetName())
-			queue.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
+			q.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
 		},
 	}
+
+	kindMysqlUser := source.TypedKind[client.Object](cache, &mysqlv1alpha1.MySQLUser{}, eventHandler)
+	kindPod := source.TypedKind[client.Object](cache, &v1.Pod{}, eventHandler)
 
 	// Start Source
-	if err := kindMysqlUser.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+	if err := kindMysqlUser.Start(ctx, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
-	if err := kindPod.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+	if err := kindPod.Start(ctx, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
 
@@ -120,6 +122,7 @@ func main() {
 			break
 		}
 		log.Info("got item", "item", item)
+		queue.Done(item)
 	}
 }
 
