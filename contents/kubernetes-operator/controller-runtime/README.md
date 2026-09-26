@@ -1,92 +1,61 @@
-# [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime)
+# controller-runtime
 
-[controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime) is a subproject of kubebuilder which provides a lot of useful tools that help develop Kubernetes Operator.
-
-Version: [v0.13.0](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0)
+Kubernetes controller を構築するライブラリ。ここでは [go.mod](../../../go.mod) の **v0.25.1** を対象に、実行できるサンプルと各コンポーネントの関係を説明する。client-go は **v0.37.1**。バージョンを更新するときは両者の互換性を確認する。
 
 ## Overview
 
-![](diagram.drawio.svg)
+1. `ctrl.NewManager` が Cluster、Cache、Client、Scheme などの共通依存を準備する。
+1. Reconciler に `mgr.GetClient()` などを明示的に渡す。
+1. Builder の `For` / `Owns` / `Watches` で監視対象とイベントの対応付けを登録する。
+1. `mgr.Start(ctrl.SetupSignalHandler())` でキャッシュ・Controller などを開始する。
+1. Source が Informer の通知を Handler に渡し、Handler が処理対象キーをキューへ追加する。
+1. Controller が同期を待って Reconciler を呼び出す。Reconciler は現在の状態を読み、必要な変更だけを書き込む。
 
-1. Create a **Manager**.
-    1. **Cluster**, which has `Cache`, `Client`, `Scheme`, etc, is created internally. Read [cluster](cluster/README.md) for more details.
-1. Create one or multiple **Reconciler**s. For more details, read [reconciler](reconciler/README.md).
-1. Build the `Reconciler`(s) with the `Manager` using `Builder`.
-    1. Internally, `builder.doWatch` and `builder.doController` are called.
-    1. [bldr.doController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L279) calls [newController](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/controller/controller.go#L88) to create a new **Controller** and add it to `manager.runnables.Others` by `Manager.Add(Runnable)`. ([controller](controller/README.md#how-controller-is-used))
-        1. Inject dependencies to Reconciler and Controller. e.g. Cache.
-    1. [bldr.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/builder/controller.go#L220) creates [Kind (Source)](source/README.md#how-source-is-used) and call [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L125) for `For`, `Owns`, and `Watches`.
-        1. [controller.Watch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L125) calls `source.Start()`, which gets informer from the injected cache and add the event handler.
-1. Start the `Manager`, which trigger to start all the `mgr.runnables` (`Caches`, `Webhooks`, `Others`) in the `Manager`.
-    1. `Informer.Run` is called in `cm.runnables.Caches.Start(cm.internalCtx)`
-
-For more details, you can check the [architecture in book.kubebuilder.io](https://book.kubebuilder.io/architecture.html):
-![](https://raw.githubusercontent.com/kubernetes-sigs/kubebuilder/master/docs/book/src/kb_concept_diagram.svg)
-
-List of components:
-
-1. [Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager): Package manager is required to create Controllers and provides shared dependencies such as clients, caches, schemes, etc.
-1. [Controller](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller): Package controller provides types and functions for building Controllers. The Controller **MUST** be started by calling Manager.Start.
-    1. Event
-    1. Builder
-    1. Source
-    1. Handler
-    1. Predicate
-1. [Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client): Package client contains functionality for interacting with Kubernetes API servers.
-    1. [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L69): The default client type whose Get and List get object from [cache.CacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/cache_reader.go#L40), which reduces the API requests to API server.
-1. [Cache](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/cache)
-    1. client.Reader: Cache acts as a client to objects stored in the cache.
-    1. Informers: Cache loads informers and adds field indices.
-1. [Scheme](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/scheme): Wraps apimachinery/Scheme.
-1. [Webhook](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/webhook)
-1. [Envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
+イベントは集約されるため、Reconcile はイベント履歴ではなく現在の状態から判断する。何度呼ばれても同じ状態に収束するように実装する。
 
 ## Components
 
-1. [manager](manager)
-1. [reconciler](reconciler)
-1. [log](log)
-1. [controller](controller)
-1. [cluster](cluster)
-    1. [client](client)
-    1. [cache](cache)
-1. [inject](inject)
-1. [source](source)
-1. [builder](builder)
-1. [handler](handler)
+- [manager](manager): ライフサイクルと共有依存
+- [cluster](cluster): クラスタへの接続、Scheme、RESTMapper
+- [client](client): API の読み書きとキャッシュ
+- [cache](cache): Informer の作成・同期
+- [builder](builder): Controller と監視対象の構築
+- [controller](controller): キュー、ワーカー、再試行
+- [reconciler](reconciler): 調整ロジック
+- [source](source): イベントの供給元
+- [handler](handler): イベントから処理対象キーへの変換
+- [log](log)、[leaderelection](leaderelection)、[webhook](webhook)
+- [inject からの移行](inject): 削除された依存注入 API の置き換え
+
+図は controller-runtime v0.25.1 / client-go v0.37.1 に合わせたもの。概念上の流れと実装の詳細を区別し、詳細は各ページのバージョン固定の参照先を確認する。
 
 ## Examples
 
-1. [example-controller](example-controller)
-1. envtest
+リポジトリルートで実行する。Go のバージョンは go.mod の `go` / `toolchain` に従う。
 
-## Memo
+```sh
+go test ./contents/kubernetes-operator/...
+go run ./contents/kubernetes-operator/controller-runtime/reconciler
+go run ./contents/kubernetes-operator/controller-runtime/log
+```
 
-1. [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
-1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
-    1. [⚠️ Refactor source/handler/predicate packages to remove dep injection #2120](https://github.com/kubernetes-sigs/controller-runtime/pull/2120)
+クラスタを使う例は有効な kubeconfig と対象リソースへの権限が必要。`KUBECONFIG` または `~/.kube/config` を使う。Manager / Cache / Source の例は Ctrl+C で終了する。
 
-        ```diff
-        -       kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
-        -       kindWithCacheMysql := source.NewKindWithCache(mysql, cache)
-        -       kindWithCachesecret := source.NewKindWithCache(secret, cache)
-        +       kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
-        +       kindWithCacheMysql := source.Kind(cache, mysql)
-        +       kindWithCachesecret := source.Kind(cache, secret)
-        ```
+- [example-controller](example-controller): ReplicaSet に所有 Pod 数のラベルを付ける
+- [manager](manager): Pod と Deployment を監視
+- [cache](cache): キャッシュから Pod を取得
+- [source](source): Pod / MySQLUser のイベントを観察
+- [webhook](webhook): TLS サーバーで AdmissionReview を処理
 
-    1. Example PR: https://github.com/nakamasato/secret-mirror-operator/pull/28
+参照: [v0.25.1 API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1)、[互換性](https://github.com/kubernetes-sigs/controller-runtime/tree/v0.25.1#compatibility)。
 
-1. [v0.16.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.16.0)
-    1. [⚠ Introduce Metrics Options struct & secure metrics serving #2407](https://github.com/kubernetes-sigs/controller-runtime/pull/2407)
+## 図
 
-        ```diff
-        import (
-        + metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-        )
-        - MetricsBindAddress: metricsAddr
-        + Metrics: metricsserver.Options{BindAddress: metricsAddr},
-        ```
+![controller-runtime の処理と構成](diagram.drawio.svg)
 
-    1. [⚠ Remove deprecated manager, webhook and cluster options #2422](https://github.com/kubernetes-sigs/controller-runtime/pull/2422)
-    1. Example PR: https://github.com/nakamasato/secret-mirror-operator/pull/28
+SVG には diagrams.net / draw.io の編集データを埋め込んでいる。再生成の定義は [generate_operator_diagrams.py](../../../scripts/generate_operator_diagrams.py) にあり、図を変更するときはこの定義を更新する。リポジトリルートで再生成・同期確認できる。
+
+```sh
+python3 scripts/generate_operator_diagrams.py
+python3 scripts/generate_operator_diagrams.py --check
+```

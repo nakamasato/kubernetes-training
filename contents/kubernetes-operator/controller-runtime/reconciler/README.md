@@ -1,61 +1,32 @@
-# [Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)
+# Reconciler
 
-![](diagram.drawio.svg)
-
-Controller logic is implemented in terms of Reconcilers ([pkg/reconcile](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)). A Reconciler implements a function which takes a reconcile Request containing the name and namespace of the object to reconcile, reconciles the object, and returns a Response or an error indicating whether to requeue for a second round of processing.
-
-As you can see in the diagram above, a Reconciler is part of a Controller. A Controller has a function to watch changes of the target resources, put change events into the queue, and call **Reconcile** function with an queue item, and requeue the item if necessary.
-
-
-## Types
-
-### [Reconciler Interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/reconcile/reconcile.go#L89)
+Reconciler は現在の状態を読み、望ましい状態に近づける処理を実装する。通常の `reconcile.Reconciler` は `TypedReconciler[Request]` の別名で、次のメソッドを持つ。
 
 ```go
-type Reconciler interface {
-	// Reconcile performs a full reconciliation for the object referred to by the Request.
-	// The Controller will requeue the Request to be processed again if an error is non-nil or
-	// Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
-	Reconcile(context.Context, Request) (Result, error)
-}
+Reconcile(context.Context, reconcile.Request) (reconcile.Result, error)
 ```
 
-### Request
+`Request` は `types.NamespacedName` を持つ。作成・更新・削除といったイベント種別や古いオブジェクトは含まない。現在の状態を取得し、繰り返し実行しても不要な変更を行わないようにする。
 
-```go
-type Request struct {
-	// NamespacedName is the name and namespace of the object to reconcile.
-	types.NamespacedName
-}
+| 戻り値 | 動作 |
+|---|---|
+| `reconcile.Result{}, nil` | 今回の処理を完了。新しいイベントでは再度呼ばれる |
+| `reconcile.Result{RequeueAfter: time.Minute}, nil` | 指定時間後に再実行 |
+| `reconcile.Result{}, err` | 通常のエラーは rate limit 付きで再試行 |
+| `reconcile.Result{}, reconcile.TerminalError(err)` | エラーを記録するが、そのエラーを理由に再試行しない |
+
+`Result.Requeue` は deprecated。明示的な待ち時間には `RequeueAfter` を使う。エラーを返す場合、Result は無視される。
+
+## Run
+
+[main.go](main.go) は struct と `reconcile.Func` の二通りで実装する。struct は大文字の `Reconcile` メソッドが必要で、コンパイル時にインターフェースへの適合を確認している。クラスタは不要。
+
+```sh
+go run ./contents/kubernetes-operator/controller-runtime/reconciler
 ```
 
-### Result
+参照: [Reconcile API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/reconcile)、[実際の Controller](../example-controller)。
 
-```go
-type Result struct {
-	// Requeue tells the Controller to requeue the reconcile key.  Defaults to false.
-	Requeue bool
+## 図
 
-	// RequeueAfter if greater than 0, tells the Controller to requeue the reconcile key after the Duration.
-	// Implies that Requeue is true, there is no need to set Requeue to true at the same time as RequeueAfter.
-	RequeueAfter time.Duration
-}
-```
-## Implement
-
-You can use either implementation of the `Reconciler` interface:
-1. a reconciler struct with `Reconcile` function.
-1. a `reconcile.Func`, which implements Reconciler interface:
-	```go
-	type Func func(context.Context, Request) (Result, error)
-	```
-
-([Controller](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/internal/controller/controller.go#L42) also implements Reconciler interface. The reconciler passed to `builder` is used inside the controller's `Reconcile` function.)
-## How reconciler is used
-Reconciler is passed to Controller [builder](../builder) when initializing controller (you can also check it in [Manager](../manager/)):
-
-```go
-ctrl.NewControllerManagedBy(mgr). // returns controller Builder
-    For(&corev1.Pod{}). // defines the type of Object being reconciled
-    Complete(podReconciler) // Complete builds the Application controller, and return error
-```
+![reconciler の処理と構成](diagram.drawio.svg)

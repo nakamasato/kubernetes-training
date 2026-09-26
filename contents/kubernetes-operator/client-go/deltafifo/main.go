@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,30 +16,27 @@ func main() {
 		KnownObjects:          indexer,
 		EmitDeltaTypeReplaced: true,
 	})
-	stopCh := make(chan struct{})
-	go func() {
-		<-stopCh
-		fifo.Close()
-	}()
+	defer fifo.Close()
 	// In informer, Reflector update DeltaFIFO
 	// https://github.com/kubernetes/client-go/blob/ee1a5aaf793a9ace9c433f5fb26a19058ed5f37c/tools/cache/reflector.go#L460-L538
 	err := fifo.Add(newPodWithoutContainer())
 	if err != nil {
-		fmt.Println("failed to DeltaFIFO.Add")
+		log.Fatal(err)
 	}
 	err = fifo.Update(newPodWithContainer())
 	if err != nil {
-		fmt.Println("failed to DeltaFIFO.Update")
+		log.Fatal(err)
 	}
 	err = fifo.Delete(newPodWithoutContainer())
 	if err != nil {
-		fmt.Println("failed to DeltaFIFO.Delete")
+		log.Fatal(err)
 	}
 
 	// Informer handleDeltas Pop()
 	// https://github.com/kubernetes/client-go/blob/ee1a5aaf793a9ace9c433f5fb26a19058ed5f37c/tools/cache/controller.go#L182-L195
-	// cannot use process (value of type func(obj interface{}) error) as "k8s.io/client-go/tools/cache".PopProcessFunc value in argument to fifo.Pop
-	fifo.Pop(process)
+	if _, err := fifo.Pop(process); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func newPodWithoutContainer() *corev1.Pod {

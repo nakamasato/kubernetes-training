@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
@@ -31,18 +34,18 @@ func main() {
 
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		log.Printf("Building config from flags, %s", err.Error())
+		log.Fatalf("Building config from flags: %v", err)
 	}
 
 	kubeClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.Printf("getting kubernetes client set %s\n", err.Error())
+		log.Fatalf("getting kubernetes client set: %v", err)
 	}
 
 	informerFactory := informers.NewSharedInformerFactory(kubeClient, time.Second*30)
 
 	podInformer := informerFactory.Core().V1().Pods()
-	podInformer.Informer().AddEventHandler(
+	_, err = podInformer.Informer().AddEventHandler(
 		cache.ResourceEventHandlerFuncs{
 			AddFunc:    handleAdd,
 			UpdateFunc: handleUpdate,
@@ -50,21 +53,24 @@ func main() {
 		},
 	)
 
-	ch := make(chan struct{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	ch := ctx.Done()
 	informerFactory.Start(ch)
+	defer informerFactory.Shutdown()
 
 	cacheSynced := podInformer.Informer().HasSynced
 	if ok := cache.WaitForCacheSync(ch, cacheSynced); !ok {
-		log.Printf("cache is not synced")
+		log.Print("cache sync stopped")
+		return
 	}
 	log.Println("cache is synced")
 
-	go wait.Until(run, time.Second*10, ch)
 	<-ch
-}
-
-func run() {
-	log.Println("run")
 }
 
 func handleAdd(obj interface{}) {
@@ -72,7 +78,8 @@ func handleAdd(obj interface{}) {
 	if pod, ok := obj.(*v1.Pod); !ok {
 		fmt.Println("couldn't convert to pod")
 	} else {
-		pod.SetLabels(map[string]string{"test": "test"}) // modify the object to trigger MutationDetector
+		pod = pod.DeepCopy() // informer objects are shared and must be treated as read-only
+		pod.SetLabels(map[string]string{"test": "test"})
 		fmt.Printf("converted to Pod label: %s\n", pod.GetLabels())
 	}
 	log.Printf(eventHandlerMessage, "handleAdd", key)
@@ -85,13 +92,13 @@ func handleUpdate(old, new interface{}) {
 
 func handleDelete(obj interface{}) {
 	key := getKeyFromObj(obj)
-	log.Printf(eventHandlerMessage, "handlDelete", key)
+	log.Printf(eventHandlerMessage, "handleDelete", key)
 }
 
 func getKeyFromObj(obj interface{}) string {
 	var key string
 	var err error
-	if key, err = cache.MetaNamespaceKeyFunc(obj); err != nil {
+	if key, err = cache.DeletionHandlingMetaNamespaceKeyFunc(obj); err != nil {
 		log.Printf("failed to get key from the cache %s\n", err.Error())
 		return ""
 	}

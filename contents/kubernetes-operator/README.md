@@ -16,7 +16,7 @@ And [more](list/README.md)
 ![](diagram.drawio.svg)
 
 1. Kubernetes Controller components.
-1. How Kubernetes Controlloer works.
+1. How Kubernetes Controller works.
 1. Custom Resource.
 
 **Kubernetes Operator**
@@ -115,8 +115,8 @@ More Detailed:
     1. [client](controller-runtime/client/)
     1. [cluster](controller-runtime/cluster/)
     1. [controller](controller-runtime/controller/)
-    1. [eventhandler](controller-runtime/eventhandler/)
-    1. [inject](controller-runtime/inject/)
+    1. [handler](controller-runtime/handler/)
+    1. [inject migration](controller-runtime/inject/)
     1. [log](controller-runtime/log)
     1. [manager](controller-runtime/manager/)
     1. [reconciler](controller-runtime/reconciler/)
@@ -154,8 +154,8 @@ Considerations:
         return reconcile.Result{}, nil
         // Reconcile failed due to error - requeue
         return reconcile.Result{}, err
-        // Requeue for any reason other than error
-        return reconcile.Result{Requeue: true}, nil
+        // Requeue after an explicit delay (requires the time package)
+        return reconcile.Result{RequeueAfter: time.Minute}, nil
         ```
     - https://github.com/operator-framework/operator-sdk/issues/4209#issuecomment-729916367
     - [How can I have separate logic for Create, Update, and Delete events? When reconciling an object can I access its previous state?](https://sdk.operatorframework.io/docs/faqs/#how-can-i-have-separate-logic-for-create-update-and-delete-events-when-reconciling-an-object-can-i-access-its-previous-state) -> You should not have separate logic. Instead design your reconciler to be idempotent.
@@ -183,7 +183,7 @@ Considerations:
         - request & response: ConversionReview
         ![](conversion-webhook.drawio.svg)
 
-- [Indexing](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.10.0/pkg/client#hdr-Indexing)
+- [Indexing](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/client#hdr-Indexing)
 
 ## 6. Tools
 - https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil

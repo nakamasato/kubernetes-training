@@ -1,171 +1,35 @@
-# [client](https://github.com/kubernetes-sigs/controller-runtime/tree/v0.13.0/pkg/client/client.go)
+# Client
 
-![](diagram.drawio.svg)
+`client.Client` は Kubernetes API を Go のオブジェクトとして読み書きするためのインターフェース。
 
-## [Client interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/interfaces.go#L101)
+| 操作 | Manager のデフォルト Client |
+|---|---|
+| `Get` / `List` | 通常は Cache から取得 |
+| `Create` / `Update` / `Patch` / `Delete` | API サーバーへ送信 |
+| `Status().Update` / `Status().Patch` | status サブリソースへ送信 |
+| `mgr.GetAPIReader().Get` / `List` | API サーバーから直接取得 |
 
-```go
-// Client knows how to perform CRUD operations on Kubernetes objects.
-type Client interface {
-	Reader
-	Writer
-	StatusClient
+書き込み直後にキャッシュが更新済みとは限らない。Reconcile は読み取りが遅れても再実行によって収束するようにする。キャッシュ内のフィールド検索には `mgr.GetFieldIndexer().IndexField` で対応する index を登録する。
 
-	// Scheme returns the scheme this client is using.
-	Scheme() *runtime.Scheme
-	// RESTMapper returns the rest this client is using.
-	RESTMapper() meta.RESTMapper
-}
-```
+`client.New(config, client.Options{})` で単独に作った Client は、Cache を指定しなければ直接 API を読む。Manager の Client と同じ挙動とは限らない。現在のキャッシュ設定は `client.Options.Cache` / `client.CacheOptions`（`Reader`、`DisableFor`、`Unstructured`）。旧 `NewDelegatingClient` / `delegatingClient` の構築例は使わない。
+
+## 更新例
 
 ```go
-// Reader knows how to read and list Kubernetes objects.
-type Reader interface {
-	Get(ctx context.Context, key ObjectKey, obj Object) error
-	List(ctx context.Context, list ObjectList, opts ...ListOption) error
+before := obj.DeepCopy()
+if obj.Labels == nil {
+    obj.Labels = map[string]string{}
 }
+obj.Labels["example"] = "value"
+err := c.Patch(ctx, obj, client.MergeFrom(before))
 ```
 
-```go
-// Writer knows how to create, delete, and update Kubernetes objects.
-type Writer interface {
-	Create(ctx context.Context, obj Object, opts ...CreateOption) error
-	Delete(ctx context.Context, obj Object, opts ...DeleteOption) error
-	Update(ctx context.Context, obj Object, opts ...UpdateOption) error
-	Patch(ctx context.Context, obj Object, patch Patch, opts ...PatchOption) error
-	DeleteAllOf(ctx context.Context, obj Object, opts ...DeleteAllOfOption) error
-}
-```
+`MergeFrom` は変更差分の JSON merge patch を作る。読み取った値との競合検出が必要なら `MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{})` を使う。毎回同じ書き込みを行うと不要なイベントが発生するので、値が変わるときだけ書き込む。
 
-```go
-// StatusClient knows how to create a client which can update status subresource
-// for kubernetes objects.
-type StatusClient interface {
-	Status() StatusWriter
-}
+Get の NotFound は削除済みなら正常終了にできる。例: `return ctrl.Result{}, client.IgnoreNotFound(err)`。
 
-// StatusWriter knows how to update status subresource of a Kubernetes object.
-type StatusWriter interface {
-	Update(ctx context.Context, obj Object, opts ...UpdateOption) error
-	Patch(ctx context.Context, obj Object, patch Patch, opts ...PatchOption) error
-}
-```
+参照: [Client API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/client)、[実装](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/client/client.go)、[動作する例](../example-controller)。
 
-## [delegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L69)
+## 図
 
-```go
-type delegatingClient struct {
-	Reader
-	Writer
-	StatusClient
-
-	scheme *runtime.Scheme
-	mapper meta.RESTMapper
-}
-```
-
-There's a function called [shouldBypassCache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L102) to check if the target object is cached or not. If cached, call [cacheReader](), otherwise call [clientReader]()
-
-
-## How `client` is used
-
-1. When a **Manager** is created, a **Cluster** is created internally. (You can check more details in [cluster](../cluster/README.md))
-1. When creating a **cluster**, **client** is also created. If `Options.NewClient` is not specified [DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L259) is used, which calls [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L44) to return a client.
-
-	```go
-	if options.NewClient == nil {
-		options.NewClient = DefaultNewClient
-	}
-	```
-
-	```go
-	writeObj, err := options.NewClient(cache, config, clientOptions, options.ClientDisableCacheFor...)
-	```
-
-1. In [DefaultNewClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cluster/cluster.go#L259), new client is created first, and then delegatingClient is created.
-	```go
-	c, err := client.New(config, options)
-	```
-
-	```go
-	client.NewDelegatingClient(client.NewDelegatingClientInput{
-		CacheReader:     cache,
-		Client:          c,
-		UncachedObjects: uncachedObjects,
-	})
-	```
-
-	As you can see, there's a struct for the input:
-	```go
-	// NewDelegatingClientInput encapsulates the input parameters to create a new delegating client.
-	type NewDelegatingClientInput struct {
-		CacheReader       Reader
-		Client            Client
-		UncachedObjects   []Object
-		CacheUnstructured bool
-	}
-	```
-
-1. `delegatingClient` is initialized in [NewDelegatingClient](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/split.go#L44)
-
-	Three roles:
-	1. `Reader`: client + cache <- utilize the cache to reduce API requests (`Get` and `List`)
-	1. `Writer`: client (`Create`, `Update`, `Delete`, etc)
-	1. `StatusClient`: client (`Status().Update()` or `Status().Patch()`)
-
-	```go
-	&delegatingClient{
-		scheme: in.Client.Scheme(),
-		mapper: in.Client.RESTMapper(),
-		Reader: &delegatingReader{
-			CacheReader:       in.CacheReader,
-			ClientReader:      in.Client,
-			scheme:            in.Client.Scheme(),
-			uncachedGVKs:      uncachedGVKs,
-			cacheUnstructured: in.CacheUnstructured,
-		},
-		Writer:       in.Client,
-		StatusClient: in.Client,
-	}
-	```
-
-	[cacheReader](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/cache/internal/cache_reader.go#L40):
-
-	```go
-	// CacheReader wraps a cache.Index to implement the client.CacheReader interface for a single type.
-	type CacheReader struct {
-		indexer cache.Indexer
-		groupVersionKind schema.GroupVersionKind
-		scopeName apimeta.RESTScopeName
-		disableDeepCopy bool
-	}
-	```
-
-## [New](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.13.0/pkg/client/client.go#L75)
-
-```go
-func newClient(config *rest.Config, options Options) (*client, error) {
-```
-
-```go
-c := &client{
-    typedClient: typedClient{
-        cache:      clientcache,
-        paramCodec: runtime.NewParameterCodec(options.Scheme),
-    },
-    unstructuredClient: unstructuredClient{
-        cache:      clientcache,
-        paramCodec: noConversionParamCodec{},
-    },
-    metadataClient: metadataClient{
-        client:     rawMetaClient,
-        restMapper: options.Mapper,
-    },
-    scheme: options.Scheme,
-    mapper: options.Mapper,
-}
-```
-
-## Tips
-
-1. https://zoetrope.github.io/kubebuilder-training/controller-runtime/client.html: When to use `Patch`? `MergeFrom` vs. `StrategicMergeFrom`
+![client の処理と構成](diagram.drawio.svg)

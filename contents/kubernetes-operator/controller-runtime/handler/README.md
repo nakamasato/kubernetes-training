@@ -1,53 +1,25 @@
-# [handler](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.17.0/pkg/handler)
+# Handler
 
-Package `handler` defines `EventHandlers` that enqueue `reconcile.Request`s in response to Create, Update, Deletion Events observed from Watching Kubernetes APIs. Users should provide a `source.Source` and `handler.EventHandler` to `Controller.Watch` in order to generate and enqueue `reconcile.Request` work items.
+Handler は Create / Update / Delete / Generic イベントからキューへ処理対象を追加する。通常の `EventHandler` は `TypedEventHandler[client.Object, reconcile.Request]` の別名。
 
-`handler.EventHandler` is an argument to `Controller.Watch` that enqueues `reconcile.Request`s in response to events.
+| Handler | enqueue する対象 |
+|---|---|
+| `EnqueueRequestForObject` | イベントのオブジェクト自身 |
+| `EnqueueRequestForOwner` | ownerReferences が示す親 |
+| `EnqueueRequestsFromMapFunc` | 任意の対応付け関数が返すキー |
+| `TypedFuncs[Object, Request]` | 独自の型とコールバックで指定する対象 |
 
-1. Unless you are implementing your own EventHandler, you can ignore the functions on the `EventHandler` interface.
-1. Most users shouldn't need to implement their own EventHandler.
-
-## [EventHandler interface](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/handler/eventhandler.go)
+Owner Handler には依存を明示的に渡す。
 
 ```go
-// * Use EnqueueRequestsFromMapFunc to transform an event for an object to a reconcile of an object
-// of a different type - do this for events for types the Controller may be interested in, but doesn't create.
-// (e.g. If Foo responds to cluster size events, map Node events to Foo objects.)
-//
-// Unless you are implementing your own EventHandler, you can ignore the functions on the EventHandler interface.
-// Most users shouldn't need to implement their own EventHandler.
-type EventHandler interface {
-	// Create is called in response to an create event - e.g. Pod Creation.
-	Create(event.CreateEvent, workqueue.RateLimitingInterface)
-
-	// Update is called in response to an update event -  e.g. Pod Updated.
-	Update(event.UpdateEvent, workqueue.RateLimitingInterface)
-
-	// Delete is called in response to a delete event - e.g. Pod Deleted.
-	Delete(event.DeleteEvent, workqueue.RateLimitingInterface)
-
-	// Generic is called in response to an event of an unknown type or a synthetic event triggered as a cron or
-	// external trigger request - e.g. reconcile Autoscaling, or a Webhook.
-	Generic(event.GenericEvent, workqueue.RateLimitingInterface)
-}
+h := handler.EnqueueRequestForOwner(
+    mgr.GetScheme(), mgr.GetRESTMapper(), &appsv1.ReplicaSet{},
+    handler.OnlyControllerOwner(),
+)
 ```
 
-## [EnqueueRequestForObject](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/handler/enqueue.go#L33)
+`source.Kind` に `*corev1.Pod` を渡すなら、Handler も `TypedEnqueueRequestForObject[*corev1.Pod]` のように object 型を揃える。複数のリソースを同じ Handler で処理する例は [Source](../source) を参照。
 
-This is used by default in [builder.doWatch](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.17.0/pkg/builder/controller.go#L276). If you create an operator with kubebuilder, you're using this eventhandler.
-This function converts events received from the Source into `reconcile.Request`s object and enqueue them to the given queue.
+Handler は軽い処理に留め、API の読み書きや再試行が必要な処理は Reconciler に委ねる。Predicate は Handler より前にイベントを絞り込む。
 
-1. `Create`, `Delete`, `Generic`:
-	```go
-	q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
-		Name:      evt.Object.GetName(),
-		Namespace: evt.Object.GetNamespace(),
-	}})
-	```
-1. `Update`: Enqueue ObjectNew (ObjectOld if ObjectNew doesn't exist)
-	```go
-	q.Add(reconcile.Request{NamespacedName: types.NamespacedName{
-		Name:      evt.ObjectNew.GetName(),
-		Namespace: evt.ObjectNew.GetNamespace(),
-	}})
-	```
+参照: [Handler API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/handler)、[実装](https://github.com/kubernetes-sigs/controller-runtime/tree/v0.25.1/pkg/handler)。

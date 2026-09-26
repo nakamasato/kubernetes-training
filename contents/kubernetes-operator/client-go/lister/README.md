@@ -1,4 +1,4 @@
-# [Lister](https://pkg.go.dev/k8s.io/client-go/tools/cache#Lister)
+# [Lister](https://pkg.go.dev/k8s.io/client-go@v0.37.1/listers/apps/v1#DeploymentLister)
 
 ## Overview
 
@@ -68,3 +68,18 @@ type Lister interface {
     ```
 
     Objects are got from the indexers.
+
+## キャッシュの扱い
+
+Lister は API サーバーではなく Indexer を読む。Informer と組み合わせる場合は同期を待ってから使い、返された共有オブジェクトは直接変更せず `DeepCopy()` する。
+
+このサンプルの label selector は取得した候補をフィルタする。独自の `labels` index を追加しただけで、生成された Lister がその index を自動利用するわけではない。namespace 指定の List は namespace index を利用できる。
+
+リポジトリルートからクラスタなしで実行できる。
+
+```sh
+go run ./contents/kubernetes-operator/client-go/lister
+go test ./contents/kubernetes-operator/client-go/lister
+```
+
+参照: [生成された DeploymentLister](https://github.com/kubernetes/client-go/blob/v0.37.1/listers/apps/v1/deployment.go)、[ListAll / ListAllByNamespace](https://github.com/kubernetes/client-go/blob/v0.37.1/tools/cache/listers.go)。
