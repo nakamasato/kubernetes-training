@@ -12,7 +12,7 @@ bash scripts/e2e/run.sh helm       # also requires Helm
 bash scripts/e2e/run.sh kustomize  # also requires standalone Kustomize
 ```
 
-Each invocation creates a disposable kind cluster, verifies workload readiness and
+Each invocation creates a disposable kind cluster, waits for CoreDNS, verifies workload readiness and
 an application endpoint, then deletes the cluster even on failure. Prometheus
 Operator also checks that Prometheus discovers and successfully scrapes itself.
 Run local targets sequentially to avoid exhausting Docker Desktop resources.
@@ -39,6 +39,11 @@ and an explicit disposable `--kubeconfig` when deleting a leftover cluster.
 Prometheus tests readiness and a successful self-scrape query. Grafana tests startup
 with the repository's dashboard/datasource provisioning and database health; it
 does not provision the optional MySQL or RabbitMQ dashboard backends.
+
+Grafana Operator tests the HA sample with PostgreSQL 18.6, two ready Grafana
+replicas, database health through the Service, and Grafana-created SQL tables.
+Optional Prometheus datasources and external dashboards are outside this test.
+Run it with `bash scripts/e2e/run.sh grafana-operator`.
 
 Helm tests the hello-world chart's install, connection hook, upgrade with optional
 Ingress/HPA resources, HTTP response and uninstall. Kustomize tests the portable

@@ -11,6 +11,9 @@
   "grafana": [
     "contents/grafana/**"
   ],
+  "grafana-operator": [
+    "contents/grafana-operator/**"
+  ],
   "helm": [
     "contents/helm/README.md",
     "contents/helm/hello-world/**"

@@ -1,98 +1,63 @@
-# [Grafana Operator](https://github.com/grafana-operator/grafana-operator) (WIP)
+# Grafana Operator
 
-## 1. Install operator
+This example runs two Grafana 13.2.2 replicas against a shared PostgreSQL
+[18.6](https://www.postgresql.org/docs/release/18.6/) database (previously 17),
+managed by Grafana Operator v5.25.0.
 
-```
-kubectl apply -k github.com/grafana-operator/grafana-operator/deploy/manifests/?ref=v5.25.0
-```
+## Install
 
-## 3. Create Grafana
+Run from the repository root. The pinned release bundle creates the `grafana`
+namespace and installs the operator there:
 
-Be sure to deploy in the same namespace as the operator (`grafana-operator-system`).
-
-1. Create Grafana
-
-    Option 1 (simple one):
-
-    ```
-    kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/v5.25.0/deploy/examples/Grafana.yaml -n grafana-operator-system
-    ```
-
-    Option 2 (HA with Postgres for session storage)
-
-    ```
-    kubectl apply -k ha -n grafana-operator-system
-    ```
-
-1. Check status.
-    ```
-    kubectl get grafana example-grafana -n grafana-operator-system -o jsonpath='{.status}'
-    {"message":"success","phase":"reconciling","previousServiceName":"grafana-service"}
-    ```
-
-1. port forward.
-
-    ```
-    kubectl port-forward -n grafana-operator-system svc/grafana-service 3000
-    ```
-
-1. Access to UI.
-
-    http://localhost:3000
-
-1. Log in with `admin`.
-
-    Get password.
-
-    ```
-    kubectl get secret -n grafana-operator-system grafana-admin-credentials -o jsonpath='{.data.GF_SECURITY_ADMIN_PASSWORD}' | base64 -D
-    9GD2tIHo-GrgTQ==%
-
-    kubectl get secret -n grafana-operator-system grafana-admin-credentials -o jsonpath='{.data.GF_SECURITY_ADMIN_USER}' | base64 --decode
-    admin%
-    ```
-## 2. Datasource
-
-### 2.1. Prometheus Datasource
-
-1. Deploy prometheus with [Prometheus Operator](../prometheus-operator). Prometheus Datasource expects `prometheus` service with port 9090.
-
-    ```
-    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.94.1/bundle.yaml
-    kubectl apply -k ../prometheus-operator
-    ```
-
-1. Create Prometheus Datasource
-    ```
-    kubectl apply -f datasource-prometheus.yaml -n grafana-operator-system
-    ```
-
-## 3. Dashboard
-
-simple-dashboard
-
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/v5.25.0/deploy/examples/dashboards/SimpleDashboard.yaml -n grafana-operator-system
+```sh
+kubectl apply --server-side -k contents/grafana-operator/operator
+kubectl -n grafana rollout status deployment/grafana-operator-controller-manager --timeout=300s
+kubectl apply -k contents/grafana-operator/ha -n grafana
+kubectl -n grafana rollout status deployment/postgres --timeout=300s
+kubectl -n grafana wait --for=create deployment/example-grafana-deployment --timeout=180s
+kubectl -n grafana rollout status deployment/example-grafana-deployment --timeout=360s
 ```
 
-keycloak-dashboard (data is empty)
+The Grafana custom resource uses the v5 API: configuration values are strings,
+and replica overrides live under `spec.deployment.spec`. PostgreSQL 18 uses
+`/var/lib/postgresql/18/docker` for data with a volume at `/var/lib/postgresql`,
+following the [official image](https://hub.docker.com/_/postgres).
 
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/v5.25.0/deploy/examples/dashboards/KeycloakDashboard.yaml -n grafana-operator-system
-```
+Database credentials, anonymous viewer access and `emptyDir` storage are for
+local training. Two Grafana replicas demonstrate a shared database; PostgreSQL
+itself is a single ephemeral instance. This is not a data migration procedure
+for an existing PostgreSQL 17 database.
 
-dashboard from grafana (need node exporter)
+## Access
 
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/7754cd15386ff6da1e3e7b820f8baf53e6dd9356/deploy/examples/dashboards/DashboardFromGrafana.yaml -n grafana-operator-system
-```
-## 4. Cleanup
-
-```
-kubectl delete --all grafana,grafanadashboard,grafanadatasource -n grafana-operator-system
-kubectl delete -k github.com/grafana-operator/grafana-operator/deploy/manifests/?ref=v5.25.0
+```sh
+kubectl -n grafana port-forward service/example-grafana-service 3000
 ```
 
-## Debug
+Open http://localhost:3000 or check http://localhost:3000/api/health. Database
+health should be `ok`.
 
-1. Log: `kubectl logs -l control-plane=controller-manager -c manager -n grafana-operator-system -f`
+## E2E
+
+```sh
+bash scripts/e2e/run.sh grafana-operator
+```
+
+The disposable kind test checks both Grafana replicas, Service HTTP/database
+health, and Grafana's migration table in PostgreSQL through the database Service.
+It cleans up the cluster on completion or failure.
+
+## Optional integrations
+
+The older `datasource-prometheus.yaml`, `dashboard.yaml` and `prometheus/`
+examples are outside this E2E target and still need migration to the v5
+integration APIs. Use the operator's
+[versioned examples](https://github.com/grafana/grafana-operator/tree/v5.25.0/examples)
+for current dashboard and datasource configuration.
+
+## Cleanup
+
+```sh
+kubectl delete -k contents/grafana-operator/ha -n grafana
+kubectl delete -k contents/grafana-operator/operator
+```

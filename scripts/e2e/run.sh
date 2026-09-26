@@ -42,6 +42,8 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 kind create cluster --name "$cluster" --kubeconfig "$KUBECONFIG" \
   --image "${KIND_NODE_IMAGE:-kindest/node:v1.36.1}" --wait 180s
+# kind waits for the node, but Service DNS may still be starting.
+k -n kube-system rollout status deployment/coredns --timeout=180s
 # API proxy exercises the Service and application without needing a curl image.
 http_get() {
   local namespace=$1 service=$2 path=$3
