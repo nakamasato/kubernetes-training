@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:17
+          image: postgres:18.6
           imagePullPolicy: "IfNotPresent"
           livenessProbe:
             timeoutSeconds: 1
@@ -54,9 +54,9 @@ spec:
             - name: POSTGRES_DB
               value: grafana
             - name: PGDATA
-              value: /var/lib/postgresql/data/pgdata
+              value: /var/lib/postgresql/18/docker
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql
               name: postgredb
       volumes:
         - name: postgredb
