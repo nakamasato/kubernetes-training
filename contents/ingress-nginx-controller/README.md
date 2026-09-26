@@ -39,7 +39,7 @@ ref: https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
 1. apply
 
     ```bash
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.15.1/deploy/static/provider/cloud/deploy.yaml
     ```
 
 1. check the pods
@@ -58,7 +58,7 @@ ref: https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
     kubectl exec -it $(kubectl get po -n ingress-nginx | grep ingress-nginx-controller | awk '{print $1}') -n ingress-nginx -- /nginx-ingress-controller --version
     -------------------------------------------------------------------------------
     NGINX Ingress controller
-      Release:       v1.7.0
+      Release:       v1.15.1
       Build:         72ff21ed9e26cb969052c753633049ba8a87ecf9
       Repository:    https://github.com/kubernetes/ingress-nginx
       nginx version: nginx/1.21.6
@@ -116,11 +116,11 @@ ref: https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
     curl http://demo.localdev.me:8080
     <html><body><h1>It works!</h1></body></html>
     ```
-## [Changelogs](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md)
+## [Changelogs](https://github.com/kubernetes/ingress-nginx/blob/controller-v1.15.1/Changelog.md)
 - 1.4.0: Deprecated Kubernetes versions 1.20-1.21, Added support for, 1.25, currently supported versions v1.22, v1.23, v1.24, v1.25
 - 1.3.0:
     - This release removes support for Kubernetes v1.19.0
     - This release adds support for Kubernetes v1.24.0
-- [1.0.0](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#100): networking.k8s.io/v1beta is being dropped
+- [1.0.0](https://github.com/kubernetes/ingress-nginx/blob/controller-v1.15.1/Changelog.md#100): networking.k8s.io/v1beta is being dropped
 - 0.40.0: Following the Ingress [extensions/v1beta1 deprecation](https://kubernetes.io/blog/2019/07/18/api-deprecations-in-1-16/), `networking.k8s.io/v1beta1` or `networking.k8s.io/v1` (Kubernetes v1.19 or higher)
 - 0.25.0: Support new `networking.k8s.io/v1beta1` package (for Kubernetes cluster > v1.14.0)

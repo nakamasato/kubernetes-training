@@ -140,7 +140,7 @@ CRDs and their roles
 1. [ServiceEntry](https://istio.io/latest/docs/concepts/traffic-management/#service-entries): Configuring service entries allows you to **manage traffic for services running outside of the mesh.** (ref: [Service Entry](https://istio.io/latest/docs/reference/config/networking/service-entry/))
 1. [Sidecar](https://istio.io/latest/docs/concepts/traffic-management/#sidecars)
 1. `Gateway` (Kubernetes Gateway API): To overcome Ingress's shortcomings with a standard Kubernetes API (beta). You can consider migration of ingress traffic from Kubernetes Ignress or Gateway/VirtualService to the new Gateway API. (e.g. **Istio Implementation of the Gateway API**) Ref: [Getting started with the Kubernetes Gateway API](https://istio.io/latest/blog/2022/getting-started-gtwapi/)
-    Configure with **Gateway** in `gateway.networking.k8s.io/v1beta1` and `HTTPRoute`
+    Configure with **Gateway** in `gateway.networking.k8s.io/v1` and `HTTPRoute`
 
 
 ## 3. [Getting Started](https://istio.io/latest/docs/setup/getting-started/)
@@ -352,7 +352,7 @@ CRDs and their roles
     - gateway/bookinfo-gateway # <namespace of gateway>/<gateway name>
     ```
 
-    Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1beta1`)
+    Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1`)
 
 1. Check
     ```

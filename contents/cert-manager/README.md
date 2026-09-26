@@ -5,13 +5,13 @@
 ### Install with yaml
 
 ```
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.21.2/cert-manager.yaml
 ```
 
 ### Install with `cmctl`
 1. Install `cmctl` following https://cert-manager.io/docs/usage/cmctl/#installation
     ```
-    OS=$(go env GOOS); ARCH=$(go env GOARCH); curl -L -o cmctl.tar.gz https://github.com/jetstack/cert-manager/releases/latest/download/cmctl-$OS-$ARCH.tar.gz
+    OS=$(go env GOOS); ARCH=$(go env GOARCH); curl -L -o cmctl.tar.gz https://github.com/jetstack/cert-manager/releases/download/v1.21.2/cmctl-$OS-$ARCH.tar.gz
     tar xzf cmctl.tar.gz
     sudo mv cmctl /usr/local/bin
     ```
