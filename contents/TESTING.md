@@ -90,3 +90,8 @@ sample in the repository. Helm cases must pass `--kube-context "$context"` and
 MySQL tests the Helm/Kustomize shared database dependency with authenticated SQL
 through its Service: table creation, insert, select and delete. It does not cover
 the older Flask application or migration of an existing MySQL 5.6 database.
+
+Istio downloads the release pinned in its README and tests the demo profile,
+Bookinfo sidecar injection, the ingress Service, v1 routing and header-based v2
+routing. It also requires tar. Optional Gateway API, dashboards and experimental
+examples are outside this test. Run `bash scripts/e2e/run.sh istio`.

@@ -23,7 +23,7 @@ CRDs and their roles
     <details><summary>example</summary>
 
     ```yaml
-    apiVersion: networking.istio.io/v1alpha3
+    apiVersion: networking.istio.io/v1
     kind: VirtualService
     metadata:
       name: bookinfo
@@ -72,7 +72,7 @@ CRDs and their roles
     <details><summary>example</summary>
 
     ```yaml
-    apiVersion: networking.istio.io/v1alpha3
+    apiVersion: networking.istio.io/v1
     kind: DestinationRule
     metadata:
       name: my-destination-rule
@@ -102,7 +102,7 @@ CRDs and their roles
     <details><summary>example</summary>
 
     ```yaml
-    apiVersion: networking.istio.io/v1alpha3
+    apiVersion: networking.istio.io/v1
     kind: Gateway
     metadata:
       name: ext-host-gwy
@@ -124,7 +124,7 @@ CRDs and their roles
     specify routing
 
     ```yaml
-    apiVersion: networking.istio.io/v1alpha3
+    apiVersion: networking.istio.io/v1
     kind: VirtualService
     metadata:
       name: virtual-svc
@@ -147,9 +147,9 @@ CRDs and their roles
 
 ### 3.1. Prepare Kubernetes Cluster
 
-**If you test on your local cluster, pleasee use docker-desktop, minikube, or kind.**
+**If you test on your local cluster, please use docker-desktop, minikube, or kind.**
 
-1. [kind](../local-cluster/kind): **Istio Gateway might not work**
+1. [kind](../local-cluster/kind): use port forwarding below to access the gateway
 
     ```
     kind create cluster --config=../local-cluster/kind/cluster-with-port-mapping.yaml
@@ -166,9 +166,9 @@ CRDs and their roles
 1. Install `istioctl` (you can skip this step if you already installed `istioctl`)
 
     ```
-    ISTIO_VERSION=1.20.0
+    ISTIO_VERSION=1.31.1
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
-    export PATH="$PATH:/$PWD/istio-${ISTIO_VERSION}/bin"
+    export PATH="$PWD/istio-${ISTIO_VERSION}/bin:$PATH"
     ```
 
     Check istioctl version
@@ -176,7 +176,7 @@ CRDs and their roles
     ```
     istioctl version
     no ready Istio pods in "istio-system"
-    1.20.0
+    1.31.1
     ```
 
 1. Install istio
@@ -231,7 +231,7 @@ CRDs and their roles
 1. Deploy sample app
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/platform/kube/bookinfo.yaml
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/platform/kube/bookinfo.yaml
     ```
 
     Deployed resources:
@@ -261,7 +261,7 @@ CRDs and their roles
 
     </details>
 
-    Envoy sider is added to all pods (2 containers are running in each pod).
+    Envoy sidecar is added to all pods (2 containers are running in each pod).
 
     ```
     kubectl get po
@@ -288,17 +288,17 @@ CRDs and their roles
 
 ### 3.5. [Open the app to outside traffic](https://istio.io/latest/docs/setup/getting-started/#ip) (Gateway & VirtualService)
 
-1. Istio Gateway (`Gateway` and `VirtualService` (`networking.istio.io/v1alpha3`))
+1. Istio Gateway (`Gateway` and `VirtualService` (`networking.istio.io/v1`))
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/networking/bookinfo-gateway.yaml
     ```
 
     <details><summary>yaml details</summary>
 
 
     ```yaml
-    apiVersion: networking.istio.io/v1alpha3
+    apiVersion: networking.istio.io/v1
     kind: Gateway
     metadata:
       name: bookinfo-gateway
@@ -309,13 +309,13 @@ CRDs and their roles
         istio: ingressgateway # use istio default controller
       servers:
       - port:
-          number: 80
+          number: 8080
           name: http
           protocol: HTTP
         hosts:
         - "*"
     ---
-    apiVersion: networking.istio.io/v1alpha3
+    apiVersion: networking.istio.io/v1
     kind: VirtualService
     metadata:
       name: bookinfo
@@ -352,7 +352,7 @@ CRDs and their roles
     - gateway/bookinfo-gateway # <namespace of gateway>/<gateway name>
     ```
 
-    Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1`)
+    Alternatively, `kubectl apply -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/gateway-api/bookinfo-gateway.yaml` to install (`Gateway` and `HTTPRoute` in `gateway.networking.k8s.io/v1`)
 
 1. Check
     ```
@@ -401,7 +401,13 @@ CRDs and their roles
 
     ![](docs/sample-app.png)
 
-    TODO: You might not be able to open it when `EXTERNAL-IP` is `<pending>` (this happens when using `kind`).
+    On kind (or whenever `EXTERNAL-IP` is `<pending>`), run:
+
+    ```sh
+    kubectl -n istio-system port-forward service/istio-ingressgateway 8080:80
+    ```
+
+    Open http://127.0.0.1:8080/productpage while that command is running.
 
 ### 3.6. [Define the service versions](https://istio.io/latest/docs/examples/bookinfo/#define-the-service-versions)
 
@@ -409,13 +415,16 @@ Before you can use Istio to control the Bookinfo version routing, you need to de
 
 
 Create `DestinationRule` for each service `productpage`, `reviews`, `ratings` and `details`.
+The local file includes only the versions deployed above; the upstream all-versions
+file also includes optional MySQL/VM workloads and fails validation without them.
+Run this command from `contents/istio`:
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/destination-rule-all.yaml
+kubectl apply -f destination-rule-all.yaml
 ```
 
 ```yaml
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
   name: reviews
@@ -457,11 +466,11 @@ For more details, please check https://github.com/kubernetes-sigs/gateway-api
 #### 3.7.2. Route to version 1 (Istio APIs)
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/virtual-service-all-v1.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/networking/virtual-service-all-v1.yaml
 ```
 
 ```yaml
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: reviews
@@ -482,11 +491,11 @@ spec:
 > Istio also supports routing based on strongly authenticated JWT on ingress gateway, refer to the JWT claim based routing for more details.
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
 ```
 
 ```yaml
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: reviews
@@ -522,7 +531,7 @@ What's done?
 1. Install [kiali](https://istio.io/latest/docs/ops/integrations/kiali/) dashboard
 
     ```
-    for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl apply -f $f; done
+    for f in https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl apply -f $f; done
     kubectl rollout status deployment/kiali -n istio-system
     ```
 
@@ -536,6 +545,16 @@ What's done?
 
     ![](docs/kiali.png)
 
+### 3.9. Automated verification
+
+From the repository root, run `bash scripts/e2e/run.sh istio` (Docker, kind,
+kubectl, Python 3, curl and tar required). The test downloads the release pinned
+above, installs the demo profile in a disposable kind cluster, verifies sidecar
+injection and Bookinfo through the ingress Service, and checks v1 and header-based
+v2 review routing. It deletes the cluster on success or failure and uses a private
+kubeconfig. Optional Gateway API, dashboards and the experiments below are not
+covered by this test.
+
 ## 4. Cleanup
 
 ```
@@ -543,9 +562,9 @@ istioctl uninstall --purge
 ```
 
 ```bash
-for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml # delete gateway
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/platform/kube/bookinfo.yaml # delete application
+for f in https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/networking/bookinfo-gateway.yaml # delete gateway
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/platform/kube/bookinfo.yaml # delete application
 istioctl manifest generate --set profile=demo | kubectl delete --ignore-not-found=true -f - # delete istio
 istioctl tag remove default
 ```
@@ -572,7 +591,7 @@ kubectl label namespace default istio-injection-
 Delete gateway and virtual service:
 
 ```
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/networking/bookinfo-gateway.yaml
 ```
 
 Create a namespace for gateway
@@ -595,7 +614,7 @@ Gateway and multiple VirtualServices
 
 ```
 kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: Gateway
 metadata:
   name: bookinfo-gateway
@@ -613,7 +632,7 @@ spec:
     hosts:
     - "*"
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: bookinfo
@@ -664,7 +683,7 @@ If you have mulitple `VirtualService` for the same host, the one corresponding t
 
 ```
 kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: Gateway
 metadata:
   name: bookinfo-gateway
@@ -682,7 +701,7 @@ spec:
     hosts:
     - "*"
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: bookinfo
@@ -699,7 +718,7 @@ spec:
         port:
           number: 9080
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: productpage

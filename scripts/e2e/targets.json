@@ -26,5 +26,8 @@
   ],
   "mysql": [
     "contents/helm-vs-kustomize/dependencies/mysql/**"
+  ],
+  "istio": [
+    "contents/istio/**"
   ]
 }
