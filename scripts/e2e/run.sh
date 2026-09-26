@@ -14,9 +14,17 @@ target=$1
 run_dir=$(mktemp -d "${TMPDIR:-/tmp}/training-e2e.XXXXXXXX")
 export E2E_RUN_DIR=$run_dir
 E2E_BACKGROUND_PIDS=()
-cluster="training-e2e-$(basename "$run_dir" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9' | tail -c 8)"
-export KUBECONFIG="$run_dir/kubeconfig"
-context="kind-$cluster"
+provided_kubeconfig=${KUBECONFIG:-}
+if [[ -n "$provided_kubeconfig" ]]; then
+  context=${KUBE_CONTEXT:-$(kubectl --kubeconfig "$provided_kubeconfig" config current-context)}
+  export KUBECONFIG="$provided_kubeconfig"
+  external_cluster=true
+else
+  cluster="training-e2e-$(basename "$run_dir" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9' | tail -c 8)"
+  export KUBECONFIG="$run_dir/kubeconfig"
+  context="kind-$cluster"
+  external_cluster=false
+fi
 artifacts="${E2E_ARTIFACTS:-$PWD/.e2e-artifacts/$target}"
 mkdir -p "$artifacts"
 artifacts=$(cd "$artifacts" && pwd)
@@ -36,20 +44,26 @@ cleanup() {
     k get pods -A -o wide >"$artifacts/pods.txt" 2>&1
     k get events -A --sort-by=.metadata.creationTimestamp >"$artifacts/events.txt" 2>&1
     k describe pods -A >"$artifacts/describe.txt" 2>&1
-    kind export logs "$artifacts/kind" --name "$cluster" >"$artifacts/export.txt" 2>&1
+    if [[ "$external_cluster" == false ]]; then
+      kind export logs "$artifacts/kind" --name "$cluster" >"$artifacts/export.txt" 2>&1
+    fi
     while read -r ns pod; do
       k logs -n "$ns" "$pod" --all-containers --tail=200 >"$artifacts/$ns-$pod.log" 2>&1
     done < <(k get pods -A -o jsonpath='{range .items[*]}{.metadata.namespace}{" "}{.metadata.name}{"\n"}{end}')
   fi
-  kind delete cluster --name "$cluster" --kubeconfig "$KUBECONFIG" || result=1
+  if [[ "$external_cluster" == false ]]; then
+    kind delete cluster --name "$cluster" --kubeconfig "$KUBECONFIG" || result=1
+  fi
   rm -rf "$run_dir"
   exit "$result"
 }
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
-kind create cluster --name "$cluster" --kubeconfig "$KUBECONFIG" \
-  --image "${KIND_NODE_IMAGE:-kindest/node:v1.36.1}" --wait 180s
+if [[ "$external_cluster" == false ]]; then
+  kind create cluster --name "$cluster" --kubeconfig "$KUBECONFIG" \
+    --image "${KIND_NODE_IMAGE:-kindest/node:v1.36.1}" --wait 180s
+fi
 # kind waits for the node, but Service DNS may still be starting.
 k -n kube-system rollout status deployment/coredns --timeout=180s
 # API proxy exercises the Service and application without needing a curl image.

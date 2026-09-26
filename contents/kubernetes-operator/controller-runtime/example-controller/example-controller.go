@@ -12,13 +12,14 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 )
 
 func main() {
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 	var log = ctrl.Log.WithName("builder-examples")
 
-	manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{})
+	manager, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{Metrics: metricsserver.Options{BindAddress: "0"}})
 	if err != nil {
 		log.Error(err, "could not create manager")
 		os.Exit(1)

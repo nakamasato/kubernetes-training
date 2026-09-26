@@ -53,8 +53,8 @@ jobs:
         target: ${{ fromJSON(needs.changes.outputs.targets) }}
     steps:
       - uses: actions/checkout@v7
-      - name: Set up Go for the controller-runtime example
-        if: matrix.target == 'controller-runtime'
+      - name: Set up Go for Kubernetes operator E2E
+        if: matrix.target == 'controller-runtime' || matrix.target == 'client-go'
         uses: actions/setup-go@v7
         with:
           go-version-file: go.mod

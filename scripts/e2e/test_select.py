@@ -23,6 +23,12 @@ class SelectionTest(unittest.TestCase):
             ["controller-runtime"],
         )
 
+    def test_client_go_target(self):
+        self.assertEqual(
+            module.select(["contents/kubernetes-operator/client-go/informer/informer.go"]),
+            ["client-go"],
+        )
+
     def test_shared_runner_and_workflow_changes_need_no_cluster(self):
         for path in ["scripts/e2e/run.sh", ".github/workflows/e2e.yml"]:
             self.assertEqual(module.select([path]), [])

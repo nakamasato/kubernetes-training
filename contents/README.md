@@ -93,6 +93,8 @@ Contents are organized based on Cloud Native Trail Map:
         1. [client-go](kubernetes-operator/client-go/)
         1. [apimachinery](kubernetes-operator/apimachinery)
         1. [controller-runtime](kubernetes-operator/controller-runtime/)
+    1. [Kubernetes Testing](kubernetes-testing)
+        1. [e2e-framework](kubernetes-testing/e2e-framework/)
     1. [More Practices of Applications on Kubernetes](PRACTICE.md)
     1. [Kubernetes Features](kubernetes-features)
         1. [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
