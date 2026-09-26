@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:11.5
+          image: postgres:17
           imagePullPolicy: "IfNotPresent"
           livenessProbe:
             timeoutSeconds: 1

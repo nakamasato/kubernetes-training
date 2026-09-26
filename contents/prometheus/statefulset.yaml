@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: quay.io/prometheus/prometheus
+          image: quay.io/prometheus/prometheus:v3.15.0
           imagePullPolicy: IfNotPresent
           args:
             - '--storage.tsdb.retention=6h'

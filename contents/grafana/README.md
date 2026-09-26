@@ -3,7 +3,7 @@
 https://github.com/grafana/grafana
 ## Version
 
-Latest
+13.2.2
 
 ## Install
 
