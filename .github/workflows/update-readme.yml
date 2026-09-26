@@ -21,11 +21,6 @@ jobs:
         with:
           ref: ${{ env.BASE_BRANCH_NAME }}
 
-      - name: update versions in readme.yml
-        run: |
-          argocd_version=$(yq '.bases[0]' contents/argocd/setup/kustomization.yaml | sed 's/.*?ref=\(.*\)/\1/')
-          yq -i "(.versions[] | select(.name == \"ArgoCD\").version) = \"$argocd_version\"" readme.yml
-
       - name: set up
         uses: actions/setup-go@v5
         with:
@@ -50,7 +45,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git checkout -b ${{ env.BRANCH_NAME }}
-          git add .
+          git add README.md contents/README.md
           git commit -m 'update readme'
           git push -u origin HEAD -f # nothing to commit
 
