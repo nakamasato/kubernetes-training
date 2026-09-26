@@ -24,7 +24,7 @@ spec:
           image: quay.io/prometheus/prometheus:v3.15.0
           imagePullPolicy: IfNotPresent
           args:
-            - '--storage.tsdb.retention=6h'
+            - '--storage.tsdb.retention.time=6h'
             - '--storage.tsdb.path=/prometheus'
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--web.enable-lifecycle'

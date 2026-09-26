@@ -5,11 +5,14 @@ Run a target from the repository root (Docker, kind, kubectl, Python 3 and curl 
 ```sh
 bash scripts/e2e/run.sh argocd
 bash scripts/e2e/run.sh prometheus-operator
+bash scripts/e2e/run.sh prometheus
+bash scripts/e2e/run.sh grafana
 ```
 
 Each invocation creates a disposable kind cluster, verifies workload readiness and
 an application endpoint, then deletes the cluster even on failure. Prometheus
 Operator also checks that Prometheus discovers and successfully scrapes itself.
+Run local targets sequentially to avoid exhausting Docker Desktop resources.
 The versions come from the sample manifests, including the pinned Operator bundle
 in `prometheus-operator/operator/kustomization.yaml`.
 
@@ -30,11 +33,16 @@ Failure diagnostics (events, pod descriptions/logs and kind logs) are saved in
 A forced process kill can prevent cleanup; use the cluster name in the run log
 and an explicit disposable `--kubeconfig` when deleting a leftover cluster.
 
+Prometheus tests readiness and a successful self-scrape query. Grafana tests startup
+with the repository's dashboard/datasource provisioning and database health; it
+does not provision the optional MySQL or RabbitMQ dashboard backends.
+
 ## Changed targets in CI
 
 PRs select targets from the merge-base diff, including deleted and renamed files.
 `contents/argocd/**` runs only Argo CD; `contents/prometheus-operator/**` runs only
-Prometheus Operator. Changes to an individual case run that case; shared runner,
+Prometheus Operator. `contents/prometheus/**` and `contents/grafana/**` select
+the corresponding standalone sample. Changes to an individual case run that case; shared runner,
 registry or workflow changes run all registered targets. Unrelated changes skip
 cluster jobs. README changes under a target are included because installation
 versions and instructions can live there. Manual `workflow_dispatch` runs all.
