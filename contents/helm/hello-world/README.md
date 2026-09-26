@@ -83,3 +83,17 @@
 - https://artifacthub.io/packages/search?kind=0
 - https://helm.sh/docs/intro/quickstart/
 - https://github.com/helm/helm
+
+## kind E2E
+
+From the repository root, with Helm installed:
+
+```sh
+bash scripts/e2e/run.sh helm
+```
+
+This tests the chart source: lint, install, the chart's connection test, upgrade
+with Ingress and HPA enabled, HTTP through the Service, and uninstall. Ingress
+routing and actual autoscaling need controllers/metrics-server and are not
+exercised here. Kubernetes 1.23+ is required for the stable Ingress and HPA APIs.
+The historical packaged `.tgz` is not rebuilt or tested by this command.

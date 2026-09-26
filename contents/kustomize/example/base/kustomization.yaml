@@ -1,0 +1,7 @@
+resources:
+  - deployment.yaml
+  - service.yaml
+configMapGenerator:
+  - name: web-content
+    literals:
+      - index.html=environment=base
