@@ -30,5 +30,8 @@
   "operator": [
     "contents/kubernetes-operator/controller-runtime/**",
     "scripts/e2e/cases/operator.sh"
+  ],
+  "istio": [
+    "contents/istio/**"
   ]
 }

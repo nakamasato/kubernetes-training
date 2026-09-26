@@ -82,7 +82,7 @@ jobs:
         env:
           TARGET: ${{ matrix.target }}
         run: bash scripts/e2e/run.sh "$TARGET"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: e2e-${{ matrix.target }}
