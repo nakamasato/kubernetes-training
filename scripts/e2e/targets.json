@@ -29,7 +29,9 @@
   ],
   "operator": [
     "contents/kubernetes-operator/controller-runtime/**",
-    "scripts/e2e/cases/operator.sh"
+    "scripts/e2e/cases/operator.sh",
+    "scripts/e2e/run.sh",
+    ".github/workflows/e2e.yml"
   ],
   "istio": [
     "contents/istio/**"
