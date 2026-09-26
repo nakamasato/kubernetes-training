@@ -29,7 +29,7 @@ spec:
         app: mysql
     spec:
       containers:
-        - image: mysql:5.6
+        - image: mysql:8.4.11
           name: mysql
           env:
             - name: MYSQL_DATABASE
@@ -43,6 +43,15 @@ spec:
                 secretKeyRef:
                   name: mysql-pass
                   key: password
+          startupProbe:
+            exec:
+              command: [sh, -c, 'MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u "$MYSQL_USER" "$MYSQL_DATABASE" -e "SELECT 1"']
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: [sh, -c, 'MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u "$MYSQL_USER" "$MYSQL_DATABASE" -e "SELECT 1"']
+            periodSeconds: 5
           ports:
             - containerPort: 3306
               name: mysql
