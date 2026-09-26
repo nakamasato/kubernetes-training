@@ -86,60 +86,93 @@ Fields:
 1. `namespace`: you can specify a namespace or all namespaces ([v1.NamespaceAll](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go)) by default
 1. `informers`: store created informers to start them when `factory.Start` is called.
 
-Methods: Get group's interface (e.g. `Apps()`) which returns version interface, and eventually you can get the corresponding informer.
+The factory exposes API groups, each group exposes versions, and each version exposes resource-specific informer accessors. Accessor construction, shared-informer registration, and starting watches are separate steps.
 
 How a new informer is created with a Factory:
+
 1. Create a factory.
+
     ```go
     kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
     ```
-1. Create a new informer for a target resource. (e.g. `Deployment`)
+
+1. Obtain the Deployment informer accessor.
 
     ```go
     deploymentInformer := kubeInformerFactory.Apps().V1().Deployments()
     ```
 
-    1. [kubeInformerFactory.Apps()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go) returns `apps.New(f, f.namespace, f.tweakListOptions)`
-        1. [apps.New(f, f.namespace, f.tweakListOptions)](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/interface.go) returns `&group{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}`
-        1. `kubeInformerFactory.Apps()` is `&group`.
-    1. `kubeInformerFactory.Apps().V1()` is `group.V1()` and [group.V1()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/interface.go) returns `v1.New(g.factory, g.namespace, g.tweakListOptions)`
-        1. [v1.New](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/interface.go) returns `&version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}`
-        1. `kubeInformerFactory.Apps().V1()` is `&version`.
-    1. `kubeInformerFactory.Apps().V1().Deployments()` is `&version` and [version.Deployments()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/interface.go) returns `&deploymentInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}`.
-        1. [deploymentInformer](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/deployment.go)
+    The v0.37.1 call chain is:
 
-    Note that there's nothing happening but just creating `deploymentInformer` at this moment.
-1. Pass the informer to a controller.
-    Example:
+    | Call | Declared return type | Implementation |
+    | --- | --- | --- |
+    | [factory.Apps()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go#L379-L381) | `apps.Interface` | Calls `apps.New(f, f.namespace, f.tweakListOptions)` |
+    | [apps.New(...)](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/interface.go#L45-L47) | `Interface` | Returns `&group{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}` |
+    | [group.V1()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/interface.go#L50-L52) | `v1.Interface` | Calls `v1.New(g.factory, g.namespace, g.tweakListOptions)` |
+    | [v1.New(...)](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/interface.go#L46-L48) | `Interface` | Returns `&version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}` |
+    | [version.Deployments()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/interface.go#L61-L63) | `TypedDeploymentInformer` | Returns `&deploymentInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}` |
+
+    In particular, Apps is a method on the concrete `sharedInformerFactory`; `kubeInformerFactory` is the sample variable, not a type or an upstream declaration. The method body is:
+
     ```go
-    NewController(
-        deploymentInformer,
-        ...
-    )
+    func (f *sharedInformerFactory) Apps() apps.Interface {
+        return apps.New(f, f.namespace, f.tweakListOptions)
+    }
     ```
 
-    1. Inside the controller, call `deploymentInformer.Informer().AddEventHandler(..)` e.g. [sample-controller/blob/v0.0.6/controller.go#L102](https://github.com/nakamasato/sample-controller/blob/v0.0.6/controller.go#L102)
-    1. [deploymentInformer.Informer()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/deployment.go) returns `f.factory.InformerFor(&appsv1.Deployment{}, f.defaultInformer)`
-    1. [factory.InformerFor](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go) create **a new informer** and **register** it to `factory.informers` <- **This is the moment the new informer is created!!**
-        ```go
-        informer = newFunc(f.client, resyncPeriod)
-        f.informers[informerType] = informer
-        ```
-        `newFunc = defaultInformer` in this example. (`defaultInformer` is defined each informer)
-        e.g. [deploymentInformer.defaultInformer](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/deployment.go)
-        ```go
-        func NewFilteredDeploymentInformer(client kubernetes.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
-            return NewTypedDeploymentInformerWithOptions(client, namespace, internalinterfaces.InformerOptions{ResyncPeriod: resyncPeriod, Indexers: indexers, TweakListOptions: tweakListOptions})
-        }
-        ```
+    At this point the Deployment accessor exists, but it has not yet registered a shared informer or started API watches.
 
-1. Start factory.
+1. Obtain the shared informer and register handlers, usually while constructing your controller.
+
+    The accessor's [Informer and TypedInformer methods](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/deployment.go#L162-L168) are:
+
     ```go
-    kubeInformerFactory.Start(stopCh)
-    ```
-    1. [factory.Start()](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go) wraps the channel in a context and calls StartWithContext, which starts registered informers with `informer.RunWithContext(ctx)`. Calling Apps().V1().Deployments() alone does not register the informer; call Informer() or Lister() before Start.
+    func (f *deploymentInformer) Informer() cache.SharedIndexInformer {
+        return f.TypedInformer()
+    }
 
-1. [informer.Run](https://github.com/kubernetes/client-go/blob/v0.37.1/tools/cache/shared_informer.go): you can reference below
+    func (f *deploymentInformer) TypedInformer() DeploymentIndexInformer {
+        return cache.NewTypedSharedIndexInformer[*apiappsv1.Deployment](f.factory.InformerFor(&apiappsv1.Deployment{}, f.defaultInformer))
+    }
+    ```
+
+    [factory.InformerFor](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go#L244-L268) locks the factory and looks up `reflect.TypeOf(obj)` in `f.informers`. If registered, it returns the existing informer. Otherwise, it selects the custom or default resync period, calls `newFunc(f.client, resyncPeriod)`, applies the factory transform if configured, and registers the result in `f.informers`.
+
+    Here `newFunc` is [deploymentInformer.defaultInformer](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/deployment.go#L158-L160):
+
+    ```go
+    func (f *deploymentInformer) defaultInformer(client kubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+        return NewTypedDeploymentInformerWithOptions(client, f.namespace, internalinterfaces.InformerOptions{ResyncPeriod: resyncPeriod, Indexers: cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, InformerName: f.factory.InformerName(), TweakListOptions: f.tweakListOptions})
+    }
+    ```
+
+    [NewTypedDeploymentInformerWithOptions](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/apps/v1/deployment.go#L118-L156) builds the Deployment ListWatch, wraps it with WatchList semantics, and calls `cache.NewSharedIndexInformerWithOptions`. The List/Watch callbacks use `client.AppsV1().Deployments(namespace)` and apply TweakListOptions. The resulting informer is wrapped with `cache.NewTypedSharedIndexInformer[*apiappsv1.Deployment]`. Construction sets up the objects; running them starts API requests.
+
+    Register your handler and check the error:
+
+    ```go
+    _, err := deploymentInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+        AddFunc: handleAdd,
+    })
+    if err != nil {
+        return err
+    }
+    ```
+
+    `handleAdd` is your callback. Calling Lister also obtains the informer, because Lister needs its Indexer.
+
+1. Start the registered informers.
+
+    ```go
+    kubeInformerFactory.StartWithContext(ctx)
+    ```
+
+    [StartWithContext](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go#L167-L184) starts each registered informer that has not already started, using `informer.RunWithContext(ctx)`. Merely calling Apps().V1().Deployments() before Start is insufficient. If an informer is registered after Start, call StartWithContext again to start it.
+
+    Wait for cache synchronization before reading through its Lister. Cancel the context before calling Shutdown to wait for informer goroutines. The channel-based Start used by the sample delegates to StartWithContext.
+
+The next sections explain the shared informer's internals and RunWithContext lifecycle.
+
 ### Interface SharedInformer
 
 - Interface:
@@ -349,12 +382,12 @@ Role: Check if a cached object is mutated. Call failurefunc or panic if mutated.
     informerFactory := informers.NewSharedInformerFactory(kubeClient, time.Second*30)
     ```
     The second argument specifies ***ResyncPeriod***, which defines the interval of resync (*The resync operation consists of delivering to the handler an update notification for every object in the informer's local cache*). For more detail, please read [NewSharedInformer](https://pkg.go.dev/k8s.io/client-go@v0.37.1/tools/cache#NewSharedInformer)
-1. Create an informer for Pods, which watches Pod's changes.
+1. Obtain a Pod informer accessor. Calling Informer() or Lister() registers its shared informer; starting the factory begins watching Pods.
     ```go
     podInformer := informerFactory.Core().V1().Pods()
     ```
 
-    factory -> group -> version -> kind
+    factory -> group -> version -> resource accessor (`TypedPodInformer`, which embeds `PodInformer`)
 
     ```go
     type PodInformer interface {
@@ -364,9 +397,9 @@ Role: Check if a cached object is mutated. Call failurefunc or panic if mutated.
     ```
 
     1. `Informer()` returns `SharedIndexInformer`
-        1. call `f.factory.InformerFor(&corev1.Pod{}, f.defaultInformer)`
-        1. create new informer with [NewFilteredPodInformer](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/core/v1/pod.go) if not exist
-        1. return the informer
+        1. Delegate to `TypedInformer()`, which calls the factory's InformerFor and wraps the result with `cache.NewTypedSharedIndexInformer[*apicorev1.Pod]`.
+        1. On first registration, `defaultInformer` constructs it through `NewTypedPodInformerWithOptions`, including the namespace index, informer name, and TweakListOptions.
+        1. Reuse the registered shared informer on later calls. See the [Pod accessor implementation](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/core/v1/pod.go).
     1. `Lister()` returns PodLister
         1. call `v1.NewPodLister(f.Informer().GetIndexer())`
         1. NewPodLister returns podLister with the given indexer.
