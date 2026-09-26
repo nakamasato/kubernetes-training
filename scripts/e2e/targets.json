@@ -26,5 +26,9 @@
   ],
   "mysql": [
     "contents/helm-vs-kustomize/dependencies/mysql/**"
+  ],
+  "operator": [
+    "contents/kubernetes-operator/controller-runtime/**",
+    "scripts/e2e/cases/operator.sh"
   ]
 }
