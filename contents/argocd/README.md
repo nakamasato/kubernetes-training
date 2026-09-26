@@ -6,7 +6,7 @@
 
 ## Version
 
-- [v2.6.7](https://github.com/argoproj/argo-cd/releases/tag/v2.6.7)
+- [v3.5.3](https://github.com/argoproj/argo-cd/releases/tag/v3.5.3)
 
 ## Install
 
@@ -91,7 +91,7 @@ ArgoCD is installed.
 
 ## Version
 
-- [v1.1.1](https://github.com/argoproj-labs/argocd-notifications/releases/tag/v1.1.1)
+- [v1.2.1](https://github.com/argoproj-labs/argocd-notifications/releases/tag/v1.2.1)
 
 
 ## Manage by kustomize

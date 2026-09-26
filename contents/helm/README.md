@@ -2,7 +2,7 @@
 
 ## Version
 
-[v3.11.2](https://github.com/helm/helm/releases/tag/v3.11.2)
+[v4.3.0](https://github.com/helm/helm/releases/tag/v4.3.0)
 
 ## Install helm
 
@@ -14,7 +14,7 @@ brew install helm
 
 ```
 helm version --short
-v3.11.2+g912ebc1
+v4.3.0
 ```
 
 ## Update helm version
