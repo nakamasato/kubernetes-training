@@ -24,12 +24,12 @@
     I0301 06:51:05.443904   14732 loader.go:372] Config loaded from file:  /Users/masato-naka/.kube/config
     I0301 06:51:05.467278   14732 round_trippers.go:454] GET https://127.0.0.1:51938/api?timeout=32s 200 OK in 22 milliseconds
     I0301 06:51:05.514229   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis?timeout=32s 200 OK in 2 milliseconds
-    I0301 06:51:05.569719   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/autoscaling/v2beta1?timeout=32s 200 OK in 5 milliseconds
+    I0301 06:51:05.569719   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/autoscaling/v2?timeout=32s 200 OK in 5 milliseconds
     I0301 06:51:05.570835   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/kubeflow.org/v1?timeout=32s 200 OK in 7 milliseconds
-    I0301 06:51:05.570854   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/batch/v1beta1?timeout=32s 200 OK in 5 milliseconds
+    I0301 06:51:05.570854   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/batch/v1?timeout=32s 200 OK in 5 milliseconds
     I0301 06:51:05.573081   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/scheduling.k8s.io/v1beta1?timeout=32s 200 OK in 8 milliseconds
     I0301 06:51:05.573087   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/authorization.k8s.io/v1beta1?timeout=32s 200 OK in 7 milliseconds
-    I0301 06:51:05.573119   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/extensions/v1beta1?timeout=32s 200 OK in 7 milliseconds
+    I0301 06:51:05.573119   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/apps/v1?timeout=32s 200 OK in 7 milliseconds
     I0301 06:51:05.573150   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/discovery.k8s.io/v1?timeout=32s 200 OK in 7 milliseconds
     I0301 06:51:05.573173   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/authentication.k8s.io/v1beta1?timeout=32s 200 OK in 8 milliseconds
     I0301 06:51:05.573188   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/autoscaling/v1?timeout=32s 200 OK in 8 milliseconds
@@ -59,7 +59,7 @@
     I0301 06:51:05.574679   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/certificates.k8s.io/v1beta1?timeout=32s 200 OK in 4 milliseconds
     I0301 06:51:05.574752   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/acid.zalan.do/v1?timeout=32s 200 OK in 4 milliseconds
     I0301 06:51:05.575375   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/apiregistration.k8s.io/v1beta1?timeout=32s 200 OK in 10 milliseconds
-    I0301 06:51:05.575481   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/autoscaling/v2beta2?timeout=32s 200 OK in 9 milliseconds
+    I0301 06:51:05.575481   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/autoscaling/v2?timeout=32s 200 OK in 9 milliseconds
     I0301 06:51:05.575600   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/apiextensions.k8s.io/v1?timeout=32s 200 OK in 6 milliseconds
     I0301 06:51:05.575743   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/storage.k8s.io/v1beta1?timeout=32s 200 OK in 9 milliseconds
     I0301 06:51:05.575745   14732 round_trippers.go:454] GET https://127.0.0.1:51938/apis/networking.k8s.io/v1beta1?timeout=32s 200 OK in 10 milliseconds
@@ -111,11 +111,9 @@
         "/apis/authorization.k8s.io/v1beta1",
         "/apis/autoscaling",
         "/apis/autoscaling/v1",
-        "/apis/autoscaling/v2beta1",
-        "/apis/autoscaling/v2beta2",
+        "/apis/autoscaling/v2",
         "/apis/batch",
         "/apis/batch/v1",
-        "/apis/batch/v1beta1",
         "/apis/certificates.k8s.io",
         "/apis/certificates.k8s.io/v1",
         "/apis/certificates.k8s.io/v1beta1",
@@ -128,8 +126,6 @@
         "/apis/events.k8s.io",
         "/apis/events.k8s.io/v1",
         "/apis/events.k8s.io/v1beta1",
-        "/apis/extensions",
-        "/apis/extensions/v1beta1",
         "/apis/flowcontrol.apiserver.k8s.io",
         "/apis/flowcontrol.apiserver.k8s.io/v1beta1",
         "/apis/kubeflow.org",
