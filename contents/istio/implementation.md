@@ -2,16 +2,16 @@
 
 ## 1. Must-read
 
-1. [Architecture of Istiod](https://github.com/istio/istio/blob/master/architecture/networking/pilot.md)
+1. [Architecture of Istiod](https://github.com/istio/istio/blob/1.31.1/architecture/networking/pilot.md)
 
 ## 2. Getting Started
 
-### 2.1. [Components](https://github.com/istio/istio/tree/1.19.0#introduction)
+### 2.1. [Components](https://github.com/istio/istio/tree/1.31.1#introduction)
 
 Need to understand the Istio components
 
 1. **Envoy**: sidecar proxies for microservices to handle ingress/egress traffic between services in the cluster and from a service to external services.
-1. [Istiod](https://github.com/istio/istio/blob/master/architecture/networking/pilot.md): Istio control plane, which provides service discovery, configuration and certificate management <- This is a modular monolith
+1. [Istiod](https://github.com/istio/istio/blob/1.31.1/architecture/networking/pilot.md): Istio control plane, which provides service discovery, configuration and certificate management <- This is a modular monolith
     1. **Pilot**: Responsible for configuring the proxies at runtime
     1. **Citadel**: Responsible for certificate issuance and rotation.
     1. **Gallery**: Responsible for validating, ingesting, aggregating, transforming, and distributing config within Istio
@@ -24,14 +24,14 @@ Memo
     > Istio’s control plane is, itself, a modern, cloud-native application. Thus, it was built from the start as a set of microservices. Individual Istio components like service discovery (Pilot), configuration (Galley), certificate generation (Citadel) and extensibility (Mixer) were all written and deployed as separate microservices.
 
     > Having established that many of the common benefits of microservices didn’t apply to the Istio control plane, we decided to unify them into a single binary: istiod (the ’d’ is for daemon).
-1. **Pilot** seems to represent **istiod**: https://github.com/istio/istio/blob/master/architecture/networking/pilot.md <- **You must read this to know the details about Istiod**
+1. **Pilot** seems to represent **istiod**: https://github.com/istio/istio/blob/1.31.1/architecture/networking/pilot.md <- **You must read this to know the details about Istiod**
 1. **Ingress**: In addition to `VirtualService` and `Gateway`, Istio supports the `Ingress` core resource type. Like CRDs, the `Ingress` controller implements `ConfigStore`, but a bit differently. **`Ingress` resources are converted on the fly to `VirtualService` and `Gateway`**, [read more](https://github.com/istio/istio/blob/353f722394f90c48212dfd2e04962eafcfbbcfd4/architecture/networking/pilot.md#ingress)
 1. **Gateway API**: `Gateway` (referring to the Kubernetes API, not the same-named Istio type) works very similarly to Ingress. **The `Gateway` controller also coverts Gateway API types into `VirtualService` and `Gateway`, implementing the `ConfigStore` interface.**
 
 
 ### 2.2. Repository
 
-Better to know the structure of the repository! Please read https://github.com/istio/istio/tree/1.19.0#repositories
+Better to know the structure of the repository! Please read https://github.com/istio/istio/tree/1.31.1#repositories
 
 ## 3. Installation
 
@@ -144,7 +144,7 @@ spec:
         port: 4317
         service: opentelemetry-collector.otel-collector.svc.cluster.local
   profile: demo
-  tag: 1.19.0
+  tag: 1.31.1
   values:
     base:
       enableCRDTemplates: false
@@ -286,12 +286,12 @@ What `istioctl install` (you can install with `-p demo` to specify a profile) do
 
 ### 4.1. pilot-discovery (istiod)
 
-1. [pilot/cmd/pilot-discovery/main.go](https://github.com/istio/istio/blob/1.19.0/pilot/cmd/pilot-discovery/main.go)
-    1. [pilot/cmd/pilot-discovery/app/cmd.go](https://github.com/istio/istio/blob/1.19.0/pilot/cmd/pilot-discovery/app/cmd.go#L100)
+1. [pilot/cmd/pilot-discovery/main.go](https://github.com/istio/istio/blob/1.31.1/pilot/cmd/pilot-discovery/main.go)
+    1. [pilot/cmd/pilot-discovery/app/cmd.go](https://github.com/istio/istio/blob/1.31.1/pilot/cmd/pilot-discovery/app/cmd.go#L100)
         ```go
         discoveryServer, err := bootstrap.NewServer(serverArgs)
         ```
-1. [bootstrap.NewServer](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go#L208)
+1. [bootstrap.NewServer](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go#L208)
     1. aggregate.NewController
     1. Initialize `Server` -> `s`
     1. xds.NewDiscoveryServer
@@ -315,7 +315,7 @@ What `istioctl install` (you can install with `-p demo` to specify a profile) do
 
 ### 4.2. Ingress
 
-1. [pilot/pkg/config/kube/ingress/controller.go](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/config/kube/ingress/controller.go)
+1. [pilot/pkg/config/kube/ingress/controller.go](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/config/kube/ingress/controller.go)
     1. Ingress、Gateway、VirtualServiceを管理してるけど、pilotとは？ -> Istiod内のComponentでTraffic Managementなどを担当する主要コンポーネント
 
     ```
@@ -385,29 +385,29 @@ What `istioctl install` (you can install with `-p demo` to specify a profile) do
     1. `proxyv2` はpilot-agentにも使われているからどういう違いかが不明
 1. `pilot-agent` sidecar
     1. `proxyv2`
-    1. [Dockerfile.proxyv2](https://github.com/istio/istio/blob/1.19.0/pilot/docker/Dockerfile.proxyv2): Entrypoint: `"/usr/local/bin/pilot-agent"`
+    1. [Dockerfile.proxyv2](https://github.com/istio/istio/blob/1.31.1/pilot/docker/Dockerfile.proxyv2): Entrypoint: `"/usr/local/bin/pilot-agent"`
     1. InjectされるSidecarのことが `pilot-agent`と呼ばれているっぽい
-    1. The code for sidecar injection: https://github.com/istio/istio/blob/1.19.0/pkg/kube/inject/inject.go
-    1. main.go: https://github.com/istio/istio/blob/1.19.0/pilot/cmd/pilot-agent/main.go
+    1. The code for sidecar injection: https://github.com/istio/istio/blob/1.31.1/pkg/kube/inject/inject.go
+    1. main.go: https://github.com/istio/istio/blob/1.31.1/pilot/cmd/pilot-agent/main.go
 1. `pilot-discovery` controller <- `istiod` Deployment
-    1. Docker: https://github.com/istio/istio/blob/1.19.0/pilot/docker/Dockerfile.pilot
+    1. Docker: https://github.com/istio/istio/blob/1.31.1/pilot/docker/Dockerfile.pilot
     1. `main.go`: Entrypoint of istiod server
-        1. [pilot/cmd/pilot-discovery/main.go](https://github.com/istio/istio/blob/1.19.0/pilot/cmd/pilot-discovery/main.go)
-        1. [pilot/cmd/pilot-discovery/app/cmd.go](https://github.com/istio/istio/blob/1.19.0/pilot/cmd/pilot-discovery/app/cmd.go#L100)
+        1. [pilot/cmd/pilot-discovery/main.go](https://github.com/istio/istio/blob/1.31.1/pilot/cmd/pilot-discovery/main.go)
+        1. [pilot/cmd/pilot-discovery/app/cmd.go](https://github.com/istio/istio/blob/1.31.1/pilot/cmd/pilot-discovery/app/cmd.go#L100)
         ```go
         discoveryServer, err := bootstrap.NewServer(serverArgs)
         ```
-    1. From Logs, https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go is the istiod server initialization.
-        1. [bootstrap.NewServer](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go#L208)
-            1. initializing istiod admin server: [initServers](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go#L614)
+    1. From Logs, https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go is the istiod server initialization.
+        1. [bootstrap.NewServer](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go#L208)
+            1. initializing istiod admin server: [initServers](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go#L614)
             1. `initIstiodAdminServer`
             1. `initControllers`
-            1. initializing secure discovery service: [initSecureDiscoveryService](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go#L740)
-            1. initializing secure webhook server for istiod webhooks: [initSecureWebhookServer](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/webhook.go#L53)
-            1. initializing sidecar injector: [initSidecarInjector](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/sidecarinjector.go#L76)
-            1. initializing config validator: [initConfigValidation](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/validation.go#L30)
-            1. initializing registry event handlers: [initRegistryEventHandlers](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go#L844)
-            1. starting discovery service: [initDiscoveryService](https://github.com/istio/istio/blob/1.19.0/pilot/pkg/bootstrap/server.go#L643)
+            1. initializing secure discovery service: [initSecureDiscoveryService](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go#L740)
+            1. initializing secure webhook server for istiod webhooks: [initSecureWebhookServer](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/webhook.go#L53)
+            1. initializing sidecar injector: [initSidecarInjector](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/sidecarinjector.go#L76)
+            1. initializing config validator: [initConfigValidation](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/validation.go#L30)
+            1. initializing registry event handlers: [initRegistryEventHandlers](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go#L844)
+            1. starting discovery service: [initDiscoveryService](https://github.com/istio/istio/blob/1.31.1/pilot/pkg/bootstrap/server.go#L643)
 
 
 ### FAQ
@@ -415,11 +415,11 @@ What `istioctl install` (you can install with `-p demo` to specify a profile) do
 1. How `sidecar` container is injected -> https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/#automatic-sidecar-injection
     > Sidecars can be automatically added to applicable Kubernetes pods using a mutating webhook admission controller provided by Istio.
 
-    Implementation: https://github.com/istio/istio/blob/1.19.0/pkg/kube/inject/webhook.go
+    Implementation: https://github.com/istio/istio/blob/1.31.1/pkg/kube/inject/webhook.go
 
 
 
 ## Ref
 
-1. [Istio operator code overview](https://github.com/istio/istio/blob/1.19.0/operator/ARCHITECTURE.md)
-1. [Istio Operator](https://github.com/istio/istio/tree/1.19.0/operator)
+1. [Istio operator code overview](https://github.com/istio/istio/blob/1.31.1/operator/ARCHITECTURE.md)
+1. [Istio Operator](https://github.com/istio/istio/tree/1.31.1/operator)

@@ -83,7 +83,7 @@ Steps
 1. Install
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml
+kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.23.1/deploy/gatekeeper.yaml
 namespace/gatekeeper-system created
 customresourcedefinition.apiextensions.k8s.io/configs.config.gatekeeper.sh created
 customresourcedefinition.apiextensions.k8s.io/constrainttemplates.templates.gatekeeper.sh created
@@ -102,7 +102,7 @@ validatingwebhookconfiguration.admissionregistration.k8s.io/gatekeeper-validatin
 1. Install `ConstraintTemplate` (CRD) to require `label`
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/demo/basic/templates/k8srequiredlabels_template.yaml
+kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.23.1/demo/basic/templates/k8srequiredlabels_template.yaml
 constrainttemplate.templates.gatekeeper.sh/k8srequiredlabels created
 ```
 
@@ -116,7 +116,7 @@ k8srequiredlabels   45s
 1. Create `Constraint`
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/demo/basic/constraints/all_ns_must_have_gatekeeper.yaml
+kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.23.1/demo/basic/constraints/all_ns_must_have_gatekeeper.yaml
 k8srequiredlabels.constraints.gatekeeper.sh/ns-must-have-gk created
 ```
 

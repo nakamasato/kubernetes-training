@@ -19,7 +19,7 @@ Kubernetes-based platform to deploy and manage modern serverless workloads.
 1. ***Configuration**: The `configuration.serving.knative.dev` resource maintains the desired state for your deployment. It provides a clean separation between code and configuration and follows the Twelve-Factor App methodology. Modifying a configuration creates a new revision.*
 1. ***Revision**: The `revision.serving.knative.dev` resource is a point-in-time snapshot of the code and configuration for each modification made to the workload. Revisions are immutable objects and can be retained for as long as useful. Knative Serving Revisions can be automatically scaled up and down according to incoming traffic. See Configuring the Autoscaler for more information.*
 
-![](https://raw.githubusercontent.com/knative/serving/main/docs/spec/images/object_model.png)
+![](https://raw.githubusercontent.com/knative/serving/knative-v1.23.0/docs/spec/images/object_model.png)
 
 ## [Getting Started](https://knative.dev/docs/getting-started/)
 
