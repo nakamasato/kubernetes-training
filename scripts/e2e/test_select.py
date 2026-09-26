@@ -27,3 +27,7 @@ class SelectionTest(unittest.TestCase):
     def test_registered_cases_exist(self):
         for target in module.TARGETS:
             self.assertTrue(Path(__file__).with_name("cases").joinpath(target + ".sh").is_file())
+
+    def test_monitoring_targets_are_independent(self):
+        for target in ["prometheus", "prometheus-operator", "grafana"]:
+            self.assertEqual(module.select([f"contents/{target}/kustomization.yaml"]), [target])

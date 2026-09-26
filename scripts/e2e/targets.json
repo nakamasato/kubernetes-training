@@ -1,4 +1,14 @@
 {
-  "argocd": ["contents/argocd/**"],
-  "prometheus-operator": ["contents/prometheus-operator/**"]
+  "argocd": [
+    "contents/argocd/**"
+  ],
+  "prometheus-operator": [
+    "contents/prometheus-operator/**"
+  ],
+  "prometheus": [
+    "contents/prometheus/**"
+  ],
+  "grafana": [
+    "contents/grafana/**"
+  ]
 }
