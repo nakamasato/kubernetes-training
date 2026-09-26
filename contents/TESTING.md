@@ -12,6 +12,7 @@ bash scripts/e2e/run.sh grafana
 Each invocation creates a disposable kind cluster, verifies workload readiness and
 an application endpoint, then deletes the cluster even on failure. Prometheus
 Operator also checks that Prometheus discovers and successfully scrapes itself.
+Run local targets sequentially to avoid exhausting Docker Desktop resources.
 The versions come from the sample manifests, including the pinned Operator bundle
 in `prometheus-operator/operator/kustomization.yaml`.
 
