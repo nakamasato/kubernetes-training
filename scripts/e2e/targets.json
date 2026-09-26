@@ -17,5 +17,8 @@
   ],
   "kustomize": [
     "contents/kustomize/**"
+  ],
+  "eck": [
+    "contents/eck/**"
   ]
 }

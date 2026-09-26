@@ -4,14 +4,12 @@ metadata:
   namespace: eck
   name: quickstart
 spec:
-  version: 7.8.1
+  version: 9.5.4
   nodeSets:
   - name: default
     count: 1
     config:
-      node.master: true
-      node.data: true
-      node.ingest: true
+      node.roles: [master, data, ingest]
       node.store.allow_mmap: false
     podTemplate:
       spec:
