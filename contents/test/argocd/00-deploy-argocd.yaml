@@ -6,4 +6,4 @@ commands:
     ignoreFailure: true
   - command: kubectl delete -k ../../argocd/setup
     ignoreFailure: true
-  - command: kubectl apply -k ../../argocd/setup
+  - command: kubectl apply --server-side -k ../../argocd/setup
