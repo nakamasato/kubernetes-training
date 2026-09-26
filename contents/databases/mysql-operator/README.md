@@ -1,15 +1,15 @@
 # MySQL Operator
 
-MySQL Version: 8.0.28
-mysqlsh version: `mysqlsh   Ver 8.0.28 for macos11 on x86_64 - for MySQL 8.0.28 (MySQL Community Server (GPL))`
+MySQL Version: 8.0.39
+mysqlsh version: `mysqlsh   Ver 8.0.39 for macos11 on x86_64 - for MySQL 8.0.28 (MySQL Community Server (GPL))`
 
 ## Getting Started
 
 1. Install CRDs and operator.
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/deploy/deploy-crds.yaml
-    kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/deploy/deploy-operator.yaml
+    kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-operator/0.3.0/deploy/deploy-crds.yaml
+    kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-operator/0.3.0/deploy/deploy-operator.yaml
     ```
 
     ```
@@ -30,7 +30,7 @@ mysqlsh version: `mysqlsh   Ver 8.0.28 for macos11 on x86_64 - for MySQL 8.0.28 
 1. Create InnoDBCluster.
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/samples/sample-cluster.yaml
+    kubectl apply -f https://raw.githubusercontent.com/mysql/mysql-operator/0.3.0/samples/sample-cluster.yaml
     ```
 
     check cluster:
@@ -172,8 +172,8 @@ mysqlsh version: `mysqlsh   Ver 8.0.28 for macos11 on x86_64 - for MySQL 8.0.28 
 1. Clean up.
 
     ```
-    kubectl delete -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/deploy/deploy-crds.yaml
-    kubectl delete -f https://raw.githubusercontent.com/mysql/mysql-operator/trunk/deploy/deploy-operator.yaml
+    kubectl delete -f https://raw.githubusercontent.com/mysql/mysql-operator/0.3.0/deploy/deploy-crds.yaml
+    kubectl delete -f https://raw.githubusercontent.com/mysql/mysql-operator/0.3.0/deploy/deploy-operator.yaml
     ```
 
 ## References

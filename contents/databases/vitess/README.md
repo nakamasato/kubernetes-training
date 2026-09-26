@@ -1,6 +1,9 @@
-# [Vitess](https://github.com/vitessio/vitess)
+# Vitess
 
-Vitess is a database clustering system for horizontal scaling of MySQL through generalized sharding. used by YouTube, Slack, Weave, JD, GitHub, etc.
+[Vitess](https://vitess.io/) is a database clustering system for horizontal scaling of MySQL through sharding.
 
-- https://vitess.io/docs/14.0/get-started/operator/
-- https://github.com/planetscale/vitess-operator
+## Status
+
+This directory is currently documentation-only. Completing it requires selecting and pinning a maintained operator, writing manifests for a local topology, and validating init, tablet, vtgate, and resharding workflows on kind. Estimate: **2–3 engineering days**.
+
+The latest Vitess release checked for this audit is [v24.0.3](https://github.com/vitessio/vitess/releases/tag/v24.0.3).

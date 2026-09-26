@@ -1,4 +1,5 @@
 namespace: kafka
 resources:
-  - topic/my-topic.yaml
   - my-cluster.yaml
+  - node-pool.yaml
+  - topic/my-topic.yaml
