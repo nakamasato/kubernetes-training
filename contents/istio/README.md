@@ -415,9 +415,12 @@ Before you can use Istio to control the Bookinfo version routing, you need to de
 
 
 Create `DestinationRule` for each service `productpage`, `reviews`, `ratings` and `details`.
+The local file includes only the versions deployed above; the upstream all-versions
+file also includes optional MySQL/VM workloads and fails validation without them.
+Run this command from `contents/istio`:
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/${ISTIO_VERSION}/samples/bookinfo/networking/destination-rule-all.yaml
+kubectl apply -f destination-rule-all.yaml
 ```
 
 ```yaml

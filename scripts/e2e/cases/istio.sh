@@ -57,7 +57,7 @@ for pod in pods:
     assert any(c['name'] == 'istio-proxy' for c in containers), pod['metadata']['name']
 PY
 k apply -f "$samples/networking/bookinfo-gateway.yaml"
-k apply -f "$samples/networking/destination-rule-all.yaml"
+k apply -f contents/istio/destination-rule-all.yaml
 k apply -f "$samples/networking/virtual-service-all-v1.yaml"
 i analyze -n default
 wait_http istio-system istio-ingressgateway:80 /productpage
