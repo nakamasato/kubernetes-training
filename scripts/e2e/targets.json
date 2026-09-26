@@ -1,4 +1,7 @@
 {
+  "eck": [
+    "contents/eck/**"
+  ],
   "argocd": [
     "contents/argocd/**"
   ],

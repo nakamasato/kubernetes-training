@@ -4,7 +4,7 @@ metadata:
   name: quickstart
   namespace: eck
 spec:
-  version: 7.8.1
+  version: 9.5.4
   count: 1
   elasticsearchRef:
     name: quickstart
@@ -14,8 +14,8 @@ spec:
       - name: kibana
         resources:
           requests:
-            memory: 512Mi
+            memory: 1Gi
             cpu: 0.5
           limits:
-            memory: 512Mi
+            memory: 1Gi
             cpu: 2

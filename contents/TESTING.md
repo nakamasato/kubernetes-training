@@ -66,6 +66,12 @@ versions and instructions can live there. Manual `workflow_dispatch` runs all.
 `status-check-e2e` is the stable aggregate check, including when no targets match.
 Go-only examples remain covered by the separate Go workflow.
 
+ECK tests the pinned operator and Elasticsearch/Kibana fresh installation, an
+authenticated document write/read over the Elasticsearch Service, and Kibana API
+health. It needs roughly 4 GiB of additional free cluster memory. The historical
+Elastic Helm/Filebeat examples and upgrades of existing data are not covered.
+Run it with `bash scripts/e2e/run.sh eck`.
+
 ## Add coverage
 
 1. Add `scripts/e2e/cases/<target>.sh`, using `k` for all kubectl operations.

@@ -1,88 +1,51 @@
 # Elastic Cloud on Kubernetes
 
-- [k8s deploy eck](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-deploy-eck.html)
-- [deploy elasticsearch](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-deploy-elasticsearch.html)
-- [Resources](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-managing-compute-resources.html)
+The fresh-install example uses ECK 3.5.0 with Elasticsearch and Kibana
+[9.5.4](https://github.com/elastic/elasticsearch/releases/tag/v9.5.4).
+Run these commands from the repository root:
 
-
-## Install operator
-
-```
-kubectl apply --server-side -f https://download.elastic.co/downloads/eck/3.5.0/all-in-one.yaml
-customresourcedefinition.apiextensions.k8s.io/apmservers.apm.k8s.elastic.co created
-customresourcedefinition.apiextensions.k8s.io/beats.beat.k8s.elastic.co created
-customresourcedefinition.apiextensions.k8s.io/elasticsearches.elasticsearch.k8s.elastic.co created
-customresourcedefinition.apiextensions.k8s.io/enterprisesearches.enterprisesearch.k8s.elastic.co created
-customresourcedefinition.apiextensions.k8s.io/kibanas.kibana.k8s.elastic.co created
-namespace/elastic-system created
-serviceaccount/elastic-operator created
-secret/elastic-webhook-server-cert created
-clusterrole.rbac.authorization.k8s.io/elastic-operator created
-clusterrole.rbac.authorization.k8s.io/elastic-operator-view created
-clusterrole.rbac.authorization.k8s.io/elastic-operator-edit created
-clusterrolebinding.rbac.authorization.k8s.io/elastic-operator created
-rolebinding.rbac.authorization.k8s.io/elastic-operator created
-service/elastic-webhook-server created
-statefulset.apps/elastic-operator created
-validatingwebhookconfiguration.admissionregistration.k8s.io/elastic-webhook.k8s.elastic.co created
+```sh
+kubectl apply --server-side -k contents/eck/operator
+kubectl -n elastic-system rollout status statefulset/elastic-operator --timeout=300s
+kubectl create namespace eck
+kubectl apply -f contents/eck/elasticsearch.yaml
+kubectl apply -f contents/eck/kibana.yaml
+kubectl -n eck wait --for=jsonpath='{.status.availableNodes}'=1 elasticsearch/quickstart --timeout=600s
+kubectl -n eck wait --for=jsonpath='{.status.availableNodes}'=1 kibana/quickstart --timeout=600s
 ```
 
-## Apply Elasticsearch
+Elasticsearch uses `node.roles` in place of the removed `node.master`, `node.data`
+and `node.ingest` settings. Kibana has a 1 GiB memory limit. Allow roughly 4 GiB
+of free cluster memory for the operator and both applications.
 
-```
-kubectl create ns eck;
-kubectl apply -f eck/elasticsearch.yaml
-```
+Access Elasticsearch using its generated training credentials:
 
-Resource requires 2GB -> at least `e2-standard-2` in GKE
-
-```
-kubectl get pod -n eck
-NAME                      READY   STATUS    RESTARTS   AGE
-quickstart-es-default-0   1/1     Running   0          6m20s
-```
-
-
-Check connection
-
-```
-PASSWORD=$(kubectl get -n eck secret quickstart-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'); echo $PASSWORD
-```
-
-
-```
+```sh
+PASSWORD=$(kubectl -n eck get secret quickstart-es-elastic-user -o go-template='{{.data.elastic | base64decode}}')
 kubectl -n eck port-forward service/quickstart-es-http 9200
+# In another terminal with PASSWORD set:
+curl -u "elastic:$PASSWORD" -k https://localhost:9200
 ```
 
-```
-curl -u "elastic:$PASSWORD" -k "https://localhost:9200"
+For Kibana, forward `service/quickstart-kb-http` on port 5601 and log in at
+https://localhost:5601 with the same `elastic` credentials.
 
-{
-  "name" : "quickstart-es-default-0",
-  "cluster_name" : "quickstart",
-  "cluster_uuid" : "S5blcUDgQ5u41eBA0TxMVA",
-  "version" : {
-    "number" : "7.8.1",
-    "build_flavor" : "default",
-    "build_type" : "docker",
-    "build_hash" : "b5ca9c58fb664ca8bf9e4057fc229b3396bf3a89",
-    "build_date" : "2020-07-21T16:40:44.668009Z",
-    "build_snapshot" : false,
-    "lucene_version" : "8.5.1",
-    "minimum_wire_compatibility_version" : "6.8.0",
-    "minimum_index_compatibility_version" : "6.0.0-beta1"
-  },
-  "tagline" : "You Know, for Search"
-}
+```sh
+bash scripts/e2e/run.sh eck
+# For slow first-time image downloads:
+ECK_WAIT_TIMEOUT=900s bash scripts/e2e/run.sh eck
 ```
 
-## Kibana
+E2E verifies both workloads, indexes and reads a document through the Elasticsearch
+Service, and checks Kibana's `/api/status`. The test uses the generated HTTP CA
+certificates to verify TLS. The local port-forward example above uses `-k` for
+convenience with the generated certificate.
 
-```
-kubectl apply -f eck/kibana.yaml
-```
+This updates a fresh training installation; existing 7.8.1 data requires Elastic's
+[supported upgrade procedure](https://www.elastic.co/docs/deploy-manage/upgrade).
+The historical Helm examples below remain separate from this ECK sample.
 
-# Install with Helm (Using this)
+# Historical Helm examples (7.8.1, not covered by E2E)
 
 ## Elasticsearch
 
