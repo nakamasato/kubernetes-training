@@ -17,9 +17,15 @@ class SelectionTest(unittest.TestCase):
     def test_case_only(self):
         self.assertEqual(module.select(["scripts/e2e/cases/argocd.sh"]), ["argocd"])
 
-    def test_operator_runner_and_workflow_changes_only_run_operator(self):
+    def test_controller_runtime_target(self):
+        self.assertEqual(
+            module.select(["contents/kubernetes-operator/controller-runtime/client/README.md"]),
+            ["controller-runtime"],
+        )
+
+    def test_shared_runner_and_workflow_changes_need_no_cluster(self):
         for path in ["scripts/e2e/run.sh", ".github/workflows/e2e.yml"]:
-            self.assertEqual(module.select([path]), ["operator"])
+            self.assertEqual(module.select([path]), [])
 
     def test_selector_changes_need_no_cluster(self):
         self.assertEqual(module.select(["scripts/e2e/select_targets.py"]), [])
