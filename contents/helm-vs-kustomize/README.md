@@ -388,7 +388,7 @@
 1. Update image.
 
     1. `helm`
-        - `helm upgrade --set nginx.image.tag=1.15.2 helm-example nakamasato/helm-example -n helm-dev`
+        - `helm upgrade --set nginx.image.tag=1.27.5 helm-example nakamasato/helm-example -n helm-dev`
 
         or
 
@@ -406,7 +406,7 @@
             images:
               - name: nginx
                 newName: nginx
-                newTag: 1.15.2
+                newTag: 1.27.5
             ```
         - Apply
 
@@ -416,11 +416,11 @@
 
 ## ArgoCD
 
-Version: [v2.0.3](https://github.com/argoproj/argo-cd/releases/tag/v2.0.3)
+Version: [v3.5.3](https://github.com/argoproj/argo-cd/releases/tag/v3.5.3)
 
 ```
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.0.3/manifests/install.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.3/manifests/install.yaml
 ```
 
 1. Deploy using Kustomize

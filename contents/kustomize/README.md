@@ -5,6 +5,10 @@
 
 ## Install
 
+## Version
+
+[v5.8.1](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v5.8.1)
+
 Mac:
 
 ```
