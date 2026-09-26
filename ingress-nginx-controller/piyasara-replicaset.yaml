@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: piyasara-api
+  labels:
+    app: piyasara-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: piyasara-api
+  template:
+    metadata:
+      labels:
+        app: piyasara-api
+    spec:
+      containers:
+        - name: piyasara-api
+          image: erangaeb/piyasara-api:0.1
+          env:
+            - name: SERVICE_NAME
+              value: piyasara-api
+            - name: SERVICE_PORT
+              value: "8761"
+          ports:
+            - containerPort: 8761

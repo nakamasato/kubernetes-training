@@ -1,0 +1,16 @@
+apiVersion: example.com/v1
+kind: Pet
+metadata:
+  name: dog
+  ownerReferences:
+    - apiVersion: example.com/v1
+      blockOwnerDeletion: true
+      kind: Person
+      name: alice
+      uid: 20ec3873-bc51-4e25-803b-49d078fd24f7
+  finalizers:
+    - finalizers.example.com/my-finalizer
+spec:
+  name: Fido
+  age: 3
+  breed: Golden Retriever
