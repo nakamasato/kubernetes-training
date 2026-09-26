@@ -42,9 +42,3 @@ kubectl delete crd mysqlusers.mysql.nakamasato.com
 ```
 
 参照: [main.go](main.go)、[Source API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/source)、[Kind の実装](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/internal/source/kind.go)。
-
-## 図
-
-![source の処理と構成](diagram.drawio.svg)
-
-![Source から処理キューへのイベントの流れ](dataflow.drawio.svg)

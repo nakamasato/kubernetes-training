@@ -36,7 +36,3 @@ go run ./contents/kubernetes-operator/controller-runtime/manager
 [main.go](main.go) は二つの Controller と RunnableFunc を登録する。Ctrl+C で停止する。
 
 参照: [Manager API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/manager)、[起動処理](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/manager/internal.go)、[Runnable の分類](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/manager/runnable_group.go)。
-
-## 図
-
-![manager の処理と構成](diagram.drawio.svg)

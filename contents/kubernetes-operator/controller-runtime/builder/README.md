@@ -20,13 +20,3 @@ err := ctrl.NewControllerManagedBy(mgr).
 旧 `Watches(&source.Kind{Type: ...}, handler)` は使わない。`source.Kind` は関数になり、cache・object・handler を受け取る。詳細は [Source](../source)。
 
 参照: [Builder API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/builder)、[実装](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/builder/controller.go)、[実行例](../example-controller)。
-
-## 図
-
-![builder の処理と構成](overview.drawio.svg)
-
-![For・Owns・Watches による処理対象の指定](for-owns-watches.drawio.svg)
-
-![ReplicaSet と所有 Pod のイベントの対応](for-owns-example.drawio.svg)
-
-![Manager による Controller の起動](manager-perspective.drawio.svg)

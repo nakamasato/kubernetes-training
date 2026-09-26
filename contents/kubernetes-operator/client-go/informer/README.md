@@ -55,10 +55,4 @@ KUBE_CACHE_MUTATION_DETECTOR=true go run ./contents/kubernetes-operator/client-g
 
 Ctrl+C で停止する。
 
-参照: [informer.go](informer.go)、[SharedInformer API](https://pkg.go.dev/k8s.io/client-go@v0.37.1/tools/cache#SharedInformer)、[Factory](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go)、[内部実装](https://github.com/kubernetes/client-go/blob/v0.37.1/tools/cache/shared_informer.go)。図は v0.37.1 の処理の流れを示す。内部フィールドの詳細はリンク先を確認する。
-
-## 図
-
-![SharedInformerFactory のライフサイクル](informer-factory.drawio.svg)
-
-![SharedIndexInformer の内部フロー](informer.drawio.svg)
+参照: [informer.go](informer.go)、[SharedInformer API](https://pkg.go.dev/k8s.io/client-go@v0.37.1/tools/cache#SharedInformer)、[Factory](https://github.com/kubernetes/client-go/blob/v0.37.1/informers/factory.go)、[内部実装](https://github.com/kubernetes/client-go/blob/v0.37.1/tools/cache/shared_informer.go)。既存 drawio 図は概念図として参照し、内部フィールドはリンク先を確認する。

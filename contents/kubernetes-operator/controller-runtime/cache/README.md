@@ -31,9 +31,3 @@ kubectl delete pod nginx -n default --ignore-not-found
 ```
 
 参照: [main.go](main.go)、[Cache API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/cache)、[Informer Cache](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/cache/informer_cache.go)。
-
-## 図
-
-![cache の処理と構成](diagram.drawio.svg)
-
-![Cache の実装レイヤー](diagram-2.drawio.svg)

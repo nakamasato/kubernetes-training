@@ -26,7 +26,3 @@ go run ./contents/kubernetes-operator/controller-runtime/reconciler
 ```
 
 参照: [Reconcile API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/reconcile)、[実際の Controller](../example-controller)。
-
-## 図
-
-![reconciler の処理と構成](diagram.drawio.svg)

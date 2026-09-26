@@ -29,14 +29,3 @@ go run ./contents/kubernetes-operator/client-go/deltafifo
 上記はクラスタ不要。clientset / listerwatcher / informer の例は有効な kubeconfig と対象リソースへの権限が必要。これらの例の接続先は `-kubeconfig /path/to/config` で指定でき、デフォルトは `~/.kube/config`。継続監視は Ctrl+C で停止する。
 
 参照: [client-go v0.37.1](https://pkg.go.dev/k8s.io/client-go@v0.37.1)、[Kubernetes との互換性](https://github.com/kubernetes/client-go/tree/v0.37.1#compatibility-matrix)。
-
-## 図
-
-![client-go の処理と構成](diagram.drawio.svg)
-
-SVG には diagrams.net / draw.io の編集データを埋め込んでいる。再生成の定義は [generate_operator_diagrams.py](../../../scripts/generate_operator_diagrams.py) にあり、図を変更するときはこの定義を更新する。リポジトリルートで再生成・同期確認できる。
-
-```sh
-python3 scripts/generate_operator_diagrams.py
-python3 scripts/generate_operator_diagrams.py --check
-```

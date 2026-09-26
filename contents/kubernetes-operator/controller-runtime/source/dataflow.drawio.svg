@@ -1,38 +1,205 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="610" viewBox="0 0 1240 610" role="img" aria-labelledby="title desc" content="&lt;mxfile host=&quot;app.diagrams.net&quot; type=&quot;device&quot;&gt;&lt;diagram id=&quot;main&quot; name=&quot;Sources feed handlers and the request queue&quot;&gt;&lt;mxGraphModel dx=&quot;1240&quot; dy=&quot;610&quot; grid=&quot;1&quot; gridSize=&quot;10&quot; page=&quot;1&quot; pageScale=&quot;1&quot; pageWidth=&quot;1240&quot; pageHeight=&quot;610&quot;&gt;&lt;root&gt;&lt;mxCell id=&quot;0&quot; /&gt;&lt;mxCell id=&quot;1&quot; parent=&quot;0&quot; /&gt;&lt;mxCell id=&quot;title&quot; value=&quot;Sources feed handlers and the request queue&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=28;fontStyle=1;fontColor=#172B4D;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;25&quot; width=&quot;1150&quot; height=&quot;40&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;version&quot; value=&quot;controller-runtime v0.25.1  |  Read arrows in their direction&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#52677F;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;75&quot; width=&quot;1150&quot; height=&quot;24&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;note&quot; value=&quot;A source starts with Start(ctx, queue). It already holds its handler and predicates.&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=15;fontColor=#52677F;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;535&quot; width=&quot;1150&quot; height=&quot;48&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e0&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n0&quot; target=&quot;n1&quot; style=&quot;exitX=1.0;exitY=0.28125;entryX=0.0;entryY=0.28125;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e1&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n1&quot; target=&quot;n2&quot; style=&quot;exitX=1.0;exitY=0.390625;entryX=0.0;entryY=0.390625;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e2&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n3&quot; target=&quot;n1&quot; style=&quot;exitX=0.5;exitY=0.0;entryX=0.5;entryY=1.0;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot;&gt;&lt;Array as=&quot;points&quot;&gt;&lt;mxPoint x=&quot;210.0&quot; y=&quot;314&quot; /&gt;&lt;mxPoint x=&quot;620.0&quot; y=&quot;314&quot; /&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e3&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n2&quot; target=&quot;n4&quot; style=&quot;exitX=0.5424242424242425;exitY=1.0;entryX=0.5424242424242425;entryY=0.0;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot;&gt;&lt;Array as=&quot;points&quot;&gt;&lt;mxPoint x=&quot;1044.0&quot; y=&quot;316&quot; /&gt;&lt;mxPoint x=&quot;634.0&quot; y=&quot;316&quot; /&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e4&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n4&quot; target=&quot;n5&quot; style=&quot;exitX=1.0;exitY=0.71875;entryX=0.0;entryY=0.71875;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n0&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;124&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n0title&quot; value=&quot;Kubernetes events&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n0&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n0body&quot; value=&quot;Kind uses Cache + Informer&amp;#10;Informer source accepts one directly&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n0&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n1&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;455&quot; y=&quot;124&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n1title&quot; value=&quot;Predicates&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n1body&quot; value=&quot;Filter incoming events&amp;#10;Configured on the Source&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n2&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;865&quot; y=&quot;124&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n2title&quot; value=&quot;TypedEventHandler&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n2&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n2body&quot; value=&quot;Map event objects to requests&amp;#10;For self, owner or custom targets&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n2&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n3&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;360&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n3title&quot; value=&quot;External events&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n3&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n3body&quot; value=&quot;User code sends GenericEvents&amp;#10;Channel source receives them&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n3&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n4&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;455&quot; y=&quot;360&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n4title&quot; value=&quot;Typed request queue&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n4&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n4body&quot; value=&quot;Store comparable request keys&amp;#10;ShutDown unblocks Get()&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n4&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n5&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;865&quot; y=&quot;360&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n5title&quot; value=&quot;Reconciler / worker&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n5&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n5body&quot; value=&quot;Get key; process current state&amp;#10;Forget on success; always Done&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n5&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;&lt;/diagram&gt;&lt;/mxfile&gt;">
-<title id="title">Sources feed handlers and the request queue</title>
-<desc id="desc">A source starts with Start(ctx, queue). It already holds its handler and predicates.</desc>
-<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,4.5 L0,9 Z" fill="#52677f" /></marker></defs>
-<rect width="1240" height="610" fill="#ffffff" />
-<text x="45" y="57" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#172b4d">Sources feed handlers and the request queue</text>
-<text x="45" y="94" font-family="Arial, sans-serif" font-size="16" fill="#52677f">controller-runtime v0.25.1  |  Read arrows in their direction</text>
-<path d="M375,160 L455,160" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M785,174 L865,174" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M210,360 L210,314 L620,314 L620,252" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M1044,252 L1044,316 L634,316 L634,360" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M785,452 L865,452" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<rect x="45" y="124" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="63" y="159" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Kubernetes events</text>
-<text x="63" y="196" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Kind uses Cache + Informer</text>
-<text x="63" y="221" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Informer source accepts one directly</text>
-<rect x="455" y="124" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="473" y="159" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Predicates</text>
-<text x="473" y="196" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Filter incoming events</text>
-<text x="473" y="221" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Configured on the Source</text>
-<rect x="865" y="124" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="883" y="159" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">TypedEventHandler</text>
-<text x="883" y="196" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Map event objects to requests</text>
-<text x="883" y="221" font-family="Arial, sans-serif" font-size="16" fill="#334e68">For self, owner or custom targets</text>
-<rect x="45" y="360" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="63" y="395" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">External events</text>
-<text x="63" y="432" font-family="Arial, sans-serif" font-size="16" fill="#334e68">User code sends GenericEvents</text>
-<text x="63" y="457" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Channel source receives them</text>
-<rect x="455" y="360" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="473" y="395" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Typed request queue</text>
-<text x="473" y="432" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Store comparable request keys</text>
-<text x="473" y="457" font-family="Arial, sans-serif" font-size="16" fill="#334e68">ShutDown unblocks Get()</text>
-<rect x="865" y="360" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="883" y="395" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Reconciler / worker</text>
-<text x="883" y="432" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Get key; process current state</text>
-<text x="883" y="457" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Forget on success; always Done</text>
-<text x="45" y="555" font-family="Arial, sans-serif" font-size="15" fill="#52677f">A source starts with Start(ctx, queue). It already holds its handler and predicates.</text>
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="991px" height="551px" viewBox="-0.5 -0.5 991 551" content="&lt;mxfile&gt;&lt;diagram id=&quot;yDuwgs3gePA-Zj2ttjYh&quot; name=&quot;Page-1&quot;&gt;3Zldb5swFIZ/TS4TYQw0uVzTbq2qSZVyse1qcvEJWDU4c0wg+/UzwSRQJ23aJgTtpsWvP7BfP+dgyABPk+KbJIv4u6DAB65DiwG+GbguRlee/lcq60pxfTeolEgyWmloJ8zYXzCiY9SMUVi2GiohuGKLthiKNIVQtTQipcjbzeaCt++6IBFYwiwk3FZ/MKriSh37zk6/AxbF9Z2RY2oSUjc2wjImVOQNCd8O8FQKoaqrpJgCL92rfan6fT1Qu52YhFQd08E1W7EiPDOLMxNT63q1UmQphbKDM8DXecwUzBYkLGtzvcFai1XCdQnpyznjfCq4kJu++ImEY4q1vlRSPEOjxsWe5+tBr80EQCooDq4Cbb3RVIFIQMm1bmI6DL3aT0PUsN6KfLc9k4nR4sbW+HVDYpCItoPvXNMXxrgDrgdvmwhUE2SKqUih7dqBBesRRCZDM4QZVBEZgWk1rqRy8Fd9ksCJYqs2vp9Zsmut+IGl9LToIErnzj50kHOFJ7CtqUPwVSMtvg7DhF7ANLZZ2jZpshScAiW/E5Rwj1DC1orv07mQCciucToHPNjpkJ7ay6Nh0QuV65/Gz03hV1kY+XXxpmhW3qybpUeQTE8RpBGPIs+zyUMXQ89++E1joo8M/H8gz+uSPDttsVSTMS8tcgOu73T9pOM5iMqrWcXDKT2mTgjg7vPYD3x0dS6Ph6hDjyedPBqCHj0a7HPVQ/YEMtVJZ6n1L4/3+u8M5Oqzz4pTsIFxmw3U6bnhvSx8NPMfxdB4T5JHl4IIeX23Bl/KmrEVXyEJYxixkxzAzpFwuw2qSUfkfPw4VYdVP85T9WwaQN2u9PTvSEp5D3BCL1M07vJw7ljr7x1Ne94LL0iT/Wb4KIGykGwe/z1jabu/nWQmO3PnQj7/ySCzz9X2V5KGE8uYLMp2SRGVH2tHcy7yMCZSjSiTEKrflChywNATuOihFy7uy+/OuSLStVx8Z4geFVXunhztXSqoXDtFQ6HTREr4btqXjq0h9rp7l9XF3ff2TV3jZwt8+w8=&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="0" width="990" height="550" fill="#bac8d3" stroke="#23445d" pointer-events="all"/>
+        <path d="M 360 190 L 360 223.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 360 228.88 L 356.5 221.88 L 360 223.63 L 363.5 221.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="300" y="130" width="120" height="60" fill="#b1ddf0" stroke="#10739e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 160px; margin-left: 301px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Kind
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="360" y="164" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Kind
+                </text>
+            </switch>
+        </g>
+        <path d="M 360 350 L 360 296.37" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 360 291.12 L 363.5 298.12 L 360 296.37 L 356.5 298.12 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="300" y="350" width="120" height="60" fill="#b1ddf0" stroke="#10739e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 380px; margin-left: 301px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Informer
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="360" y="384" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Informer
+                </text>
+            </switch>
+        </g>
+        <path d="M 420 464.68 L 823.83 361.58" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 828.92 360.28 L 823 365.4 L 823.83 361.58 L 821.27 358.62 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="300" y="450" width="120" height="60" fill="#b1ddf0" stroke="#10739e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 480px; margin-left: 301px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Channel
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="360" y="484" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Channel
+                </text>
+            </switch>
+        </g>
+        <rect x="300" y="40" width="120" height="60" fill="#d0cee2" stroke="#56517e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 70px; margin-left: 301px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                interface
+                                <br/>
+                                Source
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="360" y="74" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    interface...
+                </text>
+            </switch>
+        </g>
+        <path d="M 210 260 L 293.63 260" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 298.88 260 L 291.88 263.5 L 293.63 260 L 291.88 256.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="90" y="230" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 260px; margin-left: 91px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Kubernetes API Server
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="150" y="264" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Kubernetes API Server
+                </text>
+            </switch>
+        </g>
+        <path d="M 420 244.21 L 543.84 211.62" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 548.92 210.28 L 543.04 215.45 L 543.84 211.62 L 541.26 208.68 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 420 272.63 L 543.77 298.69" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 548.91 299.77 L 541.34 301.75 L 543.77 298.69 L 542.78 294.9 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="300" y="230" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 260px; margin-left: 301px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                cache.informer
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="360" y="264" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    cache.informer
+                </text>
+            </switch>
+        </g>
+        <path d="M 654 240 L 824.74 356.41" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 829.08 359.37 L 821.32 358.32 L 824.74 356.41 L 825.26 352.54 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="550" y="180" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 210px; margin-left: 551px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                EventHandler
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="610" y="214" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    EventHandler
+                </text>
+            </switch>
+        </g>
+        <path d="M 670 316.36 L 823.86 358.32" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 828.92 359.71 L 821.25 361.24 L 823.86 358.32 L 823.09 354.49 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="550" y="270" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 300px; margin-left: 551px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Predicates
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="610" y="304" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Predicates
+                </text>
+            </switch>
+        </g>
+        <path d="M 839.18 330 L 920.82 330 C 925.89 330 930 343.43 930 360 C 930 376.57 925.89 390 920.82 390 L 839.18 390 C 834.11 390 830 376.57 830 360 C 830 343.43 834.11 330 839.18 330 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 920.82 330 C 915.74 330 911.63 343.43 911.63 360 C 911.63 376.57 915.74 390 920.82 390" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 98px; height: 1px; padding-top: 360px; margin-left: 831px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                workqueue
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="880" y="364" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    workqueue
+                </text>
+            </switch>
+        </g>
+        <path d="M 200 480 L 293.63 480" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 298.88 480 L 291.88 483.5 L 293.63 480 L 291.88 476.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="80" y="450" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 480px; margin-left: 81px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                external source
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="140" y="484" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    external source
+                </text>
+            </switch>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
 </svg>

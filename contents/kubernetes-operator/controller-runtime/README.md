@@ -27,7 +27,7 @@ Kubernetes controller を構築するライブラリ。ここでは [go.mod](../
 - [log](log)、[leaderelection](leaderelection)、[webhook](webhook)
 - [inject からの移行](inject): 削除された依存注入 API の置き換え
 
-図は controller-runtime v0.25.1 / client-go v0.37.1 に合わせたもの。概念上の流れと実装の詳細を区別し、詳細は各ページのバージョン固定の参照先を確認する。
+既存の drawio 図には旧バージョンの内部型・inject の表記が残る。現在の API は各ページのコードとバージョン固定の参照先を確認する。
 
 ## Examples
 
@@ -48,14 +48,3 @@ go run ./contents/kubernetes-operator/controller-runtime/log
 - [webhook](webhook): TLS サーバーで AdmissionReview を処理
 
 参照: [v0.25.1 API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1)、[互換性](https://github.com/kubernetes-sigs/controller-runtime/tree/v0.25.1#compatibility)。
-
-## 図
-
-![controller-runtime の処理と構成](diagram.drawio.svg)
-
-SVG には diagrams.net / draw.io の編集データを埋め込んでいる。再生成の定義は [generate_operator_diagrams.py](../../../scripts/generate_operator_diagrams.py) にあり、図を変更するときはこの定義を更新する。リポジトリルートで再生成・同期確認できる。
-
-```sh
-python3 scripts/generate_operator_diagrams.py
-python3 scripts/generate_operator_diagrams.py --check
-```

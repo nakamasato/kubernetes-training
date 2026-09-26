@@ -30,7 +30,3 @@ go run ./contents/kubernetes-operator/client-go/deltafifo
 この例の `processDeltas` はログだけ出す。実際の Informer の処理は Indexer を更新し、Handler に通知する。`KnownObjects` に Indexer を渡すだけで自動的に更新されるわけではない。Informer が内部で選ぶキュー実装はバージョン・設定に依存する。
 
 参照: [DeltaFIFO API](https://pkg.go.dev/k8s.io/client-go@v0.37.1/tools/cache#DeltaFIFO)、[PopProcessFunc](https://pkg.go.dev/k8s.io/client-go@v0.37.1/tools/cache#PopProcessFunc)、[Informer](../informer)。
-
-## 図
-
-![deltafifo の処理と構成](deltafifo.drawio.svg)

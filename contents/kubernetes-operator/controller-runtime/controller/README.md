@@ -19,7 +19,3 @@ err := c.Watch(src)
 通常は Manager から起動する。`NewUnmanaged` で作った Controller は呼び出し側が `Start(ctx)` と停止を管理する。
 
 参照: [Controller API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/controller)、[内部実装](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/internal/controller/controller.go)、[Reconciler](../reconciler)。
-
-## 図
-
-![controller の処理と構成](diagram.drawio.svg)

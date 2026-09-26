@@ -1,38 +1,281 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="610" viewBox="0 0 1240 610" role="img" aria-labelledby="title desc" content="&lt;mxfile host=&quot;app.diagrams.net&quot; type=&quot;device&quot;&gt;&lt;diagram id=&quot;main&quot; name=&quot;For, Owns and Watches choose request keys&quot;&gt;&lt;mxGraphModel dx=&quot;1240&quot; dy=&quot;610&quot; grid=&quot;1&quot; gridSize=&quot;10&quot; page=&quot;1&quot; pageScale=&quot;1&quot; pageWidth=&quot;1240&quot; pageHeight=&quot;610&quot;&gt;&lt;root&gt;&lt;mxCell id=&quot;0&quot; /&gt;&lt;mxCell id=&quot;1&quot; parent=&quot;0&quot; /&gt;&lt;mxCell id=&quot;title&quot; value=&quot;For, Owns and Watches choose request keys&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=28;fontStyle=1;fontColor=#172B4D;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;25&quot; width=&quot;1150&quot; height=&quot;40&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;version&quot; value=&quot;controller-runtime v0.25.1  |  Read arrows in their direction&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#52677F;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;75&quot; width=&quot;1150&quot; height=&quot;24&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;note&quot; value=&quot;All three Builder methods create sources; WatchesRawSource accepts an already constructed Source.&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=15;fontColor=#52677F;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;535&quot; width=&quot;1150&quot; height=&quot;48&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e0&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n0&quot; target=&quot;n3&quot; style=&quot;exitX=0.41515151515151516;exitY=1.0;entryX=0.41515151515151516;entryY=0.0;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e1&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n1&quot; target=&quot;n3&quot; style=&quot;exitX=0.4575757575757576;exitY=1.0;entryX=0.4575757575757576;entryY=0.0;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot;&gt;&lt;Array as=&quot;points&quot;&gt;&lt;mxPoint x=&quot;606.0&quot; y=&quot;306&quot; /&gt;&lt;mxPoint x=&quot;196.0&quot; y=&quot;306&quot; /&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e2&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n2&quot; target=&quot;n3&quot; style=&quot;exitX=0.5;exitY=1.0;entryX=0.5;entryY=0.0;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot;&gt;&lt;Array as=&quot;points&quot;&gt;&lt;mxPoint x=&quot;1030.0&quot; y=&quot;313&quot; /&gt;&lt;mxPoint x=&quot;210.0&quot; y=&quot;313&quot; /&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e3&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n3&quot; target=&quot;n4&quot; style=&quot;exitX=1.0;exitY=0.609375;entryX=0.0;entryY=0.609375;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;e4&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;n4&quot; target=&quot;n5&quot; style=&quot;exitX=1.0;exitY=0.71875;entryX=0.0;entryY=0.71875;edgeStyle=none;html=0;endArrow=block;endFill=1;strokeColor=#52677F;strokeWidth=2;&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; relative=&quot;1&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n0&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;124&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n0title&quot; value=&quot;For(primary)&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n0&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n0body&quot; value=&quot;Watch the primary object type&amp;#10;Use its namespace / name&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n0&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n1&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;455&quot; y=&quot;124&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n1title&quot; value=&quot;Owns(child)&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n1body&quot; value=&quot;Watch child objects&amp;#10;Map controller owner to its key&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n2&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;865&quot; y=&quot;124&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n2title&quot; value=&quot;Watches(object, handler)&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n2&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n2body&quot; value=&quot;Watch another resource type&amp;#10;Use a custom mapping handler&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n2&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n3&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;45&quot; y=&quot;360&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n3title&quot; value=&quot;source.Kind(...)&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n3&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n3body&quot; value=&quot;Cache + object + handler&amp;#10;Predicates supplied at construction&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n3&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n4&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;455&quot; y=&quot;360&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n4title&quot; value=&quot;Controller.Watch(src)&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n4&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n4body&quot; value=&quot;Register the complete Source&amp;#10;Start sources with typed queue&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n4&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n5&quot; value=&quot;&quot; style=&quot;rounded=1;arcSize=12;html=0;fillColor=#F3F7FC;strokeColor=#B7C9E2;strokeWidth=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;865&quot; y=&quot;360&quot; width=&quot;330&quot; height=&quot;128&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n5title&quot; value=&quot;Reconcile(ctx, request)&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=1;fontColor=#17375E;&quot; vertex=&quot;1&quot; parent=&quot;n5&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;14&quot; width=&quot;294&quot; height=&quot;30&quot; /&gt;&lt;/mxCell&gt;&lt;mxCell id=&quot;n5body&quot; value=&quot;Request identifies target state&amp;#10;Event type is not in Request&quot; style=&quot;text;html=0;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=16;fontColor=#334E68;&quot; vertex=&quot;1&quot; parent=&quot;n5&quot;&gt;&lt;mxGeometry as=&quot;geometry&quot; x=&quot;18&quot; y=&quot;51&quot; width=&quot;294&quot; height=&quot;63&quot; /&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;&lt;/diagram&gt;&lt;/mxfile&gt;">
-<title id="title">For, Owns and Watches choose request keys</title>
-<desc id="desc">All three Builder methods create sources; WatchesRawSource accepts an already constructed Source.</desc>
-<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,4.5 L0,9 Z" fill="#52677f" /></marker></defs>
-<rect width="1240" height="610" fill="#ffffff" />
-<text x="45" y="57" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#172b4d">For, Owns and Watches choose request keys</text>
-<text x="45" y="94" font-family="Arial, sans-serif" font-size="16" fill="#52677f">controller-runtime v0.25.1  |  Read arrows in their direction</text>
-<path d="M182,252 L182,360" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M606,252 L606,306 L196,306 L196,360" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M1030,252 L1030,313 L210,313 L210,360" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M375,438 L455,438" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<path d="M785,452 L865,452" fill="none" stroke="#52677f" stroke-width="2" marker-end="url(#arrow)" />
-<rect x="45" y="124" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="63" y="159" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">For(primary)</text>
-<text x="63" y="196" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Watch the primary object type</text>
-<text x="63" y="221" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Use its namespace / name</text>
-<rect x="455" y="124" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="473" y="159" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Owns(child)</text>
-<text x="473" y="196" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Watch child objects</text>
-<text x="473" y="221" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Map controller owner to its key</text>
-<rect x="865" y="124" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="883" y="159" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Watches(object, handler)</text>
-<text x="883" y="196" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Watch another resource type</text>
-<text x="883" y="221" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Use a custom mapping handler</text>
-<rect x="45" y="360" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="63" y="395" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">source.Kind(...)</text>
-<text x="63" y="432" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Cache + object + handler</text>
-<text x="63" y="457" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Predicates supplied at construction</text>
-<rect x="455" y="360" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="473" y="395" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Controller.Watch(src)</text>
-<text x="473" y="432" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Register the complete Source</text>
-<text x="473" y="457" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Start sources with typed queue</text>
-<rect x="865" y="360" width="330" height="128" rx="12" fill="#f3f7fc" stroke="#b7c9e2" />
-<text x="883" y="395" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#17375e">Reconcile(ctx, request)</text>
-<text x="883" y="432" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Request identifies target state</text>
-<text x="883" y="457" font-family="Arial, sans-serif" font-size="16" fill="#334e68">Event type is not in Request</text>
-<text x="45" y="555" font-family="Arial, sans-serif" font-size="15" fill="#52677f">All three Builder methods create sources; WatchesRawSource accepts an already constructed Source.</text>
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="842px" height="451px" viewBox="-0.5 -0.5 842 451" content="&lt;mxfile&gt;&lt;diagram id=&quot;CggUf90wxQFoZYxIWtEy&quot; name=&quot;Page-1&quot;&gt;3VlLc9o6FP41zOQuwliWX1k2pGk793Z6Z7JouxSWDGqF5RGiQH99JVs2NhKExI6bCSywjqVj6TvfeZkJnK12HwQqlp85Jmzie3g3gXcT3wdJGKgfLdkbCYy8SrIQFBvZQfBAfxMjrKdtKCbrzkTJOZO06ApTnucklR0ZEoJvu9MyzrpPLdCCWIKHFDFb+pViuaykSegd5B8JXSzrJwPP3FmherIRrJcI821LBN9P4ExwLqur1W5GmEavxqVad3/ibrMxQXJ5yQJo9vELsY05nNmY3NenFXyTY6IXeBN4u11SSR4KlOq7W2VgJVvKFVMjoC4zytiMMy7KtTAL9VfJ11Lwn6R1Jyo/egXPZUtefZTcbIwISXYnTwcazBTbCF8RKfZqillwDRJzvn33uNuW1QIjW7YsFtSmRIYpi0b3AUx1YfA8YQxoYXvPxae82MgzGIPHMdaYUMXGd4wuciWTvLCRn6M0wdCFvA+DIMTDIAy6+MY2viAKbXwBGAJf38J3prgkOGNEjIBwmpIwy1wIwwjewIEQbqhoIPbDcESMg8fDA8EqNpphznPSRfLEcZUGvhGpUWGUSiQWxMwyvqOVn0VJEIYk/dUNzH1OHFonLgT/obOI6+D/oblKbp0TI8OZVJ1Y8dAm04pirHXcCrKmv9G81KdDa8FpLsuth7eT8M6JXm0Qm1Im2Rl9nXzi4pU39YIo7lDLKLoYUqP7f73t1hSeZWsiLcybLVxkBtu3U0YVCtMvc6cxnuTex6HSI5BELkf2SOIlyTkaW4Y4CTj0p2EXbs/hyb4jG0UDOHI8iiND25Gjv+XIiXViuioYWen9vwpXrk3S25WvvSmIklfkvMCuKpV+9ZC8LMAXm5NGOM0/sqPyW+v6u0Z6GprR3c4AXw72ZuCk3qMkjmwSg76kPUK7CQlH5elx2VntwazqZRK7Fv2X5njQMJohHKPUFUbnQRR6wTBhtImGdRS9cdScLxVFIzum6MiQaYT8iKkn3c5V6Rkt9NVDxamBIb7BznYKkQBA/2Ug9seEGAAL469Ipsurf84g+YzGVH3KzP6yxXt8nPTHxdIu379s8/WbbkGb8Tg9aPLUNKYa1P23OlnpQSuR6eEhk5WjfqkMhHYugz1T2aXQOAqwv95JXVxrHSGbnGWgqr88v+vm16+plwJ2T/sKmqleTm81U34wYjPlqKaeGAae587Ny+6WO/tjubOdl++5uOoQ6VyKfgaTAMaZ52IS8GJ4Q4Z6R3z0gm3UttzxumkcJgU2k6owMQaV3GXJG+TSuFGp9zuecYsTV6Md9aTgqT77KFsEHpjGQMmTOCp/467K4fpuR8tYtjNkfVX1h2+C5zB6OZ6r4eH/0MoCh7+V4fs/&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="0" width="840" height="450" fill="#f5f5f5" stroke="#666666" pointer-events="all"/>
+        <rect x="190" y="40" width="165" height="110" rx="16.5" ry="16.5" fill="#bac8d3" stroke="#23445d" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 163px; height: 1px; padding-top: 47px; margin-left: 191px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                ForInput
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="273" y="59" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    ForInput
+                </text>
+            </switch>
+        </g>
+        <rect x="630" y="225" width="165" height="110" rx="16.5" ry="16.5" fill="#cce5ff" stroke="#36393d" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 163px; height: 1px; padding-top: 232px; margin-left: 631px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Controller
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="713" y="244" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Controller
+                </text>
+            </switch>
+        </g>
+        <path d="M 332.5 127.42 L 434.03 165.35" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 438.95 167.19 L 431.17 168.02 L 434.03 165.35 L 433.62 161.46 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 149px; margin-left: 390px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 11px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; background-color: rgb(255, 255, 255); white-space: nowrap;">
+                                project
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="390" y="152" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="11px" text-anchor="middle">
+                    project
+                </text>
+            </switch>
+        </g>
+        <rect x="212.5" y="75" width="120" height="60" rx="9" ry="9" fill="#b0e3e6" stroke="#0e8088" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 105px; margin-left: 214px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                client.Object
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="273" y="109" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    client.Object
+                </text>
+            </switch>
+        </g>
+        <path d="M 500 220 L 500 253.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 500 258.88 L 496.5 251.88 L 500 253.63 L 503.5 251.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 237px; margin-left: 501px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 11px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; background-color: rgb(255, 255, 255); white-space: nowrap;">
+                                implement
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="501" y="240" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="11px" text-anchor="middle">
+                    implement
+                </text>
+            </switch>
+        </g>
+        <path d="M 560 290 L 646.13 290" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 651.38 290 L 644.38 293.5 L 646.13 290 L 644.38 286.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 290px; margin-left: 607px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 11px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; background-color: rgb(255, 255, 255); white-space: nowrap;">
+                                as an argument
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="607" y="293" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="11px" text-anchor="middle">
+                    as an argument
+                </text>
+            </switch>
+        </g>
+        <rect x="440" y="160" width="120" height="60" rx="9" ry="9" fill="#fad7ac" stroke="#b46504" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 190px; margin-left: 441px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Kind
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="500" y="194" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Kind
+                </text>
+            </switch>
+        </g>
+        <rect x="440" y="260" width="120" height="60" rx="9" ry="9" fill="#fad9d5" stroke="#ae4132" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 290px; margin-left: 441px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                interface
+                                <br/>
+                                Source
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="500" y="294" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    interface...
+                </text>
+            </switch>
+        </g>
+        <rect x="652.5" y="260" width="120" height="60" fill="#ffff88" stroke="#36393d" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 290px; margin-left: 654px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Watch()
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="713" y="294" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Watch()
+                </text>
+            </switch>
+        </g>
+        <rect x="190" y="180" width="165" height="110" rx="16.5" ry="16.5" fill="#bac8d3" stroke="#23445d" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 163px; height: 1px; padding-top: 187px; margin-left: 191px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                OwnsInput
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="273" y="199" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    OwnsInput
+                </text>
+            </switch>
+        </g>
+        <path d="M 332.5 225.3 L 433.95 191.99" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 438.94 190.35 L 433.38 195.86 L 433.95 191.99 L 431.2 189.21 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 210px; margin-left: 387px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 11px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; background-color: rgb(255, 255, 255); white-space: nowrap;">
+                                project
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="387" y="213" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="11px" text-anchor="middle">
+                    project
+                </text>
+            </switch>
+        </g>
+        <rect x="212.5" y="215" width="120" height="60" rx="9" ry="9" fill="#b0e3e6" stroke="#0e8088" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 245px; margin-left: 214px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                client.Object
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="273" y="249" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    client.Object
+                </text>
+            </switch>
+        </g>
+        <path d="M 150 105 L 206.13 105" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 211.38 105 L 204.38 108.5 L 206.13 105 L 204.38 101.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="30" y="75" width="120" height="60" rx="9" ry="9" fill="#b1ddf0" stroke="#10739e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 105px; margin-left: 31px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                For(client.Object)
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="90" y="109" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    For(client.Object)
+                </text>
+            </switch>
+        </g>
+        <path d="M 150 245 L 206.13 245" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 211.38 245 L 204.38 248.5 L 206.13 245 L 204.38 241.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="30" y="215" width="120" height="60" rx="9" ry="9" fill="#b1ddf0" stroke="#10739e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 245px; margin-left: 31px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Owns(client.Object)
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="90" y="249" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Owns(client.Object)
+                </text>
+            </switch>
+        </g>
+        <path d="M 150 352.14 L 433.77 291.33" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 438.91 290.23 L 432.8 295.12 L 433.77 291.33 L 431.33 288.28 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="30" y="335" width="120" height="60" rx="9" ry="9" fill="#b1ddf0" stroke="#10739e" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 365px; margin-left: 31px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Watches(Source)
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="90" y="369" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Watches(Source)
+                </text>
+            </switch>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
 </svg>

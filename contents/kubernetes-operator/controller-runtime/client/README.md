@@ -29,7 +29,3 @@ err := c.Patch(ctx, obj, client.MergeFrom(before))
 Get の NotFound は削除済みなら正常終了にできる。例: `return ctrl.Result{}, client.IgnoreNotFound(err)`。
 
 参照: [Client API](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1/pkg/client)、[実装](https://github.com/kubernetes-sigs/controller-runtime/blob/v0.25.1/pkg/client/client.go)、[動作する例](../example-controller)。
-
-## 図
-
-![client の処理と構成](diagram.drawio.svg)

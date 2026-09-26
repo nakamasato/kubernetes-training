@@ -25,9 +25,3 @@ go run ./contents/kubernetes-operator/client-go/clientset -kubeconfig /path/to/c
 [podlist.go](podlist.go) は 30 秒のタイムアウトで Pod 一覧を取得し、namespace/name を表示する。リソースは変更しない。
 
 参照: [Clientset API](https://pkg.go.dev/k8s.io/client-go@v0.37.1/kubernetes)、[client-go の例](https://github.com/kubernetes/client-go/tree/v0.37.1/examples)。
-
-## 図
-
-![Clientset による API 呼び出し](clientset-simple.drawio.svg)
-
-![Clientset の型付きインターフェース](clientset.drawio.svg)
