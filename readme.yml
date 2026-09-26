@@ -56,8 +56,8 @@ versions:
     repoUrl: https://github.com/grafana/grafana-operator
     category: Monitoring
     source:
-      path: contents/grafana-operator/README.md
-      pattern: (?:ref=|Operator )(v[0-9]+\.[0-9]+\.[0-9]+)
+      path: contents/grafana-operator/operator/kustomization.yaml
+      pattern: releases/download/(v[0-9]+\.[0-9]+\.[0-9]+)/
   - name: Grafana Loki
     version: null
     repoUrl: https://github.com/grafana/loki
@@ -119,8 +119,8 @@ versions:
     category: Middleware (Operator)
     dir: eck
     source:
-      path: contents/eck/README.md
-      pattern: (?:eck/|ECK )([0-9]+\.[0-9]+\.[0-9]+)
+      path: contents/eck/operator/kustomization.yaml
+      pattern: eck/([0-9]+\.[0-9]+\.[0-9]+)/
     tagPrefix: v
   - name: Kyverno
     version: null
