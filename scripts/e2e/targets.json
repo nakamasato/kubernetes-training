@@ -1,0 +1,4 @@
+{
+  "argocd": ["contents/argocd/**"],
+  "prometheus-operator": ["contents/prometheus-operator/**"]
+}

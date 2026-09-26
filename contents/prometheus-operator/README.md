@@ -18,7 +18,7 @@ About [Prometheus](../prometheus)
 1. Install Prometheus operator in `default` namespace.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.94.1/bundle.yaml
+    kubectl --context <context> apply --server-side -k operator
     ```
 
     <details><summary>This command creates the following resources:</summary>

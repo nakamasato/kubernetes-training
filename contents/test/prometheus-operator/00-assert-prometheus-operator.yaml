@@ -1,7 +1,0 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: default
-  name: prometheus-operator
-status:
-  readyReplicas: 1
