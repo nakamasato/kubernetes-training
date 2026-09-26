@@ -18,6 +18,9 @@ if name == "kind" and args[:2] == ["create", "cluster"]:
     if os.environ.get("FAIL_CREATE"):
         sys.exit(1)
 if name == "kubectl":
+    if args[-2:] == ["config", "current-context"]:
+        print("existing-context")
+        sys.exit(0)
     if os.environ.get("FAIL_APPLY") and "apply" in args:
         sys.exit(1)
     if "--raw" in args:
@@ -39,7 +42,7 @@ class IsolationTest(unittest.TestCase):
             original.write_text("current-context: do-not-touch\n")
             calls = tmp / "calls"
             env = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"],
-                       KUBECONFIG=str(original), CALLS=str(calls),
+                       CALLS=str(calls),
                        E2E_ARTIFACTS=str(tmp / "artifacts"))
             if fail:
                 env[fail] = "1"
@@ -70,3 +73,26 @@ class IsolationTest(unittest.TestCase):
 
     def test_creation_failure(self):
         self.run_case("FAIL_CREATE")
+
+    def test_existing_cluster_is_not_created_or_deleted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            tools = tmp / "bin"
+            tools.mkdir()
+            for name in ["kind", "kubectl"]:
+                executable = tools / name
+                executable.write_text(MOCK)
+                executable.chmod(0o755)
+            config = tmp / "existing-config"
+            config.write_text("existing kubeconfig")
+            calls = tmp / "calls"
+            env = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"],
+                       KUBECONFIG=str(config), CALLS=str(calls),
+                       E2E_ARTIFACTS=str(tmp / "artifacts"))
+            result = subprocess.run(["bash", "scripts/e2e/run.sh", "argocd"],
+                                    cwd=ROOT, env=env, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            entries = [json.loads(line) for line in calls.read_text().splitlines()]
+            self.assertFalse(any(tool == "kind" and args[:2] == ["create", "cluster"] for tool, args, _ in entries))
+            self.assertFalse(any(tool == "kind" and args[:2] == ["delete", "cluster"] for tool, args, _ in entries))
+            self.assertTrue(any(tool == "kubectl" and args[:4] == ["--kubeconfig", str(config), "--context", "existing-context"] for tool, args, _ in entries))

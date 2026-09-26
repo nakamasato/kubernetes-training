@@ -13,6 +13,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
@@ -40,7 +41,7 @@ func main() {
 	}
 
 	// Create a Manager
-	mgr, err = manager.New(cfg, manager.Options{})
+	mgr, err = manager.New(cfg, manager.Options{Metrics: metricsserver.Options{BindAddress: "0"}})
 	if err != nil {
 		log.Error(err, "unable to set up manager")
 		os.Exit(1)

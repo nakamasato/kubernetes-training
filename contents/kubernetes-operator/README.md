@@ -210,6 +210,30 @@ Considerations:
 
 ## 9. Keep learning
 
+## 10. Example test inventory
+
+The runnable examples are intentionally split between unit tests and Kubernetes-backed tests:
+
+| Example | Live API server | Coverage |
+| --- | --- | --- |
+| `client-go/clientset` | Yes | E2E target (API access) |
+| `client-go/deltafifo` | No | Unit/fake objects |
+| `client-go/indexer` | No | Unit/in-memory indexer |
+| `client-go/informer` | Yes | E2E target; cache sync and Pod add/update/delete |
+| `client-go/lister` | No | Unit/fake indexer |
+| `client-go/listerwatcher` | Yes | E2E target; list/watch delivery |
+| `client-go/reflector` | No runnable binary | Covered through informer/list-watch concepts |
+| `client-go/workqueue` | No runnable binary | Unit-level concept |
+| `controller-runtime/cache` | Yes | E2E target; cache sync and read |
+| `controller-runtime/example-controller` | Yes | E2E target; ReplicaSet `pod-count` reconciliation |
+| `controller-runtime/manager` | Yes | E2E target; manager startup and watches |
+| `controller-runtime/reconciler` | No | Unit test/example |
+| `controller-runtime/source` | Yes, with its example CRD | Documented live-cluster dependency; no remote CRD is applied by CI |
+| `controller-runtime/log` | No | Process/unit example |
+| `controller-runtime/webhook` | Not by the standalone example | Unit/process example; it does not register an API-server webhook |
+
+The live-cluster suites are selected independently as `client-go` and `controller-runtime` targets. CI creates a temporary kind cluster for each selected target. Developers can run either target against an existing cluster by setting `KUBECONFIG`; the runner removes only resources created by the test and never deletes a developer-provided cluster.
+
 1. [47 Things To Become a Kubernetes Expert](https://ymmt2005.hatenablog.com/entry/k8s-things)
 1. [Kubernetes API Basics - Resources, Kinds, and Objects](https://iximiuz.com/en/posts/kubernetes-api-structure-and-terminology/)
 1. [Kubernetes API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
