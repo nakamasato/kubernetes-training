@@ -1,9 +1,0 @@
-apiVersion: kuttl.dev/v1beta1
-kind: TestStep
-delete:
-commands:
-  - command: kubectl create ns argocd
-    ignoreFailure: true
-  - command: kubectl delete -k ../../argocd/setup
-    ignoreFailure: true
-  - command: kubectl apply --server-side -k ../../argocd/setup

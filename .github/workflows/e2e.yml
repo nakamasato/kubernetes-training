@@ -1,58 +1,80 @@
 name: e2e
 on:
   pull_request:
-    paths:
-      - .github/workflows/e2e.yml
-      - contents/argocd/setup/kustomization.yaml
-      - contents/test/**
-      - contents/kuttl-test.yaml
-      - '**.go'
-      - 'go.*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  e2e:
+  changes:
     runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.select.outputs.targets }}
     steps:
       - uses: actions/checkout@v7
-      - name: set up
-        uses: actions/setup-go@v7
         with:
-          go-version-file: go.mod
-
-      # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
-      - name: krew - install
+          fetch-depth: 0
+      - name: Test target selection and context isolation
+        run: python3 -m unittest discover -s scripts/e2e -p 'test_*.py'
+      - id: select
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
-          (
-            set -x; cd "$(mktemp -d)" &&
-            OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-            ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-            KREW="krew-${OS}_${ARCH}" &&
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-            tar zxvf "${KREW}.tar.gz" &&
-            ./"${KREW}" install krew
-          )
-      # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#adding-a-system-path
-      - name: krew - set PATH
-        run: echo "${KREW_ROOT:-$HOME/.krew}/bin:$PATH" >> "$GITHUB_PATH"
+          if [ "$EVENT" = workflow_dispatch ]; then
+            targets=$(python3 -c 'import json; print(json.dumps(sorted(json.load(open("scripts/e2e/targets.json")))))')
+          else
+            targets=$(git diff --name-only --no-renames -z "$BASE...$HEAD" | python3 scripts/e2e/select_targets.py)
+          fi
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          echo "Selected targets: $targets"
 
-      # https://kuttl.dev/docs/cli.html#setup-the-kuttl-kubectl-plugin
-      - name: kuttl - install
+  e2e:
+    needs: changes
+    if: needs.changes.outputs.targets != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        target: ${{ fromJSON(needs.changes.outputs.targets) }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install kind and kubectl
         run: |
-          kubectl krew install kuttl
-          kubectl kuttl -v
+          curl -fsSL https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 -o /tmp/kind
+          sudo install /tmp/kind /usr/local/bin/kind
+          curl -fsSL https://dl.k8s.io/release/v1.36.1/bin/linux/amd64/kubectl -o /tmp/kubectl
+          sudo install /tmp/kubectl /usr/local/bin/kubectl
+      - name: Run E2E
+        env:
+          TARGET: ${{ matrix.target }}
+        run: bash scripts/e2e/run.sh "$TARGET"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-${{ matrix.target }}
+          path: .e2e-artifacts/
+          include-hidden-files: true
+          if-no-files-found: ignore
 
-      - name: kuttl - run
-        working-directory: contents
-        run: kubectl kuttl test
-
-      # - name: client-go/clientset
-      #   working-directory: contents/kubernetes-operator/client-go/clientset
-      #   run: go run podlist.go
-
-      - name: client-go/indexer
-        working-directory: contents/kubernetes-operator/client-go/indexer
-        run: go run main.go
-
-      - name: client-go/lister
-        working-directory: contents/kubernetes-operator/client-go/lister
-        run: go run main.go
+  status-check-e2e:
+    if: always()
+    needs: [changes, e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require successful selection and selected tests
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          E2E: ${{ needs.e2e.result }}
+          TARGETS: ${{ needs.changes.outputs.targets }}
+        run: |
+          test "$CHANGES" = success
+          if [ "$TARGETS" = '[]' ]; then
+            test "$E2E" = skipped
+          else
+            test "$E2E" = success
+          fi
