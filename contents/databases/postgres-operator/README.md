@@ -1,6 +1,6 @@
 # Postgres Operator
 
-Version: [v1.7.1](https://github.com/zalando/postgres-operator/releases/tag/v1.7.1)
+Version: [v2.0.2](https://github.com/zalando/postgres-operator/releases/tag/v2.0.2)
 
 ## Overview
 
@@ -16,7 +16,7 @@ https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md
 Namespace: `default`
 
 ```
-kubectl apply -k github.com/zalando/postgres-operator/manifests
+kubectl apply -k https://github.com/zalando/postgres-operator/manifests?ref=v2.0.2
 ```
 
 or
@@ -30,7 +30,7 @@ helm install postgres-operator ./charts/postgres-operator
 1. Deploy
 
     ```
-    kubectl apply -k github.com/zalando/postgres-operator/ui/manifests
+    kubectl apply -k https://github.com/zalando/postgres-operator/ui/manifests?ref=v2.0.2
     ```
 
     or
@@ -191,7 +191,7 @@ kubectl delete -f resources/minimal-postgres-manifest.yaml
 ### 5. Remove operator
 
 ```
-kubectl apply -k github.com/zalando/postgres-operator/manifests
+kubectl apply -k https://github.com/zalando/postgres-operator/manifests?ref=v2.0.2
 kubectl delete -k github.com/zalando/postgres-operator/ui/manifests # ui
 ```
 

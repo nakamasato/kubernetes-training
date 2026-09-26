@@ -1,9 +1,11 @@
 apiVersion: kafka.strimzi.io/v1
-kind: KafkaTopic
+kind: KafkaNodePool
 metadata:
-  name: my-topic
+  name: broker
   labels:
     strimzi.io/cluster: my-cluster
 spec:
-  partitions: 3
+  roles: [broker, controller]
   replicas: 3
+  storage:
+    type: ephemeral
