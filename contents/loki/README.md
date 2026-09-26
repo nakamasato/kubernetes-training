@@ -7,7 +7,7 @@
 
 ## Install & Uninstall
 
-https://grafana.com/docs/loki/latest/installation/helm/
+https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/
 
 1. Deploy Loki Stack (Loki, Promtail, Grafana, Prometheus) via Helm.
 
@@ -17,7 +17,7 @@ https://grafana.com/docs/loki/latest/installation/helm/
     ```
 
     ```
-    helm upgrade --install loki grafana/loki-stack  --set grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false
+    helm upgrade --install loki grafana/loki --version 7.3.0 --set deploymentMode=SingleBinary --set loki.auth_enabled=false --set singleBinary.replicas=1 --set minio.enabled=false
     ```
 
     <details><summary>Pods</summary>

@@ -3,7 +3,7 @@
 ## 1. Install operator
 
 ```
-kubectl apply -k github.com/grafana-operator/grafana-operator/deploy/manifests/
+kubectl apply -k github.com/grafana-operator/grafana-operator/deploy/manifests/?ref=v5.25.0
 ```
 
 ## 3. Create Grafana
@@ -15,7 +15,7 @@ Be sure to deploy in the same namespace as the operator (`grafana-operator-syste
     Option 1 (simple one):
 
     ```
-    kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/Grafana.yaml -n grafana-operator-system
+    kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/v5.25.0/deploy/examples/Grafana.yaml -n grafana-operator-system
     ```
 
     Option 2 (HA with Postgres for session storage)
@@ -58,7 +58,7 @@ Be sure to deploy in the same namespace as the operator (`grafana-operator-syste
 1. Deploy prometheus with [Prometheus Operator](../prometheus-operator). Prometheus Datasource expects `prometheus` service with port 9090.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.94.1/bundle.yaml
     kubectl apply -k ../prometheus-operator
     ```
 
@@ -72,13 +72,13 @@ Be sure to deploy in the same namespace as the operator (`grafana-operator-syste
 simple-dashboard
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/dashboards/SimpleDashboard.yaml -n grafana-operator-system
+kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/v5.25.0/deploy/examples/dashboards/SimpleDashboard.yaml -n grafana-operator-system
 ```
 
 keycloak-dashboard (data is empty)
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/dashboards/KeycloakDashboard.yaml -n grafana-operator-system
+kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/v5.25.0/deploy/examples/dashboards/KeycloakDashboard.yaml -n grafana-operator-system
 ```
 
 dashboard from grafana (need node exporter)
@@ -90,7 +90,7 @@ kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-oper
 
 ```
 kubectl delete --all grafana,grafanadashboard,grafanadatasource -n grafana-operator-system
-kubectl delete -k github.com/grafana-operator/grafana-operator/deploy/manifests/
+kubectl delete -k github.com/grafana-operator/grafana-operator/deploy/manifests/?ref=v5.25.0
 ```
 
 ## Debug

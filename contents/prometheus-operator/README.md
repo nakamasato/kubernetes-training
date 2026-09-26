@@ -18,7 +18,7 @@ About [Prometheus](../prometheus)
 1. Install Prometheus operator in `default` namespace.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.94.1/bundle.yaml
     ```
 
     <details><summary>This command creates the following resources:</summary>
@@ -277,7 +277,7 @@ metric_relabel_configs: []
 kubectl delete -f example-app-with-pod-monitor
 kubectl delete -f example-app-with-service-monitor
 kubectl delete -k .
-kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+kubectl delete -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.94.1/bundle.yaml
 kubectl delete ns monitoring
 ```
 ## Important Configurations
