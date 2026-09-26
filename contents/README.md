@@ -34,10 +34,10 @@
 1. MySQL Operator: [0.3.0](https://github.com/mysql/mysql-operator/releases/tag/0.3.0)
 1. Cert Manager: [v1.21.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.21.2)
 1. Gatekeeper: [v3.23.1](https://github.com/open-policy-agent/gatekeeper/releases/tag/v3.23.1)
-1. Elasticsearch (ECK sample): [7.8.1](https://github.com/elastic/elasticsearch/releases/tag/v7.8.1)
-1. Kibana (ECK sample): [7.8.1](https://github.com/elastic/kibana/releases/tag/v7.8.1)
-1. MySQL (Helm/Kustomize sample): [5.6](https://dev.mysql.com/doc/relnotes/mysql/)
-1. PostgreSQL (Grafana HA sample): [17](https://www.postgresql.org/docs/release/)
+1. Elasticsearch (ECK sample): [9.5.4](https://github.com/elastic/elasticsearch/releases/tag/v9.5.4)
+1. Kibana (ECK sample): [9.5.4](https://github.com/elastic/kibana/releases/tag/v9.5.4)
+1. MySQL (Helm/Kustomize sample): [8.4.11](https://dev.mysql.com/doc/relnotes/mysql/)
+1. PostgreSQL (Grafana HA sample): [18.6](https://www.postgresql.org/docs/release/)
 
 # Contents
 
