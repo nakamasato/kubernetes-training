@@ -12,7 +12,7 @@ bash scripts/e2e/run.sh helm       # also requires Helm
 bash scripts/e2e/run.sh kustomize  # also requires standalone Kustomize
 ```
 
-Each invocation creates a disposable kind cluster, verifies workload readiness and
+Each invocation creates a disposable kind cluster, waits for CoreDNS, verifies workload readiness and
 an application endpoint, then deletes the cluster even on failure. Prometheus
 Operator also checks that Prometheus discovers and successfully scrapes itself.
 Run local targets sequentially to avoid exhausting Docker Desktop resources.
