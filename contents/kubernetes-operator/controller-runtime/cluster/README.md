@@ -2,7 +2,7 @@
 
 Cluster owns the dependencies used to interact with one Kubernetes cluster. `manager.New` constructs it and embeds the `Cluster` interface. Reconcilers receive these dependencies explicitly through their fields or constructors.
 
-These implementation notes target controller-runtime v0.25.1, pinned in the repository's go.mod. The existing SVGs retain their original layout; their older API names are being tracked separately in [#474](https://github.com/nakamasato/kubernetes-training/issues/474). Use the signatures and call paths below for this version.
+These implementation notes target controller-runtime v0.25.1, pinned in the repository's go.mod. Use the signatures and call paths below for this version.
 
 ## Types
 

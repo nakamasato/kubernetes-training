@@ -79,7 +79,7 @@ You can also reference example controllers:
 
 ## 4. Understand more detail about each component
 
-The walkthroughs target client-go v0.37.1 and controller-runtime v0.25.1 from [go.mod](../../go.mod). They include implementation structure, construction paths, and runnable examples. Existing SVGs are retained while diagram corrections are tracked separately in [#474](https://github.com/nakamasato/kubernetes-training/issues/474).
+The walkthroughs and diagrams target client-go v0.37.1 and controller-runtime v0.25.1 from [go.mod](../../go.mod). They include implementation structure, construction paths, and runnable examples.
 
 Simplified:
 

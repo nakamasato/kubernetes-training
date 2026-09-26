@@ -4,11 +4,11 @@
 
 ![](diagram-2.drawio.svg)
 
-These implementation notes target controller-runtime v0.25.1, pinned in the repository's go.mod. The existing SVGs retain their original layout; their older API names are being tracked separately in [#474](https://github.com/nakamasato/kubernetes-training/issues/474). Use the signatures and call paths below for this version.
+These implementation notes and diagrams target controller-runtime v0.25.1, pinned in the repository's go.mod. Use the signatures and call paths below for this version.
 
 The Cache stored in a Cluster combines a Reader with informer management. The basic implementation is `informerCache`; namespace and per-object options can wrap it in `multiNamespaceCache` and `delegatingByGVKCache`.
 
-Internally, `internal.Informers` has a `tracker` with separate Structured, Unstructured, and Metadata maps keyed by GVK. Each entry pairs a client-go SharedIndexInformer with a CacheReader over the same Indexer. This replaces the older `InformersMap` → `specificInformersMap` → `MapEntry` names shown in the SVGs.
+Internally, `internal.Informers` has a `tracker` with separate Structured, Unstructured, and Metadata maps keyed by GVK. Each entry pairs a client-go SharedIndexInformer with a CacheReader over the same Indexer.
 
 Typed objects retain Go fields, unstructured objects retain arbitrary JSON fields, and metadata informers use PartialObjectMetadata. The separate maps keep their representations distinct even when the GVK matches.
 

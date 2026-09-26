@@ -17,7 +17,7 @@ Version: [v0.25.1](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.25.1), w
 1. Kind.Start obtains an informer from Cache and registers the handler. Controller waits for source synchronization before running workers.
 1. Informer events pass predicates, handlers enqueue keys, and Controller workers call Reconcile. Reconcile reads current state through Client and writes desired changes to the API server.
 
-The component pages retain construction details, interfaces, and usage examples. Existing SVGs are preserved; updates to their older labels and relationships are tracked in [#474](https://github.com/nakamasato/kubernetes-training/issues/474).
+The component pages and diagrams retain construction details, interfaces, usage examples, and call relationships for the pinned version.
 
 For more details, you can check the [architecture in book.kubebuilder.io](https://book.kubebuilder.io/architecture.html):
 ![](https://raw.githubusercontent.com/kubernetes-sigs/kubebuilder/master/docs/book/src/kb_concept_diagram.svg)
@@ -73,31 +73,6 @@ CI runs the Go tests with coverage and golangci-lint when Go source, go.mod/go.s
 
 ## Memo
 
-1. [v0.11.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.11.0): Allow Specification of the Log Timestamp Format. -> Default EpochTimeEncoder
-1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
-    1. [⚠️ Refactor source/handler/predicate packages to remove dep injection #2120](https://github.com/kubernetes-sigs/controller-runtime/pull/2120)
-
-        ```diff
-        -       kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
-        -       kindWithCacheMysql := source.NewKindWithCache(mysql, cache)
-        -       kindWithCachesecret := source.NewKindWithCache(secret, cache)
-        +       kindWithCacheMysqlUser := source.Kind(cache, mysqluser)
-        +       kindWithCacheMysql := source.Kind(cache, mysql)
-        +       kindWithCachesecret := source.Kind(cache, secret)
-        ```
-
-    1. Example PR: https://github.com/nakamasato/secret-mirror-operator/pull/28
-
-1. [v0.16.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.16.0)
-    1. [⚠ Introduce Metrics Options struct & secure metrics serving #2407](https://github.com/kubernetes-sigs/controller-runtime/pull/2407)
-
-        ```diff
-        import (
-        + metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-        )
-        - MetricsBindAddress: metricsAddr
-        + Metrics: metricsserver.Options{BindAddress: metricsAddr},
-        ```
-
-    1. [⚠ Remove deprecated manager, webhook and cluster options #2422](https://github.com/kubernetes-sigs/controller-runtime/pull/2422)
-    1. Example PR: https://github.com/nakamasato/secret-mirror-operator/pull/28
+1. The default logger uses epoch timestamps unless configured otherwise.
+1. Sources, handlers, and predicates receive their dependencies explicitly. For example, construct a `Kind` source with `source.Kind(cache, object, handler)`; no dependency injection is required.
+1. Metrics and webhook servers use dedicated options and server interfaces. See [Manager](manager/) and [Webhook](webhook/) for the current configuration paths.

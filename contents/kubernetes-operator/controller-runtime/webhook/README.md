@@ -99,7 +99,7 @@ Ctrl+C stops the server. Remove the temporary certificate directory afterward. F
 
 ValidateCreate receives the new object, ValidateUpdate receives old and new objects, and ValidateDelete receives the object being removed. They return warnings plus an error; errors deny the request, while warnings can accompany allowed or denied responses. Validation should not mutate objects.
 
-The warnings support was added in [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0) via [#2014](https://github.com/kubernetes-sigs/controller-runtime/pull/2014). Kubernetes can return these to the caller as HTTP Warning headers; see the [admission response documentation](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#response).
+The pinned controller-runtime version supports returning warnings with a validation result. Kubernetes can return these to the caller as HTTP Warning headers; see the [admission response documentation](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#response).
 
 Run the mutation regression tests without a cluster:
 
@@ -109,36 +109,8 @@ go test ./contents/kubernetes-operator/controller-runtime/webhook
 
 They exercise absent/existing annotations, field preservation, and invalid JSON. See [main_test.go](main_test.go) for the exact assertions.
 
-## Changes
+## Configuration notes
 
-1. [v0.15.0](https://github.com/kubernetes-sigs/controller-runtime/releases/tag/v0.15.0)
-    1. [Allow passing a custom webhook server controller-runtime#2293](https://github.com/kubernetes-sigs/controller-runtime/pull/2293) `webhook.Server` `struct` was changed to `interface`.
-        ```diff
-        - hookServer := &Server{Port: 8443}
-        + hookServer := NewServer(Options{Port: 8443})
-        ```
-    1. [⚠️ feat: new features about support warning with webhook #2014](https://github.com/kubernetes-sigs/controller-runtime/pull/2014) `Validator`, `CustomValidator` interface change: added warning to response of admission webhook.
-        ```diff
-        type Validator interface {
-            runtime.Object
-        -   ValidateCreate() error
-        -   ValidateUpdate(old runtime.Object) error
-        -   ValidateDelete() error
-
-        +   // ValidateCreate validates the object on creation.
-        +   // The optional warnings will be added to the response as warning messages.
-        +   // Return an error if the object is invalid.
-        +   ValidateCreate() (warnings Warnings, err error)
-        +   // ValidateUpdate validates the object on update. The oldObj is the object before the update.
-        +   // The optional warnings will be added to the response as warning messages.
-        +   // Return an error if the object is invalid.
-        +   ValidateUpdate(old runtime.Object) (warnings Warnings, err error)
-        +   // ValidateDelete validates the object on deletion.
-        +   // The optional warnings will be added to the response as warning messages.
-        +   // Return an error if the object is invalid.
-        +   ValidateDelete() (warnings Warnings, err error)
-        }
-        ```
-
-
-The Changes section above is historical. Use the generic context-aware signatures shown earlier for v0.25.1 rather than copying the old object-embedded Validator methods.
+1. `webhook.NewServer(webhook.Options{...})` returns the `webhook.Server` interface. Pass it through `ctrl.Options{WebhookServer: ...}` so Manager starts and stops it.
+1. Generic `Validator[T]` methods receive a context and typed objects, and return warnings with an error. Errors deny the admission request; warnings can accompany either an allowed or denied response.
+1. Register paths on `mgr.GetWebhookServer()`. Creating a path handler does not create the Kubernetes webhook configuration resources; deploy those separately.

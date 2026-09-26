@@ -11,7 +11,7 @@
 
 ***Informer*** monitors the changes of target resource. An informer is created for each of the target resources if you need to handle multiple resources (e.g. podInformer, deploymentInformer).
 
-The snippets below target client-go v0.37.1. Structs show implementation details rather than APIs to construct directly. Existing diagrams are retained; diagram corrections are tracked separately in [#474](https://github.com/nakamasato/kubernetes-training/issues/474).
+The snippets and diagrams below target client-go v0.37.1. Structs show implementation details rather than APIs to construct directly.
 
 ## types
 
