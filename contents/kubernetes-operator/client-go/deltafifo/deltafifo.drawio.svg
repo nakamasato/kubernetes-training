@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" host="65bd71144e" version="1.1" width="491px" height="161px" viewBox="-0.5 -0.5 491 161" content="&lt;mxfile&gt;&lt;diagram id=&quot;zEBHZXsPmL6j09PajY4e&quot; name=&quot;Page-1&quot;&gt;zZZNj9owEIZ/TaT20CpfBPZYYGkrtWolDj0bPCSWHDt1HD7213dCJoRsjBap2W0vYL8Zjz2PXzvxokV+/GxYkX3XHKQX+vzoRUsvDIM4xt9aODVCmASNkBrBKaYT1uIJSPRJrQSHshdotZZWFH1xq5WCre1pzBh96IfttOzPWrAUBsJ6y+RQ/SW4zRp1NvE7/QuINGtnDnx6krM2mIQyY1wfrqTo0YsWRmvbtPLjAmTNruVC47xwdSPgsjYDyt45JmkC9kxWVCGtzp7akoEjAeoqrfBvntlcYi/AZhNex9xcBEmlrsyWomgWy0wKFBVdGKB3QOdgzQlDDEhmxb6fndEuppe4XpXYoELdRU8HRUtRWmfh39gGDdyrmEmRKmxvsUAwKOzBWIEW+UQPcsF5nWNuoBRPbHPO52O/0ELZ89Inc2+yvNCrE8DR5V8a3O3kNdfETYwSffA/BuGUSj31kt/NlJL/rNd9FaJ3uxKsC/plGXftQzjYhyVIywYbYXSlOHCieMiEhXXBzl464C3jMqTDfwPKN9FFfp9ae/kcuhMftBuSXZ32xB/FnpEbSzkGF4fVBqhucgn9fwtm5gaz+rr6gfI7XVihFTuPUDttcjydof+7ggre/x275yfc6mIcovEzorM7gQYjEX0YEEUOOTotkTjTfIMAk7Ru5YhkMi+tESrFq+tFQwZvYsg4mLxoyAcHvngceu1sV/jObhviay58wvffUZu+JjXsdh81zUui+zKMHv8A&lt;/diagram&gt;&lt;/mxfile&gt;">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" host="65bd71144e" version="1.1" width="491px" height="161px" viewBox="-0.5 -0.5 491 161" content="&lt;mxfile&gt;&lt;diagram id=&quot;zEBHZXsPmL6j09PajY4e&quot; name=&quot;Page-1&quot;&gt;zZbNrpswEIVfJRuWrfhP7rIkTVupVStl0bUTT8CSwdSYkNyn72BM4gBpI6FbdZN4joexz8fYwgnW+fmTJGX2TVDgC3p2go3j+14Y4u+CXrrQj702TCWjZr4Pd+wVjORqrWYUKitJCcEVK23pIIoCDspSiJSisVOOgtsrlSSFQbg7ED7UfjKqsk5bRW6vfgaWZv1qnqv1nPSJOqwyQkVzE5zgoxOspRCqG+XnNXC+6N3rZxx/OzlpdiOhUE9kx+3kifDaeNG7UZfeGlB0asJCFPiXZCrnGHk4bJPbjAcLa6EStTyYDF1dEZmCyQiuXrELQOSg5GUhgRPFTnZVYt5NanLuHOGgMzVpcDkwyFmlJkx+JXvg9+4IZ2mB4wMaAonCCaRi+No/mImcUdrWSCRU7JXsdT0X41KwQuktR4kTbQyp9nE4j/vQPNi/KZtgPMXHlHjnvvf8pbZ3sYo+R68v+qPd6TVBHI8VqDHcfulnePsD3hvgigyAS1EXFKih1WRMwa4kuksavAvGTTbqqiHLR5AC1+bTXRHN7ZR6HfLMOqGxO7PhgikA1VwCo+YZInlEwHf/PYLVFILtl+33xa8aUJzBYngGlSjnEgrvCK2eAOTNJvQyIISec+yRmOMKyV7iKG1HOdqPkkpJVqR4kfyllbw3bqXQi/7YSi8jUOFcTt0aFijTQENQ3UVrQP0nfJZvwQfD22dBdzlfv55Q/A0&lt;/diagram&gt;&lt;/mxfile&gt;">
     <defs />
     <g>
         <path d="M 120 60 L 163.63 60" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke" />
@@ -59,11 +59,11 @@
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
                     <xhtml:div style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 7px; margin-left: 371px;">
                         <xhtml:div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <xhtml:div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">DeltaFIFO (optional informer queue)</xhtml:div>
+                            <xhtml:div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">DeltaFIFO queue</xhtml:div>
                         </xhtml:div>
                     </xhtml:div>
                 </foreignObject>
-                <text x="430" y="19" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">DeltaFIFO (optional informer queue)</text>
+                <text x="430" y="19" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">DeltaFIFO queue</text>
             </switch>
         </g>
         <rect x="385" y="30" width="90" height="40" rx="6" ry="6" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all" />
