@@ -25,7 +25,7 @@ brew install kind
 
 ```
 kind version
-kind v0.20.0 go1.20.5 darwin/amd64
+kind v0.33.0 go1.20.5 darwin/amd64
 ```
 
 ## Configure a cluster

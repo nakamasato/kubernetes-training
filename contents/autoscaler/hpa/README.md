@@ -10,7 +10,7 @@ Automatically scales the number of Pods in a replication controller, deployment,
 
 - API Group: `autoscaling`
 - CPU autoscaling: `autoscaling/v1`
-- memory & custom metrics: `autoscaling/v2beta2`
+- memory & custom metrics: `autoscaling/v2`
 
 ### Kubectl
 
