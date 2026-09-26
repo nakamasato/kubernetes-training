@@ -6,8 +6,8 @@ k -n elastic-system rollout status statefulset/elastic-operator --timeout=300s
 k create namespace eck
 k apply -f contents/eck/elasticsearch.yaml
 k apply -f contents/eck/kibana.yaml
-k -n eck wait --for=jsonpath='{.status.availableNodes}'=1 elasticsearch/quickstart --timeout=600s
-k -n eck wait --for=jsonpath='{.status.availableNodes}'=1 kibana/quickstart --timeout=600s
+k -n eck wait --for=jsonpath='{.status.availableNodes}'=1 elasticsearch/quickstart --timeout="${ECK_WAIT_TIMEOUT:-600s}"
+k -n eck wait --for=jsonpath='{.status.availableNodes}'=1 kibana/quickstart --timeout="${ECK_WAIT_TIMEOUT:-600s}"
 # Pass generated credentials/certificates over stdin, never print them in logs.
 password=$(k -n eck get secret quickstart-es-elastic-user -o jsonpath='{.data.elastic}' | python3 -c 'import base64,sys; print(base64.b64decode(sys.stdin.read()).decode())')
 eck_request() {

@@ -32,6 +32,8 @@ https://localhost:5601 with the same `elastic` credentials.
 
 ```sh
 bash scripts/e2e/run.sh eck
+# For slow first-time image downloads:
+ECK_WAIT_TIMEOUT=900s bash scripts/e2e/run.sh eck
 ```
 
 E2E verifies both workloads, indexes and reads a document through the Elasticsearch
