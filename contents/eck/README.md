@@ -8,7 +8,7 @@
 ## Install operator
 
 ```
-kubectl apply -f https://download.elastic.co/downloads/eck/3.5.0/all-in-one.yaml
+kubectl apply --server-side -f https://download.elastic.co/downloads/eck/3.5.0/all-in-one.yaml
 customresourcedefinition.apiextensions.k8s.io/apmservers.apm.k8s.elastic.co created
 customresourcedefinition.apiextensions.k8s.io/beats.beat.k8s.elastic.co created
 customresourcedefinition.apiextensions.k8s.io/elasticsearches.elasticsearch.k8s.elastic.co created

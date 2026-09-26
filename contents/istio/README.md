@@ -545,7 +545,7 @@ istioctl uninstall --purge
 ```bash
 for f in https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/addons/{grafana,jaeger,kiali,loki,prometheus}.yaml; do kubectl delete -f $f; done # delete kilia
 kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/networking/bookinfo-gateway.yaml # delete gateway
-kubectl delete -f kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/platform/kube/bookinfo.yaml # delete application
+kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-${ISTIO_VERSION%.*}/samples/bookinfo/platform/kube/bookinfo.yaml # delete application
 istioctl manifest generate --set profile=demo | kubectl delete --ignore-not-found=true -f - # delete istio
 istioctl tag remove default
 ```
@@ -584,7 +584,7 @@ kubectl create ns gateway
 Create `productpage-v2`
 
 ```
-kubectl deploy -f productpage-v2.yaml
+kubectl apply -f productpage-v2.yaml
 ```
 
 Gateway and multiple VirtualServices

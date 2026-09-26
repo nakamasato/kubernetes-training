@@ -48,7 +48,7 @@ About [Prometheus](../prometheus)
     1. `ServiceMonitor` for Prometheus itself.
 
     ```
-    kubectl apply -k .
+    kubectl apply --server-side -k .
     ```
 
 ### 2. Monitor an application with `ServiceMonitor`
