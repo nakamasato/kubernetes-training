@@ -49,6 +49,20 @@ jobs:
           sudo install /tmp/kind /usr/local/bin/kind
           curl -fsSL https://dl.k8s.io/release/v1.36.1/bin/linux/amd64/kubectl -o /tmp/kubectl
           sudo install /tmp/kubectl /usr/local/bin/kubectl
+      - name: Install the documented Helm version
+        if: matrix.target == 'helm'
+        run: |
+          version=$(python3 scripts/e2e/tool_version.py helm)
+          curl -fsSL "https://get.helm.sh/helm-${version}-linux-amd64.tar.gz" -o /tmp/helm.tar.gz
+          tar -xzf /tmp/helm.tar.gz -C /tmp
+          sudo install /tmp/linux-amd64/helm /usr/local/bin/helm
+      - name: Install the documented Kustomize version
+        if: matrix.target == 'kustomize'
+        run: |
+          version=$(python3 scripts/e2e/tool_version.py kustomize)
+          curl -fsSL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${version}/kustomize_${version}_linux_amd64.tar.gz" -o /tmp/kustomize.tar.gz
+          tar -xzf /tmp/kustomize.tar.gz -C /tmp
+          sudo install /tmp/kustomize /usr/local/bin/kustomize
       - name: Run E2E
         env:
           TARGET: ${{ matrix.target }}

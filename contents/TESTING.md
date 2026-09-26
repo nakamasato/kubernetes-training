@@ -7,6 +7,8 @@ bash scripts/e2e/run.sh argocd
 bash scripts/e2e/run.sh prometheus-operator
 bash scripts/e2e/run.sh prometheus
 bash scripts/e2e/run.sh grafana
+bash scripts/e2e/run.sh helm       # also requires Helm
+bash scripts/e2e/run.sh kustomize  # also requires standalone Kustomize
 ```
 
 Each invocation creates a disposable kind cluster, verifies workload readiness and
@@ -37,12 +39,21 @@ Prometheus tests readiness and a successful self-scrape query. Grafana tests sta
 with the repository's dashboard/datasource provisioning and database health; it
 does not provision the optional MySQL or RabbitMQ dashboard backends.
 
+Helm tests the hello-world chart's install, connection hook, upgrade with optional
+Ingress/HPA resources, HTTP response and uninstall. Kustomize tests the portable
+`contents/kustomize/example` dev/prod overlays, content and replicas. These tests
+do not cover `helm-vs-kustomize`'s older Flask/MySQL example or the packaged Helm
+archive. CI installs Helm and Kustomize versions from their README version links,
+so version-only README updates exercise the new binaries. Local runs use the
+binaries on `PATH` and print their versions; use the documented versions for parity.
+
 ## Changed targets in CI
 
 PRs select targets from the merge-base diff, including deleted and renamed files.
 `contents/argocd/**` runs only Argo CD; `contents/prometheus-operator/**` runs only
 Prometheus Operator. `contents/prometheus/**` and `contents/grafana/**` select
-the corresponding standalone sample. Changes to an individual case run that case; shared runner,
+the corresponding standalone sample. The hello-world chart and Helm README
+select `helm`; `contents/kustomize/**` selects `kustomize`. Changes to an individual case run that case; shared runner,
 registry or workflow changes run all registered targets. Unrelated changes skip
 cluster jobs. README changes under a target are included because installation
 versions and instructions can live there. Manual `workflow_dispatch` runs all.
