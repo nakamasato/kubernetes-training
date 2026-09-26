@@ -59,8 +59,12 @@ PRs select targets from the merge-base diff, including deleted and renamed files
 `contents/argocd/**` runs only Argo CD; `contents/prometheus-operator/**` runs only
 Prometheus Operator. `contents/prometheus/**` and `contents/grafana/**` select
 the corresponding standalone sample. The hello-world chart and Helm README
-select `helm`; `contents/kustomize/**` selects `kustomize`. Changes to an individual case run that case; shared runner,
-registry or workflow changes run all registered targets. Unrelated changes skip
+select `helm`; `contents/kustomize/**` selects `kustomize`. Changes to an individual case run that case; shared runner, selector or workflow changes run all registered targets.
+Registry edits compare the PR merge-base and head: only added targets or targets
+with changed path patterns run. Deleted targets are not scheduled, and registry
+formatting/order changes do not create clusters. Unit-test-only changes run the
+selection/isolation checks without clusters; the tool-version helper selects only
+Helm and Kustomize. New commits cancel superseded E2E runs for the same PR. Unrelated changes skip
 cluster jobs. README changes under a target are included because installation
 versions and instructions can live there. Manual `workflow_dispatch` runs all.
 `status-check-e2e` is the stable aggregate check, including when no targets match.

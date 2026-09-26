@@ -3,6 +3,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -26,7 +30,13 @@ jobs:
           if [ "$EVENT" = workflow_dispatch ]; then
             targets=$(python3 -c 'import json; print(json.dumps(sorted(json.load(open("scripts/e2e/targets.json")))))')
           else
-            targets=$(git diff --name-only --no-renames -z "$BASE...$HEAD" | python3 scripts/e2e/select_targets.py)
+            merge_base=$(git merge-base "$BASE" "$HEAD")
+            git show "$merge_base:scripts/e2e/targets.json" > "$RUNNER_TEMP/e2e-base-targets.json"
+            git show "$HEAD:scripts/e2e/targets.json" > "$RUNNER_TEMP/e2e-head-targets.json"
+            targets=$(git diff --name-only --no-renames -z "$merge_base" "$HEAD" |
+              python3 scripts/e2e/select_targets.py \
+                --base-registry "$RUNNER_TEMP/e2e-base-targets.json" \
+                --head-registry "$RUNNER_TEMP/e2e-head-targets.json")
           fi
           echo "targets=$targets" >> "$GITHUB_OUTPUT"
           echo "Selected targets: $targets"

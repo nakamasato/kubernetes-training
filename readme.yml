@@ -1,41 +1,63 @@
+# Sources are local repository pins; README generation never queries upstream releases.
+# source.pattern must capture exactly one version; repeated matches must agree.
+# Use version only for a manual pin; omit both for an unpinned project.
 versions:
   - name: Kubernetes
-    version: v1.25.3
     repoUrl: https://github.com/kubernetes/kubernetes
+    source:
+      path: scripts/e2e/run.sh
+      pattern: kindest/node:(v[0-9]+\.[0-9]+\.[0-9]+)
   - name: Kustomize
-    version: kustomize/v4.5.7
     repoUrl: https://github.com/kubernetes-sigs/kustomize
     category: Yaml Management
+    source:
+      path: contents/kustomize/README.md
+      pattern: releases/tag/(kustomize/v[0-9]+\.[0-9]+\.[0-9]+)
   - name: Helm
-    version: v3.11.2
     repoUrl: https://github.com/helm/helm
     category: Yaml Management
+    source:
+      path: contents/helm/README.md
+      pattern: releases/tag/(v[0-9]+\.[0-9]+\.[0-9]+)
   - name: Traefik
-    version: v2.9.0
     repoUrl: https://github.com/traefik/traefik
     category: Networking
+    source:
+      path: contents/traefik/quick-start/docker-compose.yml
+      pattern: 'image: traefik:(v[0-9]+\.[0-9]+\.[0-9]+)'
   - name: ArgoCD
-    version: v2.8.4
     repoUrl: https://github.com/argoproj/argo-cd
     category: CI/CD
+    source:
+      path: contents/argocd/setup/kustomization.yaml
+      pattern: ref=(v[0-9]+\.[0-9]+\.[0-9]+)
   - name: Prometheus-Operator
-    version: v0.43.1
     repoUrl: https://github.com/prometheus-operator/prometheus-operator
     category: Monitoring
     dir: prometheus-operator
+    source:
+      path: contents/prometheus-operator/operator/kustomization.yaml
+      pattern: prometheus-operator/(v[0-9]+\.[0-9]+\.[0-9]+)/bundle.yaml
   - name: Prometheus
-    version: "latest"
     repoUrl: https://github.com/prometheus/prometheus
     category: Monitoring
     dir: prometheus
+    source:
+      path: contents/prometheus/statefulset.yaml
+      pattern: 'image: quay.io/prometheus/prometheus:(v[0-9]+\.[0-9]+\.[0-9]+)'
   - name: Grafana
-    version: "latest"
     repoUrl: https://github.com/grafana/grafana
     category: Monitoring
+    source:
+      path: contents/grafana/deployment.yaml
+      pattern: 'image: grafana/grafana:([0-9]+\.[0-9]+\.[0-9]+)'
+    tagPrefix: v
   - name: Grafana Operator
-    version: null
-    repoUrl: https://github.com/grafana-operator/grafana-operator
+    repoUrl: https://github.com/grafana/grafana-operator
     category: Monitoring
+    source:
+      path: contents/grafana-operator/operator/kustomization.yaml
+      pattern: releases/download/(v[0-9]+\.[0-9]+\.[0-9]+)/
   - name: Grafana Loki
     version: null
     repoUrl: https://github.com/grafana/loki
@@ -51,40 +73,55 @@ versions:
     category: Monitoring
     todo: true
   - name: Strimzi
-    version: 0.24.0
     repoUrl: https://github.com/strimzi/strimzi-kafka-operator
     category: Middleware (Operator)
+    source:
+      path: contents/strimzi/README.md
+      pattern: releases/download/([0-9]+\.[0-9]+\.[0-9]+)/
   - name: Kind
-    version: v0.17.0
     repoUrl: https://github.com/kubernetes-sigs/kind
+    source:
+      path: .github/workflows/e2e.yml
+      pattern: kind.sigs.k8s.io/dl/(v[0-9]+\.[0-9]+\.[0-9]+)/
   - name: Ingress Nginx Controller
-    version: controller-v1.7.0
     repoUrl: https://github.com/kubernetes/ingress-nginx
     category: Networking
+    source:
+      path: contents/ingress-nginx-controller/README.md
+      pattern: ingress-nginx/(controller-v[0-9]+\.[0-9]+\.[0-9]+)/deploy/
   - name: Conftest
-    version: v0.25.0
     repoUrl: https://github.com/open-policy-agent/conftest
     category: CI/CD
+    source:
+      path: .github/workflows/conftest.yml
+      pattern: releases/download/(v[0-9]+\.[0-9]+\.[0-9]+)/
   - name: Istio
-    version: 1.19.0
     repoUrl: https://github.com/istio/istio
     category: Service Proxy, Discovery, and, Mesh
+    source:
+      path: contents/istio/README.md
+      pattern: ISTIO_VERSION=([0-9]+\.[0-9]+\.[0-9]+)
   - name: Postgres Operator
-    version: v1.7.1
     repoUrl: https://github.com/zalando/postgres-operator
+    source:
+      path: contents/databases/postgres-operator/README.md
+      pattern: releases/tag/(v[0-9]+\.[0-9]+\.[0-9]+)
   - name: KNative
     version: null
     repoUrl: https://github.com/knative/serving
     category: Deployment Management
   - name: Skaffold
-    version: v1.39.1
+    version: null
     repoUrl: https://github.com/GoogleContainerTools/skaffold
     category: Deployment Management
   - name: eck
-    version: null
     repoUrl: https://github.com/elastic/cloud-on-k8s
     category: Middleware (Operator)
     dir: eck
+    source:
+      path: contents/eck/operator/kustomization.yaml
+      pattern: eck/([0-9]+\.[0-9]+\.[0-9]+)/
+    tagPrefix: v
   - name: Kyverno
     version: null
     repoUrl: https://github.com/kyverno/kyverno
@@ -99,10 +136,12 @@ versions:
     repoUrl: https://github.com/kubeflow/kubeflow
     category: Machine Learning
   - name: Vitess
-    version: null
     repoUrl: https://github.com/vitessio/vitess
     category: Database
     todo: true
+    source:
+      path: contents/databases/vitess/README.md
+      pattern: releases/tag/(v[0-9]+\.[0-9]+\.[0-9]+)
   - name: TiDB
     version: null
     repoUrl: https://github.com/pingcap/tidb
@@ -114,10 +153,42 @@ versions:
     category: Database
     todo: true
   - name: MySQL Operator
-    version: null
     repoUrl: https://github.com/mysql/mysql-operator
     category: Database
-  - name: Postgres Operator
-    version: null
-    repoUrl: https://github.com/zalando/postgres-operator
-    category: Database
+    source:
+      path: contents/databases/mysql-operator/README.md
+      pattern: mysql-operator/([0-9]+\.[0-9]+\.[0-9]+)/deploy/
+  - name: Cert Manager
+    repoUrl: https://github.com/cert-manager/cert-manager
+    source:
+      path: contents/cert-manager/README.md
+      pattern: cert-manager/releases/download/(v[0-9]+\.[0-9]+\.[0-9]+)/cert-manager.yaml
+  - name: Gatekeeper
+    repoUrl: https://github.com/open-policy-agent/gatekeeper
+    source:
+      path: contents/open-policy-agent/README.md
+      pattern: gatekeeper/(v[0-9]+\.[0-9]+\.[0-9]+)/deploy/
+  - name: Elasticsearch (ECK sample)
+    repoUrl: https://github.com/elastic/elasticsearch
+    source:
+      path: contents/eck/elasticsearch.yaml
+      pattern: 'version: ([0-9]+\.[0-9]+\.[0-9]+)'
+    tagPrefix: v
+  - name: Kibana (ECK sample)
+    repoUrl: https://github.com/elastic/kibana
+    source:
+      path: contents/eck/kibana.yaml
+      pattern: 'version: ([0-9]+\.[0-9]+\.[0-9]+)'
+    tagPrefix: v
+  - name: MySQL (Helm/Kustomize sample)
+    releaseUrl: https://dev.mysql.com/doc/relnotes/mysql/
+    repoUrl: https://github.com/mysql/mysql-server
+    source:
+      path: contents/helm-vs-kustomize/dependencies/mysql/mysql.yaml
+      pattern: 'image: mysql:([0-9]+\.[0-9]+(?:\.[0-9]+)?)'
+  - name: PostgreSQL (Grafana HA sample)
+    releaseUrl: https://www.postgresql.org/docs/release/
+    repoUrl: https://github.com/postgres/postgres
+    source:
+      path: contents/grafana-operator/ha/postgres.yaml
+      pattern: 'image: postgres:([0-9]+(?:\.[0-9]+)?)'

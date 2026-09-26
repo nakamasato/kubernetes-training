@@ -16,3 +16,12 @@ repos:
             contents/README.md$
           )
       # - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: generate-readme
+        name: Synchronize README version indexes
+        entry: go run readme.go
+        language: system
+        pass_filenames: false
+        always_run: true

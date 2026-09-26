@@ -10,4 +10,9 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: 'pypy3.9'
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Test README generation
+        run: go test . ./doc
       - uses: pre-commit/action@v3.0.1
