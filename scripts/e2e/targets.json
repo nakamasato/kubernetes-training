@@ -1,4 +1,7 @@
 {
+  "eck": [
+    "contents/eck/**"
+  ],
   "argocd": [
     "contents/argocd/**"
   ],
@@ -17,8 +20,5 @@
   ],
   "kustomize": [
     "contents/kustomize/**"
-  ],
-  "eck": [
-    "contents/eck/**"
   ]
 }
