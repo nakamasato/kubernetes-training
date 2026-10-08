@@ -1,0 +1,7 @@
+namespace: database
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=password
+resources:
+  - mysql.yaml

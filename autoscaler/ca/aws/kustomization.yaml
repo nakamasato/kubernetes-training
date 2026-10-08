@@ -1,0 +1,8 @@
+commonLabels:
+  app: cluster-autoscaler
+
+resources:
+  - https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+
+patches:
+  - deployment.yaml

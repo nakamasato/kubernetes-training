@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: helm
+  namespace: argocd
+spec:
+  description: manage helm chart
+
+  sourceRepos:
+    - "*"
+
+  destinations:
+    - namespace: helm-dev
+      server: https://kubernetes.default.svc
+    - namespace: helm-prod
+      server: https://kubernetes.default.svc
+
+  clusterResourceWhitelist:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+    - group: ''
+      kind: Namespace
+
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: ResourceQuota
+    - group: ""
+      kind: LimitRange
+    - group: ""
+      kind: NetworkPolicy
+
+  orphanedResources:
+    warn: false
