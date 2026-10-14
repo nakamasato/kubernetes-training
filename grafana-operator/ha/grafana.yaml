@@ -1,0 +1,27 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: example-grafana
+  labels:
+    dashboards: grafana
+spec:
+  version: "13.2.2"
+  deployment:
+    spec:
+      replicas: 2
+  config:
+    log:
+      mode: "console"
+      level: "warn"
+    auth:
+      disable_login_form: "false"
+      disable_signout_menu: "true"
+    auth.anonymous:
+      enabled: "true"
+    database:
+      type: postgres
+      host: postgres:5432
+      name: grafana
+      user: grafana
+      password: grafana
+      ssl_mode: disable

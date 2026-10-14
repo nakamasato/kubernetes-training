@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-app-with-service-monitor
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example-app-with-service-monitor
+  template:
+    metadata:
+      labels:
+        app: example-app-with-service-monitor
+    spec:
+      containers:
+      - name: example-app-with-service-monitor
+        image: fabxc/instrumented_app
+        ports:
+        - name: web
+          containerPort: 8080

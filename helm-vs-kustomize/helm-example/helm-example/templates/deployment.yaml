@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm-example.fullname" . }}
+  labels:
+    {{- include "helm-example.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "helm-example.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "helm-example.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag | default "latest" }}"
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: nginx-conf
+              subPath: nginx.conf
+          ports:
+            - name: http
+              containerPort: 80
+
+        - name: uwsgi
+          image: "{{ .Values.uwsgi.image.repository }}:{{ .Values.uwsgi.image.tag | default .Chart.AppVersion }}"
+          envFrom:
+            - configMapRef:
+                name: {{ include "helm-example.fullname" . }}-uwsgi
+            - secretRef:
+                name: {{ include "helm-example.fullname" . }}-uwsgi
+
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: {{ include "helm-example.fullname" . }}-nginx
+            items:
+              - key: nginx.conf
+                path: nginx.conf
