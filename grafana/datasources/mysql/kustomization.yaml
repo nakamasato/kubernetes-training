@@ -1,0 +1,9 @@
+namespace: database
+resources:
+  - mysql-deployment.yaml
+  - mysql-service.yaml
+
+configMapGenerator:
+  - name: initsql
+    files:
+      - init.sql

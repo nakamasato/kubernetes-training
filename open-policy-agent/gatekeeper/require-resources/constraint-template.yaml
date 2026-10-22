@@ -1,0 +1,25 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: requireresource
+spec:
+  crd:
+    spec:
+      names:
+        kind: RequireResource
+        listKind: RequireResourcesList
+        plural: requireresources
+        singular: requireresource
+
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package requireresource
+
+        all_resource_exist {
+          input.review.object.spec.containers[_].resources != {}
+        }
+        violation[{"msg": msg}] {
+          not all_resource_exist
+          msg := "resource is required"
+        }
