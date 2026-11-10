@@ -2,7 +2,7 @@ module github.com/nakamasato/kubernetes-training
 
 go 1.26.0
 
-toolchain go1.27.3
+toolchain go1.27.4
 
 require (
 	github.com/evanphx/json-patch/v5 v5.9.11
