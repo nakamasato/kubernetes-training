@@ -1,0 +1,6 @@
+namespace: monitoring
+resources:
+  - prometheus.yaml
+  - rbac.yaml
+  - service.yaml
+  - service-monitor-prometheus.yaml

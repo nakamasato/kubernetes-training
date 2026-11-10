@@ -1,0 +1,19 @@
+apiVersion: v1
+entries:
+  helm-example:
+  - apiVersion: v2
+    appVersion: v0.0.1
+    created: "2021-05-24T09:27:53.95018+09:00"
+    description: Simple API application.
+    digest: 3c3358bab8d1d47845b1c6ef7fb18db4290af2d72103d2ea19d8a6466582d759
+    maintainers:
+    - name: nakamasato
+    name: helm-example
+    sources:
+    - https://github.com/nakamasato/kubernetes-training
+    - https://github.com/nakamasato/flask-test
+    type: application
+    urls:
+    - https://nakamasato.github.io/helm-charts-repo/helm-example-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-05-24T09:27:53.949005+09:00"
