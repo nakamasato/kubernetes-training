@@ -1,0 +1,11 @@
+namespace: kustomize-prod
+resources:
+  - ../../base
+configMapGenerator:
+  - name: web-content
+    behavior: merge
+    literals:
+      - index.html=environment=prod
+replicas:
+  - name: kustomize-demo
+    count: 2
